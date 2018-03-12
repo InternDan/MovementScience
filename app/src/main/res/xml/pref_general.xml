@@ -1,0 +1,214 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceCategory
+        android:title="Point Tracking Options">
+
+        <EditTextPreference
+            android:key="pref_trackingSearchWindowSize"
+            android:title="@string/pref_trackingSearchWindowSize"
+            android:dialogTitle="@string/pref_trackingSearchWindowSize_disp"
+            android:defaultValue="@string/pref_trackingSearchWindowSize_default"
+            />
+
+        <EditTextPreference
+            android:key="pref_trackingSearchEpsilon"
+            android:title="@string/pref_trackingSearchEpsilon"
+            android:dialogTitle="@string/pref_trackingSearchEpsilon_disp"
+            android:defaultValue="@string/pref_trackingSearchEpsilon_default"
+            />
+
+        <EditTextPreference
+            android:key="pref_trackingSearchMaxLevel"
+            android:title="@string/pref_trackingSearchMaxLevel"
+            android:dialogTitle="@string/pref_trackingSearchMaxLevel_disp"
+            android:defaultValue="@string/pref_trackingSearchMaxLevel_default"
+            />
+
+        <EditTextPreference
+            android:key="pref_trackingSearchMinEigenThreshold"
+            android:title="@string/pref_trackingSearchMinEigenThreshold"
+            android:dialogTitle="@string/pref_trackingSearchMinEigenThreshold_disp"
+            android:defaultValue="@string/pref_trackingSearchMinEigenThreshold_default"
+            />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="Point Display Options">
+
+        <EditTextPreference
+            android:key="pref_currentPointSize"
+            android:title="@string/pref_currentPointSize"
+            android:dialogTitle="@string/pref_currentPointSize_disp"
+            android:defaultValue="@string/pref_currentPointSize_default"
+            />
+
+        <EditTextPreference
+            android:key="pref_trailingPointSize"
+            android:title="@string/pref_trailingPointSize"
+            android:dialogTitle="@string/pref_trailingPointSize_disp"
+            android:defaultValue="@string/pref_trailingPointSize_default"
+            />
+
+        <EditTextPreference
+            android:key="pref_trailingPointNumber"
+            android:title="@string/pref_trailingPointNumber"
+            android:dialogTitle="@string/pref_trailingPointNumber_disp"
+            android:defaultValue="@string/pref_trailingPointNumber_default"
+            />
+
+        <ListPreference
+            android:key="pref_currentPointColor"
+            android:title="@string/pref_currentPointColor"
+            android:dialogTitle="@string/pref_currentPointColor"
+            android:entries="@array/pref_currentPointColor_entries"
+            android:entryValues="@array/pref_currentPointColor_values"
+            android:defaultValue="@string/pref_currentPointColor_default" />
+
+        <ListPreference
+            android:key="pref_trailingPointColor"
+            android:title="@string/pref_trailingPointColor"
+            android:dialogTitle="@string/pref_trailingPointColor"
+            android:entries="@array/pref_trailingPointColor_entries"
+            android:entryValues="@array/pref_trailingPointColor_values"
+            android:defaultValue="@string/pref_trailingPointColor_default" />
+
+        <ListPreference
+            android:key="pref_anglePointColor"
+            android:title="@string/pref_anglePointColor"
+            android:dialogTitle="@string/pref_anglePointColor"
+            android:entries="@array/pref_anglePointColor_entries"
+            android:entryValues="@array/pref_anglePointColor_values"
+            android:defaultValue="@string/pref_anglePointColor_default" />
+
+        <ListPreference
+            android:key="pref_linePointColor"
+            android:title="@string/pref_linePointColor"
+            android:dialogTitle="@string/pref_linePointColor"
+            android:entries="@array/pref_linePointColor_entries"
+            android:entryValues="@array/pref_linePointColor_values"
+            android:defaultValue="@string/pref_linePointColor_default" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Line Display Options">
+
+        <ListPreference
+            android:key="pref_lineNoAngleColor"
+            android:title="@string/pref_lineNoAngleColor"
+            android:dialogTitle="@string/pref_lineNoAngleColor"
+            android:entries="@array/pref_lineNoAngleColor_entries"
+            android:entryValues="@array/pref_lineNoAngleColor_values"
+            android:defaultValue="@string/pref_lineNoAngleColor_default" />
+
+        <ListPreference
+            android:key="pref_angleLineColor"
+            android:title="@string/pref_angleLineColor"
+            android:dialogTitle="@string/pref_angleLineColor"
+            android:entries="@array/pref_angleLineColor_entries"
+            android:entryValues="@array/pref_angleLineColor_values"
+            android:defaultValue="@string/pref_angleLineColor_default" />
+
+        <ListPreference
+            android:key="pref_scribbleColor"
+            android:title="@string/pref_scribbleColor"
+            android:dialogTitle="@string/pref_scribbleColor"
+            android:entries="@array/pref_scribbleColor_entries"
+            android:entryValues="@array/pref_scribbleColor_values"
+            android:defaultValue="@string/pref_scribbleColor_default" />
+
+        <EditTextPreference
+            android:key="pref_scribbleWeight"
+            android:title="@string/pref_scribbleWeight"
+            android:dialogTitle="@string/pref_scribbleWeight_disp"
+            android:defaultValue="@string/pref_scribbleWeight_default"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Text Options">
+
+        <EditTextPreference
+            android:key="pref_textBoxTextSize"
+            android:title="@string/pref_textBoxTextSize"
+            android:dialogTitle="@string/pref_textBoxTextSize_disp"
+            android:defaultValue="@string/pref_textBoxTextSize_default"
+            />
+
+        <EditTextPreference
+            android:key="pref_angleTextSize"
+            android:title="@string/pref_angleTextSize"
+            android:dialogTitle="@string/pref_angleTextSize_disp"
+            android:defaultValue="@string/pref_angleTextSize_default"
+            />
+
+        <ListPreference
+            android:key="pref_angleTextColor"
+            android:title="@string/pref_angleTextColor"
+            android:dialogTitle="@string/pref_angleTextColor"
+            android:entries="@array/pref_angleTextColor_entries"
+            android:entryValues="@array/pref_angleTextColor_values"
+            android:defaultValue="@string/pref_angleTextColor_default" />
+
+        <ListPreference
+            android:key="pref_textBoxTextColor"
+            android:title="@string/pref_textBoxTextColor"
+            android:dialogTitle="@string/pref_textBoxTextColor"
+            android:entries="@array/pref_textBoxTextColor_entries"
+            android:entryValues="@array/pref_textBoxTextColor_values"
+            android:defaultValue="@string/pref_textBoxTextColor_default" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Processing Options">
+
+        <ListPreference
+            android:key="pref_rotateDegreesPostProcess"
+            android:title="@string/pref_rotateDegreesPostProcess"
+            android:dialogTitle="@string/pref_rotateDegreesPostProcess"
+            android:entries="@array/pref_rotateDegreesPostProcess_entries"
+            android:entryValues="@array/pref_rotateDegreesPostProcess_values"
+            android:defaultValue="@string/pref_rotateDegreesPostProcess_default" />
+
+        <ListPreference
+            android:key="pref_rotateDegreesRealTime"
+            android:title="@string/pref_rotateDegreesRealTime"
+            android:dialogTitle="@string/pref_rotateDegreesRealTime"
+            android:entries="@array/pref_rotateDegreesRealTime_entries"
+            android:entryValues="@array/pref_rotateDegreesRealTime_values"
+            android:defaultValue="@string/pref_rotateDegreesRealTime_default" />
+
+
+    </PreferenceCategory>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PreferenceScreen>

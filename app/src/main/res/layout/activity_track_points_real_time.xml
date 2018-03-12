@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.home.buffa.movementscience.trackPointsRealTime">
+
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/texture"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitXY"
+        />
+
+    <Button
+        android:id="@+id/buttonResetPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="resetPoints"
+        android:text="@string/clear_points"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.026"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.015"
+        android:textColor="@android:color/holo_red_dark"
+        android:background="#33999999"
+        android:textStyle="bold|normal"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/buttonGoHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="goHome"
+        android:text="@string/go_home"
+        app:layout_constraintBottom_toBottomOf="@+id/texture"
+        app:layout_constraintHorizontal_bias="0.028"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        android:textColor="@android:color/holo_red_dark"
+        android:background="#33999999"
+        android:textStyle="bold|normal"
+        android:textSize="20sp" />
+
+</android.support.constraint.ConstraintLayout>

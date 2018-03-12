@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
+    }
+    defaultConfig {
+        multiDexEnabled true
+        applicationId "com.home.buffa.movementscience"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDir 'jniLibs'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile files('src/main/libs/opencv.jar')
+    compile files('src/main/libs/commons-math3-3.6.1.jar')
+    compile files('src/main/libs/commons-math3-3.6.1-tools.jar')
+    compile files('src/main/libs/opencv-android-x86.jar')
+    compile files('src/main/libs/opencv-android-arm.jar')
+    compile files('src/main/libs/libfreenect.jar')
+    compile files('src/main/libs/libdc1394.jar')
+    compile files('src/main/libs/javacv.jar')
+    compile files('src/main/libs/javacv-platform.jar')
+    compile files('src/main/libs/javacpp.jar')
+    compile files('src/main/libs/flandmark-android-x86.jar')
+    compile files('src/main/libs/flandmark-android-arm.jar')
+    compile files('src/main/libs/artoolkitplus-android-x86.jar')
+    compile files('src/main/libs/artoolkitplus-android-arm.jar')
+    compile project(':openCVLibrary300')
+    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-core-utils:26.0.0-alpha1'
+    compile 'com.jjoe64:graphview:4.2.1'
+    compile 'com.journeyapps:zxing-android-embedded:3.5.0'
+    compile 'com.google.android.gms:play-services-drive:11.0.4'
+    compile 'com.google.android.gms:play-services:11.0.4'
+    compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
+    compile 'com.github.bumptech.glide:glide:4.0.0-RC1'
+    compile 'com.android.support:support-v4:26.+'
+    compile 'org.jcodec:jcodec:0.2.0'
+    compile 'org.jcodec:jcodec-android:0.2.0'
+    compile 'com.android.support:multidex:1.0.0'
+    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
+}
