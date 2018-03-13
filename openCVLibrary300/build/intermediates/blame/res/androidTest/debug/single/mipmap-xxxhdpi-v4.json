@@ -4,6 +4,10 @@
         "source": "D:\\MovementScience\\openCVLibrary300\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxxhdpi-v4\\ic_launcher.png"
     },
     {
+        "merged": "C:\\Users\\buffa\\StudioProjects\\MovementScience\\openCVLibrary300\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxxhdpi-v4\\ic_launcher.png",
+        "source": "C:\\Users\\buffa\\StudioProjects\\MovementScience\\openCVLibrary300\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxxhdpi-v4\\ic_launcher.png"
+    },
+    {
         "merged": "D:\\github\\MovementScience\\openCVLibrary300\\build\\intermediates\\res\\merged\\androidTest\\debug\\mipmap-xxxhdpi-v4\\ic_launcher.png",
         "source": "D:\\github\\MovementScience\\openCVLibrary300\\build\\intermediates\\bundles\\debug\\res\\mipmap-xxxhdpi-v4\\ic_launcher.png"
     }

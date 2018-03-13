@@ -1,9 +1,9 @@
 
 {
-	"buildFiles" : [ "D:/github/MovementScience/app/CMakeLists.txt" ],
+	"buildFiles" : [ "C:/Users/buffa/StudioProjects/MovementScience/app/CMakeLists.txt" ],
 	"cleanCommands" : 
 	[
-		"C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\github\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\x86 --target clean"
+		"C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\buffa\\StudioProjects\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\x86 --target clean"
 	],
 	"cppFileExtensions" : [ "cpp" ],
 	"libraries" : 
@@ -12,18 +12,18 @@
 		{
 			"abi" : "x86",
 			"artifactName" : "native-lib",
-			"buildCommand" : "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\github\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\x86 --target native-lib",
+			"buildCommand" : "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\buffa\\StudioProjects\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\x86 --target native-lib",
 			"buildType" : "release",
 			"files" : 
 			[
 				
 				{
 					"flags" : "  --target=i686-none-linux-android --gcc-toolchain=C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/toolchains/x86-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/sysroot  -Dnative_lib_EXPORTS -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\sources\\cxx-stl\\gnu-libstdc++\\4.9\\include -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\sources\\cxx-stl\\gnu-libstdc++\\4.9\\libs\\x86\\include -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\sources\\cxx-stl\\gnu-libstdc++\\4.9\\include\\backward  -isystem C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/sysroot/usr/include/i686-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -Wa,--noexecstack -Wformat -Werror=format-security   -O2 -DNDEBUG  -fPIC    -c ",
-					"src" : "D:/github/MovementScience/app/src/main/cpp/native-lib.cpp",
-					"workingDirectory" : "D:/github/MovementScience/app/.externalNativeBuild/cmake/release/x86"
+					"src" : "C:/Users/buffa/StudioProjects/MovementScience/app/src/main/cpp/native-lib.cpp",
+					"workingDirectory" : "C:/Users/buffa/StudioProjects/MovementScience/app/.externalNativeBuild/cmake/release/x86"
 				}
 			],
-			"output" : "D:/github/MovementScience/app/build/intermediates/cmake/release/obj/x86/libnative-lib.so",
+			"output" : "C:/Users/buffa/StudioProjects/MovementScience/app/build/intermediates/cmake/release/obj/x86/libnative-lib.so",
 			"toolchain" : "2113081685"
 		}
 	},
