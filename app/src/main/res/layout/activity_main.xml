@@ -93,17 +93,18 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:background="#00999999"
         android:onClick="manageFiles"
         android:text="@string/manage_files"
         android:textColor="@android:color/holo_red_dark"
-        android:background="#00999999"
-        android:textStyle="bold|normal"
         android:textSize="20sp"
+        android:textStyle="bold|normal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonRealTimeTracking"
-        app:layout_constraintVertical_bias="0.046" />
+        app:layout_constraintVertical_bias="0.332" />
 
     <Button
         android:id="@+id/buttonSettings"
@@ -113,17 +114,30 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:background="#00999999"
         android:onClick="editSettings"
         android:text="@string/settings"
         android:textColor="@android:color/holo_red_dark"
-        android:background="#00999999"
-        android:textStyle="bold|normal"
         android:textSize="20sp"
+        android:textStyle="bold|normal"
         app:layout_constraintBottom_toTopOf="@+id/buttonMonitorGaitStability"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonManageFiles"
-        app:layout_constraintVertical_bias="0.053" />
+        app:layout_constraintVertical_bias="0.173" />
+
+    <Button
+        android:id="@+id/buttonPostProcessing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="36dp"
+        android:text="Video Post-Processing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonRealTimeTracking" />
 
 </android.support.constraint.ConstraintLayout>

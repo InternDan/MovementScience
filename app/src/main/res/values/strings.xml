@@ -327,7 +327,6 @@
     <string name="pref_trackingSearchMinEigenThreshold_default">0.001</string>
 
 
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_settings">Settings</string>
@@ -412,5 +411,6 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_post_processing">PostProcessing</string>
 
 </resources>

@@ -21,11 +21,9 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.apps.drive.API_KEY"
-            android:value="555904913923-hlctv5jknm0lfuf8cn1g6lbegr65pen6.apps.googleusercontent.com"
-            />
+            android:value="555904913923-hlctv5jknm0lfuf8cn1g6lbegr65pen6.apps.googleusercontent.com" />
 
         <activity android:name=".MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -78,7 +76,8 @@
         <activity android:name=".internetProcessing" />
         <activity
             android:name=".settingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".postProcessing"></activity>
     </application>
 
 </manifest>

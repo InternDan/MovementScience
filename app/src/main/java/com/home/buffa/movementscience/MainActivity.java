@@ -118,6 +118,11 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void postProcessing(View view){
+        Intent intent = new Intent(getApplicationContext(),postProcessing.class);
+        startActivity(intent);
+    }
+
 
     private  boolean checkAndRequestPermissions() {
         int permissionCamera = ContextCompat.checkSelfPermission(this,
