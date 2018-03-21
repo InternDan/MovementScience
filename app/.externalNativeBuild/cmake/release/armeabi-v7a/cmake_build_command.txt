@@ -1,10 +1,10 @@
 Executable : C:\Users\buffa\AppData\Local\Android\Sdk\cmake\3.6.4111459\bin\cmake.exe
 arguments : 
--HD:\github\MovementScience\app
--BD:\github\MovementScience\app\.externalNativeBuild\cmake\release\armeabi-v7a
+-HC:\Users\buffa\Documents\Android Studio Projects\MovementScience\app
+-BC:\Users\buffa\Documents\Android Studio Projects\MovementScience\app\.externalNativeBuild\cmake\release\armeabi-v7a
 -DANDROID_ABI=armeabi-v7a
 -DANDROID_PLATFORM=android-21
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\github\MovementScience\app\build\intermediates\cmake\release\obj\armeabi-v7a
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\buffa\Documents\Android Studio Projects\MovementScience\app\build\intermediates\cmake\release\obj\armeabi-v7a
 -DCMAKE_BUILD_TYPE=Release
 -DANDROID_NDK=C:\Users\buffa\AppData\Local\Android\Sdk\ndk-bundle
 -DCMAKE_CXX_FLAGS=
