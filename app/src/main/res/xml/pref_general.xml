@@ -186,6 +186,38 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="Video Post Processing Options">
+
+        <ListPreference
+            android:key="pref_postProcessingOrientation"
+            android:title="@string/pref_postProcessingOrientation"
+            android:dialogTitle="@string/pref_postProcessingOrientation"
+            android:entries="@array/pref_postProcessingOrientation_entries"
+            android:entryValues="@array/pref_postProcessingOrientation_values"
+            android:defaultValue="@string/pref_postProcessingOrientation_default" />
+
+        <ListPreference
+            android:key="pref_postProcessingSize"
+            android:title="@string/pref_postProcessingSize"
+            android:dialogTitle="@string/pref_postProcessingSize"
+            android:entries="@array/pref_postProcessingSize_entries"
+            android:entryValues="@array/pref_postProcessingSize_values"
+            android:defaultValue="@string/pref_postProcessingSize_default" />
+
+        <ListPreference
+            android:key="pref_postProcessingPlayOrder"
+            android:title="@string/pref_postProcessingPlayOrder"
+            android:dialogTitle="@string/pref_postProcessingPlayOrder"
+            android:entries="@array/pref_postProcessingPlayOrder_entries"
+            android:entryValues="@array/pref_postProcessingPlayOrder_values"
+            android:defaultValue="@string/pref_postProcessingPlayOrder_default" />
+
+
+
+
+    </PreferenceCategory>
+
 
 
 
