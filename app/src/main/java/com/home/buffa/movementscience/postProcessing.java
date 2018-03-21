@@ -153,6 +153,11 @@ public class postProcessing extends Activity {
         loadVideo2();
     }
 
+    public void editSettings(View view){
+        Intent intent = new Intent(getApplicationContext(),settingsActivity.class);
+        startActivity(intent);
+    }
+
     public void onResume() {
         super.onResume();
     }

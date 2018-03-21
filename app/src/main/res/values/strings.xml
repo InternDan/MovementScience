@@ -397,14 +397,6 @@
         <item>4-Point Angle</item>
     </string-array>
 
-    <string-array name="post_processing_options">
-        <item>top/bottom/largest</item>
-        <item>top/bottom/smallest</item>
-        <item>left/right/largest</item>
-        <item>left/right/smallest</item>
-    </string-array>
-
-
     <string-array name="multi_select_list_preference_default_value" />
 
     <string name="pref_title_system_sync_settings">System sync settings</string>

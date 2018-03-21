@@ -76,14 +76,14 @@
             android:onClick="resetViews"
             android:text="Reload Views" />
 
-        <Spinner
-            android:id="@+id/spinnerPostProcessingOptions"
+        <Button
+            android:id="@+id/buttonPostProcessingSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/buttonCombineVideos"
-            android:layout_toStartOf="@+id/buttonResetViewers"
-            android:entries="@array/post_processing_options"/>
+            android:onClick="editSettings"
+            android:text="Settings" />
 
 
     </RelativeLayout>
