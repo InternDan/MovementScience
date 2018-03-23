@@ -77,7 +77,7 @@
             android:name=".settingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".postProcessing" />
-        <activity android:name=".postProcessExecute"></activity>
+        <activity android:name=".poatProcessExecute"></activity>
     </application>
 
 </manifest>
