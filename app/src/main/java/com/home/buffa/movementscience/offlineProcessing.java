@@ -26,6 +26,7 @@ import android.widget.VideoView;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveFile;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +38,6 @@ import java.util.Calendar;
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
 import static android.media.MediaMetadataRetriever.OPTION_CLOSEST;
-import static com.home.buffa.movementscience.trackPointsTest.getPath;
 
 public class offlineProcessing extends Activity {
 
@@ -120,7 +120,7 @@ public class offlineProcessing extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == READ_REQUEST_CODE_VIDEO && resultCode == RESULT_OK) {
             videoUri = data.getData();
-            videoAbsolutePath = getPath(getApplicationContext(),videoUri);
+            videoAbsolutePath = FileUtils.getPath(getApplicationContext(),videoUri);
             if (videoAbsolutePath == null){
                 Context context = getApplicationContext();
                 CharSequence text = "Unable to load from that location; ensure file is stored locally on device.";

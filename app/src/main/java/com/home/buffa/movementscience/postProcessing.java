@@ -18,11 +18,11 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.ipaulpro.afilechooser.utils.FileUtils;
+
 import org.jcodec.api.android.AndroidSequenceEncoder;
 
 import java.io.IOException;
-
-import static com.home.buffa.movementscience.trackPointsTest.getPath;
 
 public class postProcessing extends Activity {
 
@@ -112,7 +112,7 @@ public class postProcessing extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == READ_REQUEST_CODE_VIDEO1 && resultCode == RESULT_OK) {
             videoUri = data.getData();
-            videoAbsolutePath = getPath(getApplicationContext(), videoUri);
+            videoAbsolutePath = FileUtils.getPath(getApplicationContext(), videoUri);
             if (videoAbsolutePath == null) {
                 Context context = getApplicationContext();
                 CharSequence text = "Unable to load from that location; ensure file is stored locally on device.";
@@ -129,7 +129,7 @@ public class postProcessing extends Activity {
         }
         if (requestCode == READ_REQUEST_CODE_VIDEO2 && resultCode == RESULT_OK) {
             videoUri = data.getData();
-            videoAbsolutePath = getPath(getApplicationContext(), videoUri);
+            videoAbsolutePath = FileUtils.getPath(getApplicationContext(), videoUri);
             if (videoAbsolutePath == null) {
                 Context context = getApplicationContext();
                 CharSequence text = "Unable to load from that location; ensure file is stored locally on device.";

@@ -1,2 +1,2 @@
-include ':app', ':FFmpegAndroid-0.3.2'
+include ':app', ':FFmpegAndroid-0.3.2', ':FileChooser'
 include ':openCVLibrary300'

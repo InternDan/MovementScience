@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FFmpegAndroid-0.3.2/FFmpegAndroid-0.3.2.iml" filepath="$PROJECT_DIR$/FFmpegAndroid-0.3.2/FFmpegAndroid-0.3.2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FileChooser/FileChooser.iml" filepath="$PROJECT_DIR$/FileChooser/FileChooser.iml" />
       <module fileurl="file://$PROJECT_DIR$/MovementScience.iml" filepath="$PROJECT_DIR$/MovementScience.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/openCVLibrary300/openCVLibrary300.iml" filepath="$PROJECT_DIR$/openCVLibrary300/openCVLibrary300.iml" />

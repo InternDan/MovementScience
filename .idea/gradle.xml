@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/FFmpegAndroid-0.3.2" />
+            <option value="$PROJECT_DIR$/FileChooser" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/openCVLibrary300" />
           </set>
