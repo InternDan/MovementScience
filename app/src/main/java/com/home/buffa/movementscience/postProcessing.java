@@ -30,13 +30,13 @@ public class postProcessing extends Activity {
     static final int READ_REQUEST_CODE_VIDEO1 = 1;
     static final int READ_REQUEST_CODE_VIDEO2 = 2;
     MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-    Uri videoUri;
+    Uri videoUri1;
+    Uri videoUri2;
     String videoAbsolutePath;
     Bitmap bmp;
     String bmpPath;
     VideoView vid1;
     VideoView vid2;
-    Intent intentPassPostProcessing;
     LinearLayout linearLayoutVid1;
     LinearLayout linearLayoutVid2;
 
@@ -68,7 +68,7 @@ public class postProcessing extends Activity {
                 MediaController(this);
         mediaController2.setAnchorView(vid2);
         vid2.setMediaController(mediaController2);
-        intentPassPostProcessing = new Intent(this,postProcessExecute.class);
+
 
         final View button1 = findViewById(R.id.linearLayoutVid1);
         button1.setOnClickListener (new View.OnClickListener() {
@@ -111,8 +111,8 @@ public class postProcessing extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == READ_REQUEST_CODE_VIDEO1 && resultCode == RESULT_OK) {
-            videoUri = data.getData();
-            videoAbsolutePath = FileUtils.getPath(getApplicationContext(), videoUri);
+            videoUri1 = data.getData();
+            videoAbsolutePath = FileUtils.getPath(getApplicationContext(), videoUri1);
             if (videoAbsolutePath == null) {
                 Context context = getApplicationContext();
                 CharSequence text = "Unable to load from that location; ensure file is stored locally on device.";
@@ -121,15 +121,15 @@ public class postProcessing extends Activity {
                 toast.show();
                 return;
             }
-            mediaMetadataRetriever.setDataSource(this, videoUri);
-            vid1.setVideoURI(videoUri);
+            mediaMetadataRetriever.setDataSource(this, videoUri1);
+            vid1.setVideoURI(videoUri1);
             vid1.seekTo(200);
             //result_video.requestFocus();
-            intentPassPostProcessing.putExtra("videoPath1", videoUri.toString());
+
         }
         if (requestCode == READ_REQUEST_CODE_VIDEO2 && resultCode == RESULT_OK) {
-            videoUri = data.getData();
-            videoAbsolutePath = FileUtils.getPath(getApplicationContext(), videoUri);
+            videoUri2 = data.getData();
+            videoAbsolutePath = FileUtils.getPath(getApplicationContext(), videoUri2);
             if (videoAbsolutePath == null) {
                 Context context = getApplicationContext();
                 CharSequence text = "Unable to load from that location; ensure file is stored locally on device.";
@@ -138,11 +138,11 @@ public class postProcessing extends Activity {
                 toast.show();
                 return;
             }
-            mediaMetadataRetriever.setDataSource(this, videoUri);
-            vid2.setVideoURI(videoUri);
+            mediaMetadataRetriever.setDataSource(this, videoUri2);
+            vid2.setVideoURI(videoUri2);
             vid2.seekTo(200);
             //result_video.requestFocus();
-            intentPassPostProcessing.putExtra("videoPath2", videoUri.toString());
+
         }
     }
 
@@ -169,5 +169,12 @@ public class postProcessing extends Activity {
 
     protected void onPause() {
         super.onPause();
+    }
+
+    public void postProcessExectute(View view){
+        Intent intentPassPostProcessing = new Intent(getApplicationContext(),postProcessExecute.class);
+        intentPassPostProcessing.putExtra("videoPath1", videoUri1.toString());
+        intentPassPostProcessing.putExtra("videoPath2", videoUri2.toString());
+        startActivity(intentPassPostProcessing);
     }
 }

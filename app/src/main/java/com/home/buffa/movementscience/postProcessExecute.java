@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
@@ -26,6 +25,7 @@ import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.Rational;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,9 +62,9 @@ public class postProcessExecute extends Activity {
         setContentView(R.layout.activity_poat_process_execute);
 
         Intent intentReceive = getIntent();
-        String vidPath = intentReceive.getExtras().getString("vidPath1");
+        String vidPath = intentReceive.getExtras().getString("videoPath1");
         vid1Uri = Uri.parse(vidPath);
-        vidPath = intentReceive.getExtras().getString("vidPath2");
+        vidPath = intentReceive.getExtras().getString("videoPath2");
         vid2Uri = Uri.parse(vidPath);
 
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
@@ -115,7 +115,7 @@ public class postProcessExecute extends Activity {
         return -1;
     }
 
-    public Bitmap combineImages(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+    public Bitmap combineImagesLR(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
         Bitmap cs = null;
 
         int width, height = 0;
@@ -134,6 +134,40 @@ public class postProcessExecute extends Activity {
 
         comboImage.drawBitmap(c, 0f, 0f, null);
         comboImage.drawBitmap(s, c.getWidth(), 0f, null);
+
+        // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
+    /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
+
+    OutputStream os = null;
+    try {
+      os = new FileOutputStream(loc + tmpImg);
+      cs.compress(CompressFormat.PNG, 100, os);
+    } catch(IOException e) {
+      Log.e("combineImages", "problem combining images", e);
+    }*/
+
+        return cs;
+    }
+
+    public Bitmap combineImagesUD(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+        Bitmap cs = null;
+
+        int width, height = 0;
+
+        if(c.getHeight() > s.getHeight()) {
+            height = c.getHeight() + s.getHeight();
+            width = c.getWidth();
+        } else {
+            height = s.getHeight() + s.getHeight();
+            width = c.getWidth();
+        }
+
+        cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas comboImage = new Canvas(cs);
+
+        comboImage.drawBitmap(c, 0f, 0f, null);
+        comboImage.drawBitmap(s, c.getHeight(), 0f, null);
 
         // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
     /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
@@ -261,12 +295,13 @@ public class postProcessExecute extends Activity {
             }catch (IOException e){
                 e.printStackTrace();
             }
+            return null;
         }
 
         private void doExtract(MediaExtractor extractor1, int trackIndex1, MediaCodec decoder1,
                                ExtractMpegFramesTest.CodecOutputSurface outputSurface1, MediaExtractor extractor2, int trackIndex2, MediaCodec decoder2,
                                ExtractMpegFramesTest.CodecOutputSurface outputSurface2) throws IOException {
-            final int TIMEOUT_USEC = 10000;
+            final int TIMEOUT_USEC = 1000000;
             ByteBuffer[] decoderInputBuffers1 = decoder1.getInputBuffers();
             MediaCodec.BufferInfo info1 = new MediaCodec.BufferInfo();
             int inputChunk1 = 0;
@@ -285,12 +320,12 @@ public class postProcessExecute extends Activity {
 
             boolean outputDoneBoth = false;
 
-            Bitmap bmp1;
-            Bitmap bmp2;
+            Bitmap bmp1 = null;
+            Bitmap bmp2 = null;
 
             while (!outputDoneBoth) {
-                bmp1=null;
-                bmp2=null;
+                //bmp1=null;
+                //bmp2=null;
 
                 Log.d(TAG, "loop");
 
@@ -454,36 +489,67 @@ public class postProcessExecute extends Activity {
                         }
                     }
                 }
-                //resize bitmaps
-                if (ppSize.contains("s")){
-                    if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)){
-                        bmp1 = bmp1;
-                        bmp2 = bmp2;
-                    }else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)){
-                        int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
-                        int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)) );
-                        bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                    }else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)){
-                        int h1 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                        int w1 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)) );
-                        bmp2 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                //check for bitmaps
+                if (bmp1 != null && bmp2 != null) {
+                    //resize bitmaps
+                    if (ppSize.contains("s")) {
+                        if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                            bmp1 = bmp1;
+                            bmp2 = bmp2;
+                        } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                            int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
+                            int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                            bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                        } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
+                            int h1 = format1.getInteger(MediaFormat.KEY_HEIGHT);
+                            int w1 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
+                            bmp2 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                        }
+                    } else if (ppSize.contains("l")) {
+                        if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                            bmp1 = bmp1;
+                            bmp2 = bmp2;
+                        } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                            int h2 = format1.getInteger(MediaFormat.KEY_HEIGHT);
+                            int w2 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
+                            bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
+                        } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
+                            int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
+                            int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                            bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                        }
                     }
-                }else if (ppSize.contains("l")) {
 
+                    //put bitmaps together
+                    Bitmap bmpJoined = null;
+                    if (ppOrder.contains("lr")) {
+                        bmpJoined = combineImagesLR(bmp1, bmp2);
+                    } else if (ppOrder.contains("rl")) {
+                        bmpJoined = combineImagesLR(bmp2, bmp1);
+                    } else if (ppOrder.contains("tb")) {
+                        bmpJoined = combineImagesUD(bmp1, bmp2);
+                    } else if (ppOrder.contains("bt")) {
+                        bmpJoined = combineImagesUD(bmp2, bmp1);
+                    }
+                    enc.encodeImage(bmpJoined);
                 }
-
-                //put bitmaps together
-                Bitmap bmpJoined = null;
-                if (ppOrder.contains("lr")) {
-                    bmpJoined = combineImages(bmp1, bmp2);
-                }else if (ppOrder.contains("rl")) {
-                    bmpJoined = combineImages(bmp2, bmp1);
-                }
-                enc.encodeImage(bmpJoined);
             }
         }
 
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+        } else {
+            Log.d("OpenCV", "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
     }
 
 }
