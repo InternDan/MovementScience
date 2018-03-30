@@ -176,7 +176,7 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
      */
     static void doExtract(MediaExtractor extractor, int trackIndex, MediaCodec decoder,
                           CodecOutputSurface outputSurface) throws IOException {
-        final int TIMEOUT_USEC = 10000;
+        final int TIMEOUT_USEC = 100000;
         ByteBuffer[] decoderInputBuffers = decoder.getInputBuffers();
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;
@@ -458,7 +458,7 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
          * with the EGLContext that contains the GL texture object used by SurfaceTexture.)
          */
         public void awaitNewImage() {
-            final int TIMEOUT_MS = 2500;
+            final int TIMEOUT_MS = 10000;
 
             synchronized (mFrameSyncObject) {
                 while (!mFrameAvailable) {
