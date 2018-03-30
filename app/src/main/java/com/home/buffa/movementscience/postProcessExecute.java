@@ -33,7 +33,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 import static android.content.ContentValues.TAG;
 import static junit.framework.Assert.fail;
@@ -56,6 +59,9 @@ public class postProcessExecute extends Activity {
 
     File directory;
 
+    int frameRate1;
+    int frameRate2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +72,8 @@ public class postProcessExecute extends Activity {
         vid1Uri = Uri.parse(vidPath);
         vidPath = intentReceive.getExtras().getString("videoPath2");
         vid2Uri = Uri.parse(vidPath);
+
+
 
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 
@@ -87,8 +95,8 @@ public class postProcessExecute extends Activity {
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     new postProcessExecute.beginTrackingProcedure().execute(null, null, null);//
-                    Intent intent = new Intent(getApplicationContext(), offlineProcessing.class);
-                    Toast.makeText(getApplicationContext(),"Application will load video once tracked", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    Toast.makeText(getApplicationContext(),"Application will load video once merged", Toast.LENGTH_LONG).show();
                     startActivity(intent);
 
                 } break;
@@ -100,23 +108,9 @@ public class postProcessExecute extends Activity {
         }
     };
 
-    public int selectTrack(MediaExtractor extractor) {
-        // Select the first video track we find, ignore the rest.
-        int numTracks = extractor.getTrackCount();
-        for (int i = 0; i < numTracks; i++) {
-            MediaFormat format = extractor.getTrackFormat(i);
-            String mime = format.getString(MediaFormat.KEY_MIME);
-            if (mime.startsWith("video/")) {
-                Log.d(TAG, "Extractor selected track " + i + " (" + mime + "): " + format);
-                return i;
-            }
-        }
-
-        return -1;
-    }
 
     public Bitmap combineImagesLR(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
-        Bitmap cs = null;
+        //Bitmap cs = null;
 
         int width, height = 0;
 
@@ -128,7 +122,7 @@ public class postProcessExecute extends Activity {
             height = c.getHeight();
         }
 
-        cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
         Canvas comboImage = new Canvas(cs);
 
@@ -150,7 +144,7 @@ public class postProcessExecute extends Activity {
     }
 
     public Bitmap combineImagesUD(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
-        Bitmap cs = null;
+        //Bitmap cs = null;
 
         int width, height = 0;
 
@@ -162,7 +156,7 @@ public class postProcessExecute extends Activity {
             width = c.getWidth();
         }
 
-        cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
         Canvas comboImage = new Canvas(cs);
 
@@ -181,6 +175,21 @@ public class postProcessExecute extends Activity {
     }*/
 
         return cs;
+    }
+
+    public int selectTrack(MediaExtractor extractor) {
+        // Select the first video track we find, ignore the rest.
+        int numTracks = extractor.getTrackCount();
+        for (int i = 0; i < numTracks; i++) {
+            MediaFormat format = extractor.getTrackFormat(i);
+            String mime = format.getString(MediaFormat.KEY_MIME);
+            if (mime.startsWith("video/")) {
+                    Log.d(TAG, "Extractor selected track " + i + " (" + mime + "): " + format);
+                return i;
+            }
+        }
+
+        return -1;
     }
 
 
@@ -203,337 +212,145 @@ public class postProcessExecute extends Activity {
                 e.printStackTrace();
             }
             //Configure for 2 movies
-            MediaCodec decoder1 = null;
-            ExtractMpegFramesTest.CodecOutputSurface outputSurface1 = null;
-            MediaExtractor extractor1 = null;
+
+            FFmpegMediaMetadataRetriever mmr1 = new FFmpegMediaMetadataRetriever();
+            mmr1.setDataSource(FileUtils.getPath(getApplicationContext(),vid1Uri));
+            FFmpegMediaMetadataRetriever mmr2 = new FFmpegMediaMetadataRetriever();
+            mmr2.setDataSource(FileUtils.getPath(getApplicationContext(),vid2Uri));
+
+            MediaExtractor extractor1 = new MediaExtractor();
             File inputFile1 = new File(FileUtils.getPath(getApplicationContext(), vid1Uri));
-            if (!inputFile1.canRead()) {
-                try {
-                    throw new FileNotFoundException("Unable to read " + inputFile1);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-            extractor1 = new MediaExtractor();
             try {
                 extractor1.setDataSource(inputFile1.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
             int trackIndex1 = selectTrack(extractor1);
-            if (trackIndex1 < 0) {
-                throw new RuntimeException("No video track found in " + inputFile1);
-            }
             extractor1.selectTrack(trackIndex1);
             format1 = extractor1.getTrackFormat(trackIndex1);
-            Log.d(TAG, "Video size is " + format1.getInteger(MediaFormat.KEY_WIDTH) + "x" +
-                    format1.getInteger(MediaFormat.KEY_HEIGHT));
-            // Could use width/height from the MediaFormat to get full-size frames.
-            format1.setInteger("rotation-degrees", 0);
-            int frameRate1;
-            if (format1.containsKey("frame-rate")) {
-                frameRate1 = format1.getInteger("frame-rate");
-            } else {
-                frameRate1 = 30;
-            }
+            frameRate1 = format1.getInteger("frame-rate");
             long duration1 = format1.getLong("durationUs");
-            outputSurface1 = new ExtractMpegFramesTest.CodecOutputSurface(format1.getInteger(MediaFormat.KEY_WIDTH), format1.getInteger(MediaFormat.KEY_HEIGHT));
-            String mime1 = format1.getString(MediaFormat.KEY_MIME);
-            try {
-                decoder1 = MediaCodec.createDecoderByType(mime1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            decoder1.configure(format1, outputSurface1.getSurface(), null, 0);
-            decoder1.start();
 
-            MediaCodec decoder2 = null;
-            ExtractMpegFramesTest.CodecOutputSurface outputSurface2 = null;
-            MediaExtractor extractor2 = null;
+            MediaExtractor extractor2 = new MediaExtractor();
             File inputFile2 = new File(FileUtils.getPath(getApplicationContext(), vid2Uri));
-            if (!inputFile2.canRead()) {
-                try {
-                    throw new FileNotFoundException("Unable to read " + inputFile2);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-            extractor2 = new MediaExtractor();
             try {
                 extractor2.setDataSource(inputFile2.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
             int trackIndex2 = selectTrack(extractor2);
-            if (trackIndex2 < 0) {
-                throw new RuntimeException("No video track found in " + inputFile2);
-            }
             extractor2.selectTrack(trackIndex2);
             format2 = extractor2.getTrackFormat(trackIndex2);
-            Log.d(TAG, "Video size is " + format2.getInteger(MediaFormat.KEY_WIDTH) + "x" +
-                    format2.getInteger(MediaFormat.KEY_HEIGHT));
-            // Could use width/height from the MediaFormat to get full-size frames.
-            format2.setInteger("rotation-degrees", 0);
-            int frameRate2;
-            if (format1.containsKey("frame-rate")) {
-                frameRate2 = format2.getInteger("frame-rate");
-            } else {
-                frameRate2 = 30;
-            }
+            frameRate2 = format2.getInteger("frame-rate");
             long duration2 = format2.getLong("durationUs");
-            outputSurface2 = new ExtractMpegFramesTest.CodecOutputSurface(format2.getInteger(MediaFormat.KEY_WIDTH), format2.getInteger(MediaFormat.KEY_HEIGHT));
-            String mime2 = format2.getString(MediaFormat.KEY_MIME);
-            try {
-                decoder2 = MediaCodec.createDecoderByType(mime2);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            decoder2.configure(format2, outputSurface2.getSurface(), null, 0);
-            decoder2.start();
-            try {
-                doExtract(extractor1, trackIndex1, decoder1, outputSurface1, extractor2, trackIndex2, decoder2, outputSurface2);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        private void doExtract(MediaExtractor extractor1, int trackIndex1, MediaCodec decoder1,
-                               ExtractMpegFramesTest.CodecOutputSurface outputSurface1, MediaExtractor extractor2, int trackIndex2, MediaCodec decoder2,
-                               ExtractMpegFramesTest.CodecOutputSurface outputSurface2) throws IOException {
-            final int TIMEOUT_USEC = 1000000;
-            ByteBuffer[] decoderInputBuffers1 = decoder1.getInputBuffers();
-            MediaCodec.BufferInfo info1 = new MediaCodec.BufferInfo();
-            int inputChunk1 = 0;
-            int decodeCount1 = 0;
-
-            boolean outputDone1 = false;
-            boolean inputDone1 = false;
-
-            ByteBuffer[] decoderInputBuffers2 = decoder2.getInputBuffers();
-            MediaCodec.BufferInfo info2 = new MediaCodec.BufferInfo();
-            int inputChunk2 = 0;
-            int decodeCount2 = 0;
-
-            boolean outputDone2 = false;
-            boolean inputDone2 = false;
-
-            boolean outputDoneBoth = false;
 
             Bitmap bmp1 = null;
             Bitmap bmp2 = null;
 
-            while (!outputDoneBoth) {
-                //bmp1=null;
-                //bmp2=null;
+            double frames1 = (int) duration1 / frameRate1 / 1000;
+            double frames2 = (int) duration2 / frameRate2 / 1000;
 
-                Log.d(TAG, "loop");
+            double timePerFrame1 = duration1 / frames1;
+            double timePerFrame2 = duration2 / frames2;
 
-                // Feed more data to the decoder.
-                if (!inputDone1) {
-                    int inputBufIndex1 = decoder1.dequeueInputBuffer(TIMEOUT_USEC);
-                    if (inputBufIndex1 >= 0) {
-                        ByteBuffer inputBuf1 = decoderInputBuffers1[inputBufIndex1];
-                        // Read the sample data into the ByteBuffer.  This neither respects nor
-                        // updates inputBuf's position, limit, etc.
-                        int chunkSize1 = extractor1.readSampleData(inputBuf1, 0);
-                        if (chunkSize1 < 0) {
-                            // End of stream -- send empty frame with EOS flag set.
-                            decoder1.queueInputBuffer(inputBufIndex1, 0, 0, 0L,
-                                    MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-                            inputDone1 = true;
-                            Log.d(TAG, "sent input EOS");
-                        } else {
-                            if (extractor1.getSampleTrackIndex() != trackIndex1) {
-                                Log.w(TAG, "WEIRD: got sample from track " +
-                                        extractor1.getSampleTrackIndex() + ", expected " + trackIndex1);
-                            }
-                            long presentationTimeUs1 = extractor1.getSampleTime();
-                            decoder1.queueInputBuffer(inputBufIndex1, 0, chunkSize1,
-                                    presentationTimeUs1, 0 /*flags*/);
-                                Log.d(TAG, "submitted frame " + inputChunk1 + " to dec, size=" +
-                                        chunkSize1);
-                            inputChunk1++;
-                            extractor1.advance();
-                        }
-                    } else {
-                        Log.d(TAG, "input buffer not available");
+
+            for (int i = 0; i < frames1; i++) {
+                double time1 = i * timePerFrame1;
+                bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                double time2 = i * timePerFrame2;
+                bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                if (bmp1 == null && bmp2 == null){
+                    try {
+                        enc.finish();
+                        NIOUtils.closeQuietly(out);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;//handlesl both empty
+                }else if (bmp1 == null && bmp2 != null){
+                    bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
+                }else if (bmp2 == null && bmp1 != null){
+                    bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
+                }
+                //resize bitmaps
+                if (ppSize.contains("s")) {
+                    if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                        bmp1 = bmp1;
+                        bmp2 = bmp2;
+                    } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                        int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
+                        int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                        bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                    } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
+                        int h1 = format1.getInteger(MediaFormat.KEY_HEIGHT);
+                        int w1 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
+                        bmp2 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                    }
+                } else if (ppSize.contains("l")) {
+                    if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                        bmp1 = bmp1;
+                        bmp2 = bmp2;
+                    } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                        int h2 = format1.getInteger(MediaFormat.KEY_HEIGHT);
+                        int w2 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
+                        bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
+                    } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
+                        int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
+                        int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                        bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
                     }
                 }
 
-                if (!outputDone1) {
-                    int decoderStatus1 = decoder1.dequeueOutputBuffer(info1, TIMEOUT_USEC);
-                    if (decoderStatus1 == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                        // no output available yet
-                        Log.d(TAG, "no output from decoder available");
-                    } else if (decoderStatus1 == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                        // not important for us, since we're using Surface
-                        Log.d(TAG, "decoder output buffers changed");
-                    } else if (decoderStatus1 == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                        MediaFormat newFormat1 = decoder1.getOutputFormat();
-                        Log.d(TAG, "decoder output format changed: " + newFormat1);
-                    } else if (decoderStatus1 < 0) {
-                        fail("unexpected result from decoder.dequeueOutputBuffer: " + decoderStatus1);
-                    } else { // decoderStatus >= 0
-                        Log.d(TAG, "surface decoder given buffer " + decoderStatus1 +
-                                " (size=" + info1.size + ")");
-                        if ((info1.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-                            Log.d(TAG, "output EOS");
-                            outputDone1 = true;
-                        }
+                //put bitmaps together
 
-                        boolean doRender = (info1.size != 0);
-
-                        // As soon as we call releaseOutputBuffer, the buffer will be forwarded
-                        // to SurfaceTexture to convert to a texture.  The API doesn't guarantee
-                        // that the texture will be available before the call returns, so we
-                        // need to wait for the onFrameAvailable callback to fire.
-                        decoder1.releaseOutputBuffer(decoderStatus1, doRender);
-                        if (doRender) {
-                            Log.d(TAG, "awaiting decode of frame " + decodeCount1);
-                            outputSurface1.awaitNewImage();
-                            outputSurface1.drawImage(true);
-                            bmp1 = outputSurface1.returnFrame();
-                        }else {
-                            outputDone1 = true;
-                            if (outputDone1 && outputDone2){
-                                enc.finish();
-                                NIOUtils.closeQuietly(out);
-                                outputDoneBoth = true;
-                            }else{
-                                bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
-                            }
-                        }
-
-                        while (!outputDone2) {
-                            Log.d(TAG, "loop");
-
-                            // Feed more data to the decoder.
-                            if (!inputDone2) {
-                                int inputBufIndex2 = decoder2.dequeueInputBuffer(TIMEOUT_USEC);
-                                if (inputBufIndex2 >= 0) {
-                                    ByteBuffer inputBuf2 = decoderInputBuffers1[inputBufIndex2];
-                                    // Read the sample data into the ByteBuffer.  This neither respects nor
-                                    // updates inputBuf's position, limit, etc.
-                                    int chunkSize2 = extractor2.readSampleData(inputBuf2, 0);
-                                    if (chunkSize2 < 0) {
-                                        // End of stream -- send empty frame with EOS flag set.
-                                        decoder2.queueInputBuffer(inputBufIndex2, 0, 0, 0L,
-                                                MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-                                        inputDone2 = true;
-                                        Log.d(TAG, "sent input EOS");
-                                    } else {
-                                        if (extractor2.getSampleTrackIndex() != trackIndex2) {
-                                            Log.w(TAG, "WEIRD: got sample from track " +
-                                                    extractor2.getSampleTrackIndex() + ", expected " + trackIndex2);
-                                        }
-                                        long presentationTimeUs2 = extractor2.getSampleTime();
-                                        decoder1.queueInputBuffer(inputBufIndex2, 0, chunkSize2,
-                                                presentationTimeUs2, 0 /*flags*/);
-                                        Log.d(TAG, "submitted frame " + inputChunk2 + " to dec, size=" +
-                                                chunkSize2);
-                                        inputChunk2++;
-                                        extractor2.advance();
-                                    }
-                                } else {
-                                    Log.d(TAG, "input buffer not available");
-                                }
-                            }
-
-                            if (!outputDone2) {
-                                int decoderStatus2 = decoder2.dequeueOutputBuffer(info2, TIMEOUT_USEC);
-                                if (decoderStatus2 == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                                    // no output available yet
-                                    Log.d(TAG, "no output from decoder available");
-                                } else if (decoderStatus2 == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                                    // not important for us, since we're using Surface
-                                    Log.d(TAG, "decoder output buffers changed");
-                                } else if (decoderStatus2 == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                                    MediaFormat newFormat2 = decoder2.getOutputFormat();
-                                    Log.d(TAG, "decoder output format changed: " + newFormat2);
-                                } else if (decoderStatus2 < 0) {
-                                    fail("unexpected result from decoder.dequeueOutputBuffer: " + decoderStatus2);
-                                } else { // decoderStatus >= 0
-                                    Log.d(TAG, "surface decoder given buffer " + decoderStatus2 +
-                                            " (size=" + info2.size + ")");
-                                    if ((info2.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-                                        Log.d(TAG, "output EOS");
-                                        outputDone2 = true;
-                                    }
-
-                                    doRender = (info1.size != 0);
-
-                                    // As soon as we call releaseOutputBuffer, the buffer will be forwarded
-                                    // to SurfaceTexture to convert to a texture.  The API doesn't guarantee
-                                    // that the texture will be available before the call returns, so we
-                                    // need to wait for the onFrameAvailable callback to fire.
-                                    decoder2.releaseOutputBuffer(decoderStatus2, doRender);
-                                    if (doRender) {
-                                        Log.d(TAG, "awaiting decode of frame " + decodeCount1);
-                                        outputSurface2.awaitNewImage();
-                                        outputSurface2.drawImage(true);
-                                        bmp2 = outputSurface2.returnFrame();
-                                        //
-                                    }else {
-                                        outputDone2 = true;
-                                        if (outputDone1 && outputDone2){
-                                            enc.finish();
-                                            NIOUtils.closeQuietly(out);
-                                            outputDoneBoth = true;
-                                        }else{
-                                            bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                if (ppOrientation.contains("lr")) {
+                    Bitmap bmpJoined = combineImagesLR(bmp1, bmp2);
+                    try {
+                        enc.encodeImage(bmpJoined);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (ppOrientation.contains("rl")) {
+                    Bitmap bmpJoined = combineImagesLR(bmp2, bmp1);
+                    try {
+                        enc.encodeImage(bmpJoined);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (ppOrientation.contains("tb")) {
+                    Bitmap bmpJoined = combineImagesUD(bmp1, bmp2);
+                    try {
+                        enc.encodeImage(bmpJoined);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (ppOrientation.contains("bt")) {
+                    Bitmap bmpJoined = combineImagesUD(bmp2, bmp1);
+                    try {
+                        enc.encodeImage(bmpJoined);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
-                //check for bitmaps
-                if (bmp1 != null && bmp2 != null) {
-                    //resize bitmaps
-                    if (ppSize.contains("s")) {
-                        if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                            bmp1 = bmp1;
-                            bmp2 = bmp2;
-                        } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                            int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
-                            int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
-                            bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                        } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
-                            int h1 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                            int w1 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
-                            bmp2 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                        }
-                    } else if (ppSize.contains("l")) {
-                        if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                            bmp1 = bmp1;
-                            bmp2 = bmp2;
-                        } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                            int h2 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                            int w2 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
-                            bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
-                        } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
-                            int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
-                            int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
-                            bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                        }
-                    }
 
-                    //put bitmaps together
-                    Bitmap bmpJoined = null;
-                    if (ppOrder.contains("lr")) {
-                        bmpJoined = combineImagesLR(bmp1, bmp2);
-                    } else if (ppOrder.contains("rl")) {
-                        bmpJoined = combineImagesLR(bmp2, bmp1);
-                    } else if (ppOrder.contains("tb")) {
-                        bmpJoined = combineImagesUD(bmp1, bmp2);
-                    } else if (ppOrder.contains("bt")) {
-                        bmpJoined = combineImagesUD(bmp2, bmp1);
-                    }
-                    enc.encodeImage(bmpJoined);
-                }
             }
+
+
+
+        return null;
+        }
+
+        protected void onProgressUpdate(Void... progress) {
+
+        }
+
+        protected void onPostExecute(Void result) {
+
+            Intent intentPass = new Intent(getApplicationContext(), displayTrackingResults.class);
+
+            File file = new File(outPath);
+            intentPass.putExtra("videoPath", file.toString());
+            startActivity(intentPass);
         }
 
 
