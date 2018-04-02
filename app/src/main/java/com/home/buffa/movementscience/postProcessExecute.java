@@ -94,7 +94,7 @@ public class postProcessExecute extends Activity {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
                 {
-                    new postProcessExecute.beginTrackingProcedure().execute(null, null, null);//
+                    new postProcessExecute.beginCombiningProcedure().execute(null, null, null);//
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     Toast.makeText(getApplicationContext(),"Application will load video once merged", Toast.LENGTH_LONG).show();
                     startActivity(intent);
@@ -193,7 +193,7 @@ public class postProcessExecute extends Activity {
     }
 
 
-    private class beginTrackingProcedure extends AsyncTask<Void, Void, Void> {
+    private class beginCombiningProcedure extends AsyncTask<Void, Void, Void> {
 
         String outPath;
 
@@ -244,8 +244,8 @@ public class postProcessExecute extends Activity {
             frameRate2 = format2.getInteger("frame-rate");
             long duration2 = format2.getLong("durationUs");
 
-            Bitmap bmp1 = null;
-            Bitmap bmp2 = null;
+            Bitmap bmp1;
+            Bitmap bmp2;
 
             double frames1 = (int) duration1 / frameRate1 / 1000;
             double frames2 = (int) duration2 / frameRate2 / 1000;
@@ -254,11 +254,34 @@ public class postProcessExecute extends Activity {
             double timePerFrame2 = duration2 / frames2;
 
 
-            for (int i = 0; i < frames1; i++) {
-                double time1 = i * timePerFrame1;
-                bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-                double time2 = i * timePerFrame2;
-                bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+            for (int i = 0; i < frames1+frames2; i++) {
+                bmp1=null;
+                bmp2=null;
+                if (ppOrder.contains("lr")) {
+                    double time1 = i * timePerFrame1;
+                    bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    if (bmp1 != null) {
+                        bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
+                    } else if (bmp1 == null) {
+                        double time2 = (i - (i - 1)) * timePerFrame2;
+                        bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    }
+                }else if (ppOrder.contains("rl")){
+                    double time2 = i * timePerFrame2;
+                    bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    if (bmp2 != null) {
+                        bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
+                    } else if (bmp2 == null) {
+                        double time1 = (i - (i - 1)) * timePerFrame1;
+                        bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    }
+                }else {
+                    double time1 = i * timePerFrame1;
+                    bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    double time2 = i * timePerFrame2;
+                    bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                }
+
                 if (bmp1 == null && bmp2 == null){
                     try {
                         enc.finish();
