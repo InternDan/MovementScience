@@ -207,7 +207,6 @@ public class postProcessExecute extends Activity {
                 outPath = directory.getAbsolutePath() + "/" + eMagTime + "-combinedVid.mp4";
                 out = null;
                 out = NIOUtils.writableFileChannel(outPath);
-                enc = new AndroidSequenceEncoder(out, Rational.R(25, 1));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -244,8 +243,8 @@ public class postProcessExecute extends Activity {
             frameRate2 = format2.getInteger("frame-rate");
             long duration2 = format2.getLong("durationUs");
 
-            Bitmap bmp1;
-            Bitmap bmp2;
+            Bitmap bmp1=null;
+            Bitmap bmp2=null;
 
             double frames1 = (int) duration1 / frameRate1 / 1000;
             double frames2 = (int) duration2 / frameRate2 / 1000;
@@ -253,26 +252,45 @@ public class postProcessExecute extends Activity {
             double timePerFrame1 = duration1 / frames1;
             double timePerFrame2 = duration2 / frames2;
 
+            try {
+                enc = new AndroidSequenceEncoder(out, Rational.R((int) Math.round((frameRate1+frameRate2)/2), 1));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            for (int i = 0; i < frames1+frames2; i++) {
-                bmp1=null;
-                bmp2=null;
+
+            int c = 0;
+            for (int i = 0; i < (frames1+frames2); i++) {
+                bmp1 = null;
+                bmp2 = null;
                 if (ppOrder.contains("lr")) {
-                    double time1 = i * timePerFrame1;
-                    bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    if (i < frames1) {
+                        double time1 = i * timePerFrame1;
+                        bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                        c++;
+                    }else {
+                        bmp1=null;
+                    }
+
                     if (bmp1 != null) {
                         bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
                     } else if (bmp1 == null) {
-                        double time2 = (i - (i - 1)) * timePerFrame2;
+                        double time2 = (i - (c-1)) * timePerFrame2;
                         bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     }
+
                 }else if (ppOrder.contains("rl")){
-                    double time2 = i * timePerFrame2;
-                    bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    if (i < frames2) {
+                        double time2 = i * timePerFrame2;
+                        bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                        c++;
+                    }else{
+                        bmp2 = null;
+                    }
                     if (bmp2 != null) {
-                        bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
+                        bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
                     } else if (bmp2 == null) {
-                        double time1 = (i - (i - 1)) * timePerFrame1;
+                        double time1 = (i - (c-1)) * timePerFrame1;
                         bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     }
                 }else {
@@ -359,7 +377,12 @@ public class postProcessExecute extends Activity {
             }
 
 
-
+            try {
+                enc.finish();
+                NIOUtils.closeQuietly(out);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         return null;
         }
 
