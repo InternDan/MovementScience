@@ -161,7 +161,7 @@ public class postProcessExecute extends Activity {
         Canvas comboImage = new Canvas(cs);
 
         comboImage.drawBitmap(c, 0f, 0f, null);
-        comboImage.drawBitmap(s, c.getHeight(), 0f, null);
+        comboImage.drawBitmap(s, 0f, c.getHeight(), null);
 
         // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
     /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
