@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
@@ -62,6 +63,8 @@ public class postProcessExecute extends Activity {
     int frameRate1;
     int frameRate2;
 
+    int rotateDegreesPostProcess;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +85,8 @@ public class postProcessExecute extends Activity {
         ppOrder = sharedPref.getString("pref_postProcessingPlayOrder","s");
         ppSize = sharedPref.getString("pref_postProcessingSize","small");
         ppOrientation = sharedPref.getString("pref_postProcessingOrientation","lr");
+        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
+        rotateDegreesPostProcess = Integer.valueOf(rotDeg);
 
 
     }
@@ -204,7 +209,7 @@ public class postProcessExecute extends Activity {
             try {
                 DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
                 eMagTime = df2.format(Calendar.getInstance().getTime());
-                outPath = directory.getAbsolutePath() + "/" + eMagTime + "-combinedVid.mp4";
+                outPath = directory.getAbsolutePath() + "/CombinedVid" + eMagTime + ".mp4";
                 out = null;
                 out = NIOUtils.writableFileChannel(outPath);
             } catch (IOException e) {
@@ -253,7 +258,7 @@ public class postProcessExecute extends Activity {
             double timePerFrame2 = duration2 / frames2;
 
             try {
-                enc = new AndroidSequenceEncoder(out, Rational.R((int) Math.round((frameRate1+frameRate2)/2), 1));
+                enc = new AndroidSequenceEncoder(out, Rational.R( (int) Math.round( (frameRate1+frameRate2)/2), 1));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -343,6 +348,14 @@ public class postProcessExecute extends Activity {
                 }
 
                 //put bitmaps together
+
+                Matrix matrix = new Matrix();
+                if (rotateDegreesPostProcess != 0) {
+                    matrix.postRotate(rotateDegreesPostProcess);
+                    bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
+                    bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
+                }
+
 
                 if (ppOrientation.contains("lr")) {
                     Bitmap bmpJoined = combineImagesLR(bmp1, bmp2);
