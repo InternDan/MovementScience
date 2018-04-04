@@ -165,15 +165,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Processing Options">
-
-        <ListPreference
-            android:key="pref_rotateDegreesPostProcess"
-            android:title="@string/pref_rotateDegreesPostProcess"
-            android:dialogTitle="@string/pref_rotateDegreesPostProcess"
-            android:entries="@array/pref_rotateDegreesPostProcess_entries"
-            android:entryValues="@array/pref_rotateDegreesPostProcess_values"
-            android:defaultValue="@string/pref_rotateDegreesPostProcess_default" />
+        android:title="Real-Time Video Options">
 
         <ListPreference
             android:key="pref_rotateDegreesRealTime"
@@ -182,7 +174,6 @@
             android:entries="@array/pref_rotateDegreesRealTime_entries"
             android:entryValues="@array/pref_rotateDegreesRealTime_values"
             android:defaultValue="@string/pref_rotateDegreesRealTime_default" />
-
 
     </PreferenceCategory>
 
@@ -213,34 +204,27 @@
             android:entryValues="@array/pref_postProcessingPlayOrder_values"
             android:defaultValue="@string/pref_postProcessingPlayOrder_default" />
 
-
-
-
+        <ListPreference
+            android:key="pref_rotateDegreesPostProcess"
+            android:title="@string/pref_rotateDegreesPostProcess"
+            android:dialogTitle="@string/pref_rotateDegreesPostProcess"
+            android:entries="@array/pref_rotateDegreesPostProcess_entries"
+            android:entryValues="@array/pref_rotateDegreesPostProcess_values"
+            android:defaultValue="@string/pref_rotateDegreesPostProcess_default" />
     </PreferenceCategory>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <PreferenceCategory
+        android:title="File Storage Options">
+        <EditTextPreference
+            android:title="Set Save Folder"
+            android:key = "pref_saveFolderKey"
+            android:defaultValue="saveFolder">
+            <intent android:action="android.intent.action.VIEW"
+                android:targetPackage="com.home.buffa.movementscience"
+                android:targetClass="com.home.buffa.movementscience.SaveFolderChooserSettings" />
+        </EditTextPreference>
+    </PreferenceCategory>
 
 
 </PreferenceScreen>

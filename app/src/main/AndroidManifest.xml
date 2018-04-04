@@ -77,7 +77,13 @@
             android:name=".settingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".postProcessing" />
-        <activity android:name=".postProcessExecute"></activity>
+        <activity android:name=".postProcessExecute" />
+        <activity
+            android:name=".SaveFolderChooserMain"
+            android:label="SaveFolderChooserMain" />
+        <activity
+            android:name=".SaveFolderChooserSettings"
+            android:label="@string/title_activity_save_folder_chooser_settings"></activity>
     </application>
 
 </manifest>
