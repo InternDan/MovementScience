@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,6 +30,7 @@ import static android.content.ContentValues.TAG;
 
 public class MainActivity extends Activity {
 
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -35,6 +38,7 @@ public class MainActivity extends Activity {
     }
 
     final private int REQUEST_ID_MULTIPLE_PERMISSIONS = 124;
+    int READ_REQUEST_CODE = 333;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,16 @@ public class MainActivity extends Activity {
         if(checkAndRequestPermissions()) {
             // carry on the normal flow, as the case of  permissions  granted.
         }
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String saveFolderKey = sharedPref.getString("pref_saveFolderKey","");
+        if (saveFolderKey.contains("saveFolder")){
+            Intent intent = new Intent(this, SaveFolderChooserMain.class);
+            Toast.makeText(getApplicationContext(),"Please select a default save folder!", Toast.LENGTH_LONG).show();
+            startActivity(intent);
+        }
+
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -122,7 +136,6 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(getApplicationContext(),postProcessing.class);
         startActivity(intent);
     }
-
 
     private  boolean checkAndRequestPermissions() {
         int permissionCamera = ContextCompat.checkSelfPermission(this,
