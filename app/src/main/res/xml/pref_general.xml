@@ -214,7 +214,7 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory
+    <!--<PreferenceCategory
         android:title="File Storage Options">
         <EditTextPreference
             android:title="Set Save Folder"
@@ -224,7 +224,7 @@
                 android:targetPackage="com.home.buffa.movementscience"
                 android:targetClass="com.home.buffa.movementscience.SaveFolderChooserSettings" />
         </EditTextPreference>
-    </PreferenceCategory>
+    </PreferenceCategory> -->
 
 
 </PreferenceScreen>

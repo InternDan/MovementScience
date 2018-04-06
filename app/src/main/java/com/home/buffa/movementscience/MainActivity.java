@@ -49,15 +49,6 @@ public class MainActivity extends Activity {
             // carry on the normal flow, as the case of  permissions  granted.
         }
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String saveFolderKey = sharedPref.getString("pref_saveFolderKey","");
-        if (saveFolderKey.contains("saveFolder")){
-            Intent intent = new Intent(this, SaveFolderChooserMain.class);
-            Toast.makeText(getApplicationContext(),"Please select a default save folder!", Toast.LENGTH_LONG).show();
-            startActivity(intent);
-        }
-
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
