@@ -403,8 +403,9 @@ public class postProcessExecute extends Activity {
                         bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
                     } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
                         int h1 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                        int w1 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
-                        bmp2 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                        double t = (double) format2.getInteger(MediaFormat.KEY_WIDTH) * (double)(format1.getInteger(MediaFormat.KEY_HEIGHT) / (double) format2.getInteger(MediaFormat.KEY_HEIGHT));
+                        int w1 = (int) Math.round(t);
+                        bmp2 = Bitmap.createScaledBitmap(bmp2, w1, h1, false);
                     }
                 } else if (ppSize.contains("l")) {
                     if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
@@ -433,6 +434,7 @@ public class postProcessExecute extends Activity {
 
                 if (ppOrientation.contains("lr")) {
                     Bitmap bmpJoined = combineImagesLR(bmp1, bmp2);
+                    bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
                     } catch (IOException e) {
@@ -440,6 +442,7 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("rl")) {
                     Bitmap bmpJoined = combineImagesLR(bmp2, bmp1);
+                    bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
                     } catch (IOException e) {
@@ -447,6 +450,7 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("tb")) {
                     Bitmap bmpJoined = combineImagesUD(bmp1, bmp2);
+                    bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
                     } catch (IOException e) {
@@ -454,6 +458,7 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("bt")) {
                     Bitmap bmpJoined = combineImagesUD(bmp2, bmp1);
+                    bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
                     } catch (IOException e) {
@@ -487,6 +492,22 @@ public class postProcessExecute extends Activity {
         }
 
 
+    }
+
+    private Bitmap checkBitmapDimensions(Bitmap bmp){
+        Bitmap bmp2 = null;
+        if ( (bmp.getHeight() & 1) == 1 ){
+            bmp2 =  Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight()-1);//even
+        }
+        if ( (bmp.getWidth() & 1) == 1 ){
+            bmp2 =  Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth()-1, bmp.getHeight());//even
+        }
+        if (bmp2 == null){
+            return bmp;
+        }else if (bmp2 != null){
+            return bmp2;
+        }
+        return bmp;
     }
 
     @Override
