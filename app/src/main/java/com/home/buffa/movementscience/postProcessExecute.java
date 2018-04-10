@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
@@ -24,6 +25,7 @@ import org.jcodec.api.android.AndroidSequenceEncoder;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.Rational;
+import org.jcodec.scale.BitmapUtil;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -31,6 +33,7 @@ import org.opencv.android.OpenCVLoader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -115,7 +118,7 @@ public class postProcessExecute extends Activity {
 
 
     public Bitmap combineImagesLR(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
-        //Bitmap cs = null;
+        Bitmap cs = null;
 
         int width, height = 0;
 
@@ -127,31 +130,62 @@ public class postProcessExecute extends Activity {
             height = c.getHeight();
         }
 
-        Bitmap cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap s2 = s.copy(Bitmap.Config.ARGB_8888, true);
+        int[] pixels = new int[s2.getHeight() * s2.getWidth()];
+        s2.getPixels(pixels, 0, s2.getWidth(), 0, 0, s2.getWidth(), s2.getHeight());
+        int PixelSumS = 0;
+        for (int i = 0; i < pixels.length;i++) {
+            PixelSumS = PixelSumS + pixels[i];
+        }
 
-        Canvas comboImage = new Canvas(cs);
+        Bitmap c2 = c.copy(Bitmap.Config.ARGB_8888, true);
+        pixels = new int[c2.getHeight() * c2.getWidth()];
+        c2.getPixels(pixels, 0, c2.getWidth(), 0, 0, c2.getWidth(), c2.getHeight());
+        int PixelSumC = 0;
+        for (int i = 0; i < pixels.length;i++) {
+            PixelSumC = PixelSumC + pixels[i];
+        }
 
-        comboImage.drawBitmap(c, 0f, 0f, null);
-        comboImage.drawBitmap(s, c.getWidth(), 0f, null);
-
-        // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
-    /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
-
-    OutputStream os = null;
-    try {
-      os = new FileOutputStream(loc + tmpImg);
-      cs.compress(CompressFormat.PNG, 100, os);
-    } catch(IOException e) {
-      Log.e("combineImages", "problem combining images", e);
-    }*/
+        if (PixelSumS == 0) {
+            s2 = s.copy(Bitmap.Config.ARGB_8888, true);
+            pixels = new int[s2.getHeight() * s2.getWidth()];
+            s2.getPixels(pixels, 0, s2.getWidth(), 0, 0, s2.getWidth(), s2.getHeight());
+            for (int i = 0; i < s2.getHeight() * s2.getWidth(); i++) {
+                pixels[i] = Color.BLACK;
+            }
+            s2.setPixels(pixels, 0, s2.getWidth(), 0, 0, s2.getWidth(), s2.getHeight());
+            cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas comboImage = new Canvas(cs);
+            comboImage.drawBitmap(c, 0f, 0f, null);
+            comboImage.drawBitmap(s2, c.getWidth(), 0f, null);
+        }else if(PixelSumC == 0){
+            c2 = c.copy(Bitmap.Config.ARGB_8888, true);
+            pixels = new int[c2.getHeight() * c2.getWidth()];
+            c2.getPixels(pixels, 0, c2.getWidth(), 0, 0, c2.getWidth(), c2.getHeight());
+            for (int i = 0; i < c2.getHeight() * c2.getWidth(); i++) {
+                pixels[i] = Color.BLACK;
+            }
+            c2.setPixels(pixels, 0, c2.getWidth(), 0, 0, c2.getWidth(), c2.getHeight());
+            cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas comboImage = new Canvas(cs);
+            comboImage.drawBitmap(c2, 0f, 0f, null);
+            comboImage.drawBitmap(s, c2.getWidth(), 0f, null);
+        }else{
+            cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas comboImage = new Canvas(cs);
+            comboImage.drawBitmap(c, 0f, 0f, null);
+            comboImage.drawBitmap(s, c.getWidth(), 0f, null);
+        }
 
         return cs;
     }
 
-    public Bitmap combineImagesUD(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+    public Bitmap combineImagesUD(Bitmap c, Bitmap s) {
         //Bitmap cs = null;
 
         int width, height = 0;
+
+        Bitmap cs = null;
 
         if(c.getHeight() > s.getHeight()) {
             height = c.getHeight() + s.getHeight();
@@ -161,12 +195,52 @@ public class postProcessExecute extends Activity {
             width = c.getWidth();
         }
 
-        Bitmap cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap s2 = s.copy(Bitmap.Config.ARGB_8888, true);
+        int[] pixels = new int[s2.getHeight() * s2.getWidth()];
+        s2.getPixels(pixels, 0, s2.getWidth(), 0, 0, s2.getWidth(), s2.getHeight());
+        int PixelSumS = 0;
+        for (int i = 0; i < pixels.length;i++) {
+            PixelSumS = PixelSumS + pixels[i];
+        }
 
-        Canvas comboImage = new Canvas(cs);
+        Bitmap c2 = c.copy(Bitmap.Config.ARGB_8888, true);
+        pixels = new int[c2.getHeight() * c2.getWidth()];
+        c2.getPixels(pixels, 0, c2.getWidth(), 0, 0, c2.getWidth(), c2.getHeight());
+        int PixelSumC = 0;
+        for (int i = 0; i < pixels.length;i++) {
+            PixelSumC = PixelSumC + pixels[i];
+        }
 
-        comboImage.drawBitmap(c, 0f, 0f, null);
-        comboImage.drawBitmap(s, 0f, c.getHeight(), null);
+        if (PixelSumS == 0) {
+            s2 = s.copy(Bitmap.Config.ARGB_8888, true);
+            pixels = new int[s2.getHeight() * s2.getWidth()];
+            s2.getPixels(pixels, 0, s2.getWidth(), 0, 0, s2.getWidth(), s2.getHeight());
+            for (int i = 0; i < s2.getHeight() * s2.getWidth(); i++) {
+                pixels[i] = Color.BLACK;
+            }
+            s2.setPixels(pixels, 0, s2.getWidth(), 0, 0, s2.getWidth(), s2.getHeight());
+            cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas comboImage = new Canvas(cs);
+            comboImage.drawBitmap(c, 0f, 0f, null);
+            comboImage.drawBitmap(s2, 0,c.getHeight(), null);
+        }else if(PixelSumC == 0){
+            c2 = c.copy(Bitmap.Config.ARGB_8888, true);
+            pixels = new int[c2.getHeight() * c2.getWidth()];
+            c2.getPixels(pixels, 0, c2.getWidth(), 0, 0, c2.getWidth(), c2.getHeight());
+            for (int i = 0; i < c2.getHeight() * c2.getWidth(); i++) {
+                pixels[i] = Color.BLACK;
+            }
+            c2.setPixels(pixels, 0, c2.getWidth(), 0, 0, c2.getWidth(), c2.getHeight());
+            cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas comboImage = new Canvas(cs);
+            comboImage.drawBitmap(c2, 0f, 0f, null);
+            comboImage.drawBitmap(s, 0, c.getHeight(), null);
+        }else{
+            cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas comboImage = new Canvas(cs);
+            comboImage.drawBitmap(c, 0f, 0f, null);
+            comboImage.drawBitmap(s, 0, c.getHeight(), null);
+        }
 
         // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
     /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
