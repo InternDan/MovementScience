@@ -3,6 +3,7 @@ package com.home.buffa.movementscience;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -26,14 +27,17 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     private MediaPlayer mMediaPlayer;
     private TextureView mPreview;
 
-    int vH;
-    int vW;
+    float vH;
+    float vW;
+    float vHOrig;
+    float vWOrig;
 
     String videoAbsolutePath;
 
     TextureView textureView;
 
     FrameLayout frameLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +60,16 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
             mMediaPlayer.setDataSource(videoAbsolutePath);
             mMediaPlayer.setSurface(surface);
             mMediaPlayer.setLooping(false);
-            vH = mMediaPlayer.getVideoHeight();
-            vW = mMediaPlayer.getVideoWidth();
-            //textureView.setLayoutParams(new FrameLayout.LayoutParams(vW,vH));
             mMediaPlayer.prepareAsync();
 
             // Play video when the media source is ready for playback.
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
+                    vH = mMediaPlayer.getVideoHeight();
+                    vW = mMediaPlayer.getVideoWidth();
+                    updateTextureViewSize(mPreview.getWidth(),mPreview.getHeight());
+                    //textureView.setLayoutParams(new FrameLayout.LayoutParams(vW,vH));
                     mediaPlayer.start();
                 }
             });
@@ -115,7 +120,45 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
         return  mPreview.getBitmap();
     }
 
+    private void updateTextureViewSize(int viewWidth, int viewHeight) {
+        float scaleX = 1.0f;
+        float scaleY = 1.0f;
 
+        vHOrig = vH;
+        vWOrig = vW;
+
+        //vH and vW and viewWidth and viewHeight
+
+        if (vH > viewHeight){
+            vH = vH * (viewHeight / vH);
+            vW = vW * (viewHeight / vH);
+            if (vW > viewWidth){
+                vW = vW * (viewWidth / vW);
+                vH = vH * (viewWidth / vW);
+            }
+        }else if (vW > viewWidth){
+            vW = vW * (viewWidth / vW);
+            vH = vH * (viewWidth / vW);
+            if (vH > viewHeight){
+                vH = vH * (viewHeight / vH);
+                vW = vW * (viewHeight / vH);
+            }
+        }
+
+        scaleX = vW / viewWidth;
+        scaleY = vH / viewHeight;
+
+
+        // Calculate pivot points, in our case crop from center
+        int pivotPointX = viewWidth / 2;
+        int pivotPointY = viewHeight / 2;
+
+        Matrix matrix = new Matrix();
+        matrix.setScale(scaleX, scaleY, pivotPointX, pivotPointY);
+
+        mPreview.setTransform(matrix);
+        mPreview.setLayoutParams(new FrameLayout.LayoutParams(viewWidth, viewHeight));
+    }
 
 
 
