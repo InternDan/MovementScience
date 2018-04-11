@@ -206,11 +206,21 @@
 
         <ListPreference
             android:key="pref_rotateDegreesPostProcess"
-            android:title="@string/pref_rotateDegreesPostProcess"
+            android:title="Post-Processing Rotation Vid 1"
             android:dialogTitle="@string/pref_rotateDegreesPostProcess"
             android:entries="@array/pref_rotateDegreesPostProcess_entries"
             android:entryValues="@array/pref_rotateDegreesPostProcess_values"
-            android:defaultValue="@string/pref_rotateDegreesPostProcess_default" />
+            android:defaultValue="90" />
+
+        <ListPreference
+            android:key="pref_rotateDegreesPostProcess2"
+            android:title="Post-Processing Rotation Vid 2"
+            android:dialogTitle="@string/pref_rotateDegreesPostProcess"
+            android:entries="@array/pref_rotateDegreesPostProcess_entries"
+            android:entryValues="@array/pref_rotateDegreesPostProcess_values"
+            android:defaultValue="90" />
+
+
     </PreferenceCategory>
 
 

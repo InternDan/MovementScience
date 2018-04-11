@@ -67,6 +67,7 @@ public class postProcessExecute extends Activity {
     int frameRate2;
 
     int rotateDegreesPostProcess;
+    int rotateDegreesPostProcess2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,8 @@ public class postProcessExecute extends Activity {
         ppOrientation = sharedPref.getString("pref_postProcessingOrientation","lr");
         String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
+        rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","90");
+        rotateDegreesPostProcess2 = Integer.valueOf(rotDeg);
 
 
     }
@@ -428,6 +431,10 @@ public class postProcessExecute extends Activity {
                 if (rotateDegreesPostProcess != 0) {
                     matrix.postRotate(rotateDegreesPostProcess);
                     bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
+                }
+                matrix = new Matrix();
+                if (rotateDegreesPostProcess2 != 0) {
+                    matrix.postRotate(rotateDegreesPostProcess2);
                     bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
                 }
 
@@ -437,6 +444,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -445,6 +453,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -453,6 +462,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -461,6 +471,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
