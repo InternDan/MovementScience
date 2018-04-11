@@ -58,7 +58,9 @@ public class postProcessExecute extends Activity {
     String ppOrientation;
 
     AndroidSequenceEncoder enc;
+    AndroidSequenceEncoder enc2;
     SeekableByteChannel out;
+    SeekableByteChannel out2;
     String eMagTime;
 
     File directory;
@@ -259,6 +261,40 @@ public class postProcessExecute extends Activity {
         return cs;
     }
 
+    public Bitmap resizeForInstagram(Bitmap bmp){
+        //IG recommended size 600x600 max
+        int hout;
+        int wout;
+
+        double h = bmp.getHeight();
+        double w = bmp.getWidth();
+
+        double ratio;
+        //check height
+        if (h > 600){
+            ratio = 600 / h;
+            h = h * ratio;
+            w = w * ratio;
+        }//height scaled, now do width and redo height
+        if (w > 600){
+            ratio = 600 / w;
+            w = w * ratio;
+            h = h * ratio;
+        }
+        hout = (int) Math.round(h);
+        wout = (int) Math.round(w);
+        if ((hout & 1) == 1 ){
+            hout = hout - 1;
+        }
+        if ((wout & 1) == 1 ){
+            wout = wout - 1;
+        }
+
+        bmp = Bitmap.createScaledBitmap(bmp, wout, hout, false);
+
+        return bmp;
+    }
+
     public int selectTrack(MediaExtractor extractor) {
         // Select the first video track we find, ignore the rest.
         int numTracks = extractor.getTrackCount();
@@ -278,17 +314,23 @@ public class postProcessExecute extends Activity {
     private class beginCombiningProcedure extends AsyncTask<Void, Void, Void> {
 
         String outPath;
+        String outPath2;
 
         protected Void doInBackground(Void... params) {
 
             //set up out movie file
             enc = null;
+            enc2 = null;
             try {
                 DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
                 eMagTime = df2.format(Calendar.getInstance().getTime());
-                outPath = directory.getAbsolutePath() + "/CombinedVid" + eMagTime + ".mp4";
+                outPath = directory.getAbsolutePath() + "/LargeComboVid" + eMagTime + ".mp4";
                 out = null;
                 out = NIOUtils.writableFileChannel(outPath);
+                outPath2 = directory.getAbsolutePath() + "/SmallComboVid" + eMagTime + ".mp4";
+                out2 = null;
+                out2 = NIOUtils.writableFileChannel(outPath2);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -336,6 +378,7 @@ public class postProcessExecute extends Activity {
 
             try {
                 enc = new AndroidSequenceEncoder(out, Rational.R( (int) Math.round( (frameRate1+frameRate2)/2), 1));
+                enc2 = new AndroidSequenceEncoder(out2, Rational.R( (int) Math.round( (frameRate1+frameRate2)/2), 1));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -385,7 +428,9 @@ public class postProcessExecute extends Activity {
                 if (bmp1 == null && bmp2 == null){
                     try {
                         enc.finish();
+                        enc2.finish();
                         NIOUtils.closeQuietly(out);
+                        NIOUtils.closeQuietly(out2);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -444,6 +489,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        enc2.encodeImage(resizeForInstagram(bmpJoined));
                         bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -453,6 +499,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        enc2.encodeImage(resizeForInstagram(bmpJoined));
                         bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -462,6 +509,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        enc2.encodeImage(resizeForInstagram(bmpJoined));
                         bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -471,6 +519,7 @@ public class postProcessExecute extends Activity {
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
+                        enc2.encodeImage(resizeForInstagram(bmpJoined));
                         bmpJoined.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -483,6 +532,8 @@ public class postProcessExecute extends Activity {
             try {
                 enc.finish();
                 NIOUtils.closeQuietly(out);
+                enc2.finish();
+                NIOUtils.closeQuietly(out2);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -497,7 +548,7 @@ public class postProcessExecute extends Activity {
 
             Intent intentPass = new Intent(getApplicationContext(), displayTrackingResults.class);
 
-            File file = new File(outPath);
+            File file = new File(outPath2);
             intentPass.putExtra("videoPath", file.toString());
             startActivity(intentPass);
         }
