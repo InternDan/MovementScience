@@ -128,6 +128,11 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void talkOverVideo(View view){
+        Intent intent = new Intent(getApplicationContext(),talkOverVideoLoadAndPass.class);
+        startActivity(intent);
+    }
+
     private  boolean checkAndRequestPermissions() {
         int permissionCamera = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA);
