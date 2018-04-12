@@ -37,6 +37,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     TextureView textureView;
 
     FrameLayout frameLayout;
+    int bmpCount = 0;
 
 
     @Override
@@ -98,7 +99,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
         Bitmap bmp = getBitmap();
-        int tt = 1;
+        bmpCount ++;
     }
 
     @Override
@@ -158,6 +159,18 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
 
         mPreview.setTransform(matrix);
         mPreview.setLayoutParams(new FrameLayout.LayoutParams(viewWidth, viewHeight));
+    }
+
+    public void playVideo(){
+        if (mMediaPlayer != null){
+            mMediaPlayer.start();
+        }
+    }
+
+    public void stopVideo(){
+        if (mMediaPlayer != null){
+            mMediaPlayer.stop();
+        }
     }
 
 

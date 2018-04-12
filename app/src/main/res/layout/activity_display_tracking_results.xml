@@ -1,30 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum ="1"
-    tools:context="com.home.buffa.movementscience.postProcessing">
+    android:id="@+id/rootView">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutVidProcessed"
+    <VideoView
+        android:id="@+id/videoViewResult"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clickable="true"
-        android:orientation="vertical"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:paddingTop="0dp"
-        android:paddingBottom="0dp"
-        android:weightSum="1">
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        />
 
-        <VideoView
-            android:id="@+id/videoViewResult"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"/>
-
-    </LinearLayout>
-</LinearLayout>
+</FrameLayout>
