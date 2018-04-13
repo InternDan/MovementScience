@@ -74,7 +74,7 @@ public class postProcessExecute extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_poat_process_execute);
+        setContentView(R.layout.activity_post_process_execute);
 
         Intent intentReceive = getIntent();
         String vidPath = intentReceive.getExtras().getString("videoPath1");

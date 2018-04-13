@@ -40,7 +40,7 @@ public class displayTrackingResults extends Activity {
         duration = intentReceive.getExtras().getLong("duration");
         setContentView(R.layout.activity_display_tracking_results);
         Uri videoUri = Uri.fromFile(new File((vidPath)));
-        videoViewResult = (VideoView)findViewById(R.id.videoViewResult);
+        videoViewResult = findViewById(R.id.videoViewResult);
         MediaController mediaController = new
                 MediaController(this);
         mediaController.setAnchorView(videoViewResult);
