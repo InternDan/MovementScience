@@ -304,7 +304,7 @@ public class trackPointsOffline extends Activity {
             try {
                 DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
                 eMagTime = df2.format(Calendar.getInstance().getTime());
-                outPath = directory.getAbsolutePath() + "/" + eMagTime + "-trackedVid.mp4";
+                outPath = directory.getAbsolutePath() + "/Tracked-" + eMagTime + ".mp4";
                 out = null;
                 out = NIOUtils.writableFileChannel(outPath);
                 enc = new AndroidSequenceEncoder(out, Rational.R(25,1));
@@ -348,7 +348,7 @@ public class trackPointsOffline extends Activity {
                 frameRate = 30;
             }
             duration = format.getLong("durationUs");
-            outputSurface = new ExtractMpegFramesTest.CodecOutputSurface(format.getInteger(MediaFormat.KEY_WIDTH),format.getInteger(MediaFormat.KEY_HEIGHT));
+            outputSurface = new ExtractMpegFramesTest.CodecOutputSurface(frameWidth,frameHeight);//format.getInteger(MediaFormat.KEY_WIDTH),format.getInteger(MediaFormat.KEY_HEIGHT));//check!
             String mime = format.getString(MediaFormat.KEY_MIME);
             try {
                 decoder = MediaCodec.createDecoderByType(mime);
@@ -479,13 +479,12 @@ public class trackPointsOffline extends Activity {
                         outputSurface.awaitNewImage();
                         outputSurface.drawImage(true);
                         Bitmap bmp = outputSurface.returnFrame();
-                        if (bmp.getWidth() > bmp.getHeight()) {
-                            Matrix matrix = new Matrix();
-                            if (rotateDegreesPostProcess != 0) {
-                                matrix.postRotate(rotateDegreesPostProcess);
-                            }
-                            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-                        }
+                        Matrix matrix = new Matrix();
+                        //float sW = (float)frameWidth /(float)bmp.getWidth();
+                        //float sH = (float)frameHeight /(float)bmp.getHeight();
+                        matrix.preRotate(rotateDegreesPostProcess+90);
+                        bmp = Bitmap.createBitmap(bmp, 0, 0, frameWidth, frameHeight, matrix, true);
+                        bmp = Bitmap.createScaledBitmap(bmp,frameWidth,frameHeight,false);
                         trackPoints(bmp);
 //                        bmp.recycle();
                     }else{

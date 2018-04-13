@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -67,6 +68,7 @@ public class pickPoints extends Activity {
     Scalar angleTextColor;
     int angleTextSize;
     String vidPathPass;
+    int rotateDegreesPostProcess;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -182,6 +184,9 @@ public class pickPoints extends Activity {
         String txtBoxTxtSize = sharedPref.getString("pref_angleTextSize","5");
         angleTextSize = Integer.valueOf(txtBoxTxtSize);
 
+        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
+        rotateDegreesPostProcess = Integer.valueOf(rotDeg);
+
         Intent intentReceive = getIntent();
         coords = null;
         path = intentReceive.getExtras().getString("firstFramePathString");
@@ -195,6 +200,11 @@ public class pickPoints extends Activity {
         File image = new File(path);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmp = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+        Matrix matrix = new Matrix();
+        if (rotateDegreesPostProcess != 0) {
+            matrix.postRotate(rotateDegreesPostProcess);
+            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+        }
         frameRows = bmp.getHeight();
         frameCols = bmp.getWidth();
         imageViewPicker.setImageBitmap(bmp);
@@ -208,7 +218,6 @@ public class pickPoints extends Activity {
     public boolean onTouchEvent(MotionEvent event) {
         // MotionEvent object holds X-Y values
         if(event.getAction() == MotionEvent.ACTION_DOWN && selectionCounter < selectionCap) {
-            coords = coords + "," + event.getX() + "," + event.getY();
             coordType = coordType + "," + ptType + "," + ptType;
             selectionCounter++;
 
@@ -225,6 +234,8 @@ public class pickPoints extends Activity {
 
             float x = event.getX() * scaleWidth;
             float y = event.getY() * scaleHeight;
+
+            coords = coords + "," + x + "," + y;
 
             X = new Point((double) x, (double) y);
             points.add(X);
