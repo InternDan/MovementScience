@@ -482,7 +482,11 @@ public class trackPointsOffline extends Activity {
                         Matrix matrix = new Matrix();
                         //float sW = (float)frameWidth /(float)bmp.getWidth();
                         //float sH = (float)frameHeight /(float)bmp.getHeight();
-                        matrix.preRotate(rotateDegreesPostProcess+90);
+                        if (frameHeight > frameWidth) {
+                            matrix.preRotate(rotateDegreesPostProcess + 90);
+                        }else {
+                            matrix.preRotate(rotateDegreesPostProcess);
+                        }
                         bmp = Bitmap.createBitmap(bmp, 0, 0, frameWidth, frameHeight, matrix, true);
                         bmp = Bitmap.createScaledBitmap(bmp,frameWidth,frameHeight,false);
                         trackPoints(bmp);
