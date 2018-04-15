@@ -122,7 +122,7 @@ public class postProcessExecute extends Activity {
     };
 
 
-    public Bitmap combineImagesLR(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+    public static Bitmap combineImagesLR(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
         Bitmap cs = null;
 
         int width, height = 0;
@@ -185,7 +185,7 @@ public class postProcessExecute extends Activity {
         return cs;
     }
 
-    public Bitmap combineImagesUD(Bitmap c, Bitmap s) {
+    public static Bitmap combineImagesUD(Bitmap c, Bitmap s) {
         //Bitmap cs = null;
 
         int width, height = 0;
@@ -295,7 +295,7 @@ public class postProcessExecute extends Activity {
         return bmp;
     }
 
-    public int selectTrack(MediaExtractor extractor) {
+    public static int selectTrack(MediaExtractor extractor) {
         // Select the first video track we find, ignore the rest.
         int numTracks = extractor.getTrackCount();
         for (int i = 0; i < numTracks; i++) {
@@ -473,15 +473,21 @@ public class postProcessExecute extends Activity {
                 //put bitmaps together
 
                 Matrix matrix = new Matrix();
-                if (rotateDegreesPostProcess != 0) {
-                    matrix.postRotate(rotateDegreesPostProcess);
-                    bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
+                if (bmp1.getHeight() > bmp1.getWidth()) {
+                    matrix.preRotate(rotateDegreesPostProcess + 90);
+                }else {
+                    matrix.preRotate(rotateDegreesPostProcess);
                 }
+                bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
+                bmp1 = Bitmap.createScaledBitmap(bmp1,bmp1.getWidth(), bmp1.getHeight(),false);
                 matrix = new Matrix();
-                if (rotateDegreesPostProcess2 != 0) {
-                    matrix.postRotate(rotateDegreesPostProcess2);
-                    bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
+                if (bmp2.getHeight() > bmp2.getWidth()) {
+                    matrix.preRotate(rotateDegreesPostProcess2 + 90);
+                }else {
+                    matrix.preRotate(rotateDegreesPostProcess2);
                 }
+                bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
+                bmp2 = Bitmap.createScaledBitmap(bmp2,bmp2.getWidth(), bmp2.getHeight(),false);
 
 
                 if (ppOrientation.contains("lr")) {
@@ -556,7 +562,7 @@ public class postProcessExecute extends Activity {
 
     }
 
-    private Bitmap checkBitmapDimensions(Bitmap bmp){
+    public static Bitmap checkBitmapDimensions(Bitmap bmp){
         Bitmap bmp2 = null;
         if ( (bmp.getHeight() & 1) == 1 ){
             bmp2 =  Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight()-1);//even

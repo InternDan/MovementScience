@@ -172,7 +172,7 @@ public class postProcessing extends Activity {
     }
 
     public void postProcessExectute(View view){
-        Intent intentPassPostProcessing = new Intent(getApplicationContext(),postProcessExecute.class);
+        Intent intentPassPostProcessing = new Intent(getApplicationContext(),postProcessPreview.class);
         intentPassPostProcessing.putExtra("videoPath1", videoUri1.toString());
         intentPassPostProcessing.putExtra("videoPath2", videoUri2.toString());
         startActivity(intentPassPostProcessing);
