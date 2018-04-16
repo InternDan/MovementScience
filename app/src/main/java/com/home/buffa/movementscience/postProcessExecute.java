@@ -71,6 +71,14 @@ public class postProcessExecute extends Activity {
     int rotateDegreesPostProcess;
     int rotateDegreesPostProcess2;
 
+    int h1;
+    int h2;
+    int w1;
+    int w2;
+
+    int h;
+    int w;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,15 +133,14 @@ public class postProcessExecute extends Activity {
     public static Bitmap combineImagesLR(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
         Bitmap cs = null;
 
-        int width, height = 0;
+        int height = 0;
+        int width = 0;
 
-        if(c.getWidth() > s.getWidth()) {
-            width = c.getWidth() + s.getWidth();
-            height = c.getHeight();
-        } else {
-            width = s.getWidth() + s.getWidth();
-            height = c.getHeight();
-        }
+        int w1 = c.getWidth();
+        int w2 = s.getWidth();
+        width = w1 + w2;
+        height = c.getHeight();
+
 
         Bitmap s2 = s.copy(Bitmap.Config.ARGB_8888, true);
         int[] pixels = new int[s2.getHeight() * s2.getWidth()];
@@ -182,23 +189,36 @@ public class postProcessExecute extends Activity {
             comboImage.drawBitmap(s, c.getWidth(), 0f, null);
         }
 
+        c.recycle();
+        s.recycle();
         return cs;
     }
 
     public static Bitmap combineImagesUD(Bitmap c, Bitmap s) {
         //Bitmap cs = null;
 
-        int width, height = 0;
+        int width = 0;
+        int height = 0;
 
         Bitmap cs = null;
 
-        if(c.getHeight() > s.getHeight()) {
-            height = c.getHeight() + s.getHeight();
-            width = c.getWidth();
+        if(c.getWidth() > s.getWidth()) {
+            int hc = (int) Math.round((double)c.getHeight() * ( (double)s.getWidth() / (double)c.getWidth()) );
+            c = Bitmap.createScaledBitmap(c, s.getWidth(), hc, false);
+            int dd = c.getHeight();
+            int cc = s.getHeight();
+            height = dd + cc;
+            width = s.getWidth();
         } else {
-            height = s.getHeight() + s.getHeight();
+            int hs = (int) Math.round((double)s.getHeight() * ( (double)c.getWidth() / (double)s.getWidth()) );
+            s = Bitmap.createScaledBitmap(s, c.getWidth(), hs, false);
+            int dd = c.getHeight();
+            int cc = s.getHeight();
+            height = dd + cc;
             width = c.getWidth();
         }
+
+
 
         Bitmap s2 = s.copy(Bitmap.Config.ARGB_8888, true);
         int[] pixels = new int[s2.getHeight() * s2.getWidth()];
@@ -257,7 +277,8 @@ public class postProcessExecute extends Activity {
     } catch(IOException e) {
       Log.e("combineImages", "problem combining images", e);
     }*/
-
+        c.recycle();
+        s.recycle();
         return cs;
     }
 
@@ -442,30 +463,45 @@ public class postProcessExecute extends Activity {
                 }
                 //resize bitmaps
                 if (ppSize.contains("s")) {
-                    if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                    if (postProcessing.vid1Height == postProcessing.vid2Height) {
                         bmp1 = bmp1;
                         bmp2 = bmp2;
-                    } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                        int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
-                        int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                        h1 = bmp1.getHeight();
+                        h2 = bmp2.getHeight();
+                        w1 = bmp1.getWidth();
+                        w2 = bmp2.getWidth();
+                    } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
+                        h1 = postProcessing.vid2Height;
+                        w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
                         bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                    } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
-                        int h1 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                        double t = (double) format2.getInteger(MediaFormat.KEY_WIDTH) * (double)(format1.getInteger(MediaFormat.KEY_HEIGHT) / (double) format2.getInteger(MediaFormat.KEY_HEIGHT));
-                        int w1 = (int) Math.round(t);
-                        bmp2 = Bitmap.createScaledBitmap(bmp2, w1, h1, false);
+                        h2 = bmp2.getHeight();
+                        w2 = bmp2.getWidth();
+                    } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
+                        h1 = postProcessing.vid1Height;
+                        w2 = (int) Math.round((double) postProcessing.vid2Width * (double) ((double)postProcessing.vid1Height / (double) postProcessing.vid2Height));
+                        bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
+                        h2 = bmp2.getHeight();
+                        w1 = bmp1.getWidth();
                     }
                 } else if (ppSize.contains("l")) {
-                    if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                    if (postProcessing.vid1Height == postProcessing.vid2Height) {
                         bmp1 = bmp1;
                         bmp2 = bmp2;
-                    } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                        int h2 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                        int w2 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
-                        bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
-                    } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
-                        int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
-                        int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                        h1 = bmp1.getHeight();
+                        h2 = bmp2.getHeight();
+                        w1 = bmp1.getWidth();
+                        w2 = bmp2.getWidth();
+                    } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
+                        h1 = postProcessing.vid1Height;
+                        w1 = postProcessing.vid1Width;
+                        w2 = (int) Math.round((double)postProcessing.vid2Width * ((double)postProcessing.vid1Height / (double)postProcessing.vid2Height));
+                        bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
+                        h2 = bmp2.getHeight();
+                    } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
+                        h2 = postProcessing.vid2Height;
+                        h1 = postProcessing.vid2Height;
+                        w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
+                        w2 = bmp2.getWidth();
                         bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
                     }
                 }
@@ -473,21 +509,21 @@ public class postProcessExecute extends Activity {
                 //put bitmaps together
 
                 Matrix matrix = new Matrix();
-                if (postProcessing.vid1Height > postProcessing.vid1Width) {
+                if (h1 > w1) {
                     matrix.preRotate(rotateDegreesPostProcess + 90);
                 }else {
                     matrix.preRotate(rotateDegreesPostProcess);
                 }
                 bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
-                bmp1 = Bitmap.createScaledBitmap(bmp1,postProcessing.vid1Width, postProcessing.vid1Height,false);
+                bmp1 = Bitmap.createScaledBitmap(bmp1,w1, h1,false);
                 matrix = new Matrix();
-                if (postProcessing.vid2Height > postProcessing.vid2Width) {
+                if (h2 > w2) {
                     matrix.preRotate(rotateDegreesPostProcess2 + 90);
                 }else {
                     matrix.preRotate(rotateDegreesPostProcess2);
                 }
                 bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
-                bmp2 = Bitmap.createScaledBitmap(bmp2,postProcessing.vid2Width, postProcessing.vid2Height,false);
+                bmp2 = Bitmap.createScaledBitmap(bmp2,w2, h2,false);
 
 
                 if (ppOrientation.contains("lr")) {

@@ -56,6 +56,11 @@ public class postProcessPreview extends Activity {
 
     Bitmap bmpJoined;
 
+    int h1;
+    int h2;
+    int w1;
+    int w2;
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @SuppressLint("LongLogTag")
         @Override
@@ -64,7 +69,7 @@ public class postProcessPreview extends Activity {
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     new postProcessPreview.beginCombiningProcedure().execute(null, null, null);//
-                    Toast.makeText(getApplicationContext(),"First image will load once merged; this may take a moment", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Preview image will load once merged; this may take a moment", Toast.LENGTH_LONG).show();
                 } break;
                 default:
                 {
@@ -91,7 +96,7 @@ public class postProcessPreview extends Activity {
 
         intentReceive = getIntent();
         videoPath1 = intentReceive.getExtras().getString("videoPath1");
-        videoPath2 = intentReceive.getExtras().getString("videoPath1");
+        videoPath2 = intentReceive.getExtras().getString("videoPath2");
         videoUri1 = Uri.parse(videoPath1);
         videoUri2 = Uri.parse(videoPath2);
 
@@ -147,50 +152,65 @@ public class postProcessPreview extends Activity {
             bmp2 = mmr2.getFrameAtTime(time, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
 
             if (ppSize.contains("s")) {
-                if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                if (postProcessing.vid1Height == postProcessing.vid2Height) {
                     bmp1 = bmp1;
                     bmp2 = bmp2;
-                } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                    int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
-                    int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                    h1 = bmp1.getHeight();
+                    h2 = bmp2.getHeight();
+                    w1 = bmp1.getWidth();
+                    w2 = bmp2.getWidth();
+                } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
+                    h1 = postProcessing.vid2Height;
+                    w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
                     bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
-                    int h1 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                    double t = (double) format2.getInteger(MediaFormat.KEY_WIDTH) * (double) (format1.getInteger(MediaFormat.KEY_HEIGHT) / (double) format2.getInteger(MediaFormat.KEY_HEIGHT));
-                    int w1 = (int) Math.round(t);
-                    bmp2 = Bitmap.createScaledBitmap(bmp2, w1, h1, false);
+                    h2 = bmp2.getHeight();
+                    w2 = bmp2.getWidth();
+                } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
+                    h1 = postProcessing.vid1Height;
+                    w2 = (int) Math.round((double) postProcessing.vid2Width * (double) ((double)postProcessing.vid1Height / (double) postProcessing.vid2Height));
+                    bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
+                    h2 = bmp2.getHeight();
+                    w1 = bmp1.getWidth();
                 }
             } else if (ppSize.contains("l")) {
-                if (format1.getInteger(MediaFormat.KEY_HEIGHT) == format2.getInteger(MediaFormat.KEY_HEIGHT)) {
+                if (postProcessing.vid1Height == postProcessing.vid2Height) {
                     bmp1 = bmp1;
                     bmp2 = bmp2;
-                } else if (format1.getInteger(MediaFormat.KEY_HEIGHT) > format2.getInteger(MediaFormat.KEY_HEIGHT)) {
-                    int h2 = format1.getInteger(MediaFormat.KEY_HEIGHT);
-                    int w2 = (int) Math.round(format2.getInteger(MediaFormat.KEY_WIDTH) * (format1.getInteger(MediaFormat.KEY_HEIGHT) / format2.getInteger(MediaFormat.KEY_HEIGHT)));
-                    bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
-                } else if (format2.getInteger(MediaFormat.KEY_HEIGHT) > format1.getInteger(MediaFormat.KEY_HEIGHT)) {
-                    int h1 = format2.getInteger(MediaFormat.KEY_HEIGHT);
-                    int w1 = (int) Math.round(format1.getInteger(MediaFormat.KEY_WIDTH) * (format2.getInteger(MediaFormat.KEY_HEIGHT) / format1.getInteger(MediaFormat.KEY_HEIGHT)));
+                    h1 = bmp1.getHeight();
+                    h2 = bmp2.getHeight();
+                    w1 = bmp1.getWidth();
+                    w2 = bmp2.getWidth();
+                } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
+                    h1 = postProcessing.vid1Height;
+                    w1 = postProcessing.vid1Width;
+                    w2 = (int) Math.round((double)postProcessing.vid2Width * ((double)postProcessing.vid1Height / (double)postProcessing.vid2Height));
+                    bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
+                    h2 = bmp2.getHeight();
+                } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
+                    h2 = postProcessing.vid2Height;
+                    h1 = postProcessing.vid2Height;
+                    w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
+                    w2 = bmp2.getWidth();
                     bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
                 }
             }
 
             Matrix matrix = new Matrix();
-            if (postProcessing.vid1Height > postProcessing.vid1Width) {
+            if (h1 > w1) {
                 matrix.preRotate(rotateDegreesPostProcess + 90);
             } else {
                 matrix.preRotate(rotateDegreesPostProcess);
             }
             bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
-            bmp1 = Bitmap.createScaledBitmap(bmp1, postProcessing.vid1Width, postProcessing.vid1Height, false);
+            bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
             matrix = new Matrix();
-            if (postProcessing.vid2Height > postProcessing.vid2Width) {
+            if (h2 > w2) {
                 matrix.preRotate(rotateDegreesPostProcess2 + 90);
             } else {
                 matrix.preRotate(rotateDegreesPostProcess2);
             }
             bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
-            bmp2 = Bitmap.createScaledBitmap(bmp2, postProcessing.vid2Width, postProcessing.vid2Height, false);
+            bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
 
             if (ppOrientation.contains("lr")) {
                 bmpJoined = postProcessExecute.combineImagesLR(bmp1, bmp2);
