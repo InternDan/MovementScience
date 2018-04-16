@@ -224,6 +224,8 @@ public class postProcessPreview extends Activity {
             } else if (ppOrientation.contains("bt")) {
                 bmpJoined = postProcessExecute.combineImagesUD(bmp2, bmp1);
                 bmpJoined = postProcessExecute.checkBitmapDimensions(bmpJoined);
+            } else if (ppOrientation.contains("stacked")) {
+                bmpJoined = bmp1.copy(Bitmap.Config.ARGB_8888,false);
             }
             bmp1.recycle();
             bmp2.recycle();

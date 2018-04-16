@@ -348,12 +348,14 @@
         <item>left/right</item>
         <item>bottom/top</item>
         <item>right/left</item>
+        <item>stacked</item>
     </string-array>
     <string-array name="pref_postProcessingOrientation_values">
         <item>tb</item>
         <item>lr</item>
         <item>bt</item>
         <item>rl</item>
+        <item>stacked</item>
     </string-array>
     <string name="pref_postProcessingOrientation_default">lr</string>
 

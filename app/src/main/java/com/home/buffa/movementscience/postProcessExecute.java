@@ -279,6 +279,7 @@ public class postProcessExecute extends Activity {
     }*/
         c.recycle();
         s.recycle();
+        pixels = null;
         return cs;
     }
 
@@ -439,12 +440,21 @@ public class postProcessExecute extends Activity {
                         double time1 = (i - (c-1)) * timePerFrame1;
                         bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     }
-                }else {
+                }else if (ppOrder.contains("stacked")) {
+                    double time1 = i * timePerFrame1;
+                    bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    if (bmp1 == null){
+                        double time2 = i * timePerFrame2 - time1;
+                        bmp1 = mmr1.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    }
+
+                }else{
                     double time1 = i * timePerFrame1;
                     bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     double time2 = i * timePerFrame2;
                     bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                 }
+
 
                 if (bmp1 == null && bmp2 == null){
                     try {
@@ -571,6 +581,15 @@ public class postProcessExecute extends Activity {
                         enc.encodeImage(bmpJoined);
                         enc2.encodeImage(resizeForInstagram(bmpJoined));
                         bmpJoined.recycle();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else if (ppOrientation.contains("stacked")) {
+                    bmp1 = checkBitmapDimensions(bmp1);
+                    try {
+                        enc.encodeImage(bmp1);
+                        enc2.encodeImage(resizeForInstagram(bmp1));
+                        bmp1.recycle();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
