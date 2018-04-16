@@ -440,12 +440,21 @@ public class postProcessExecute extends Activity {
                         double time1 = (i - (c-1)) * timePerFrame1;
                         bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     }
-                }else if (ppOrder.contains("stacked")) {
-                    double time1 = i * timePerFrame1;
-                    bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-                    if (bmp1 == null){
-                        double time2 = i * timePerFrame2 - time1;
-                        bmp1 = mmr1.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                }else if (ppOrientation.contains("stacked")) {
+                    if (i < frames1) {
+                        double time1 = i * timePerFrame1;
+                        bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                        c++;
+                    }else {
+                        bmp1=null;
+                    }
+
+                    if (bmp1 != null) {
+                        bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
+                    } else if (bmp1 == null) {
+                        double time2 = (i - (c-1)) * timePerFrame2;
+                        bmp1 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                        bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
                     }
 
                 }else{
