@@ -65,30 +65,30 @@ public class trackPointsOffline extends Activity {
 
     private static final String TAG = "trackPointsOffline";
     private static final boolean VERBOSE = false;
-    static String coords;
-    static String coordType;
+    String coords;
+    String coordType;
     public File directory;
 
-    static ArrayList<Point> points = new ArrayList<Point>();
-    static ArrayList<Integer> pointTypes = new ArrayList<>();
-    static ArrayList<ArrayList> allPoints = new ArrayList();
-    static ArrayList<ArrayList> allPointTypes = new ArrayList();
-    static ArrayList<Point> trailPoints = new ArrayList();
-    static ArrayList<Point> trailPointsCollect = new ArrayList();
+    ArrayList<Point> points = new ArrayList<Point>();
+    ArrayList<Integer> pointTypes = new ArrayList<>();
+    ArrayList<ArrayList> allPoints = new ArrayList();
+    ArrayList<ArrayList> allPointTypes = new ArrayList();
+    ArrayList<Point> trailPoints = new ArrayList();
+    ArrayList<Point> trailPointsCollect = new ArrayList();
     ArrayList<Double> angles = new ArrayList<Double>();
 
-    static Mat mGray;
-    static Mat mPrevGray;
+    Mat mGray;
+    Mat mPrevGray;
 
-    static MatOfPoint2f prevFeatures = null;
-    static MatOfPoint2f nextFeatures = null;
-    static MatOfPoint features = null;
+    MatOfPoint2f prevFeatures = null;
+    MatOfPoint2f nextFeatures = null;
+    MatOfPoint features = null;
 
-    static MatOfByte status;
-    static MatOfFloat err;
+    MatOfByte status;
+    MatOfFloat err;
 
     String videoPath;
-    static String videoAbsolutePath;
+    String videoAbsolutePath;
 
     int c = 0;
     int numPoints = 0;

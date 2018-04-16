@@ -473,25 +473,27 @@ public class postProcessExecute extends Activity {
                 //put bitmaps together
 
                 Matrix matrix = new Matrix();
-                if (bmp1.getHeight() > bmp1.getWidth()) {
+                if (postProcessing.vid1Height > postProcessing.vid1Width) {
                     matrix.preRotate(rotateDegreesPostProcess + 90);
                 }else {
                     matrix.preRotate(rotateDegreesPostProcess);
                 }
                 bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
-                bmp1 = Bitmap.createScaledBitmap(bmp1,bmp1.getWidth(), bmp1.getHeight(),false);
+                bmp1 = Bitmap.createScaledBitmap(bmp1,postProcessing.vid1Width, postProcessing.vid1Height,false);
                 matrix = new Matrix();
-                if (bmp2.getHeight() > bmp2.getWidth()) {
+                if (postProcessing.vid2Height > postProcessing.vid2Width) {
                     matrix.preRotate(rotateDegreesPostProcess2 + 90);
                 }else {
                     matrix.preRotate(rotateDegreesPostProcess2);
                 }
                 bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
-                bmp2 = Bitmap.createScaledBitmap(bmp2,bmp2.getWidth(), bmp2.getHeight(),false);
+                bmp2 = Bitmap.createScaledBitmap(bmp2,postProcessing.vid2Width, postProcessing.vid2Height,false);
 
 
                 if (ppOrientation.contains("lr")) {
                     Bitmap bmpJoined = combineImagesLR(bmp1, bmp2);
+                    bmp1.recycle();
+                    bmp2.recycle();
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
@@ -502,6 +504,8 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("rl")) {
                     Bitmap bmpJoined = combineImagesLR(bmp2, bmp1);
+                    bmp1.recycle();
+                    bmp2.recycle();
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
@@ -512,6 +516,8 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("tb")) {
                     Bitmap bmpJoined = combineImagesUD(bmp1, bmp2);
+                    bmp1.recycle();
+                    bmp2.recycle();
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
@@ -522,6 +528,8 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("bt")) {
                     Bitmap bmpJoined = combineImagesUD(bmp2, bmp1);
+                    bmp1.recycle();
+                    bmp2.recycle();
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);

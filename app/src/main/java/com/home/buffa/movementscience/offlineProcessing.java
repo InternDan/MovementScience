@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -54,6 +57,8 @@ public class offlineProcessing extends Activity {
     private static final int  MY_PERMISSIONS_REQUEST_INTERNET = 131728;
     GoogleApiClient mGoogleApiClient;
 
+    int rotateDegreesPostProcess;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +80,10 @@ public class offlineProcessing extends Activity {
                 MediaController(this);
         mediaController.setAnchorView(result_video);
         result_video.setMediaController(mediaController);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String str = sharedPref.getString("pref_rotateDegreesPostProcess","0");
+        rotateDegreesPostProcess = Integer.valueOf(str);
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 android.Manifest.permission.INTERNET)
@@ -171,6 +180,9 @@ public class offlineProcessing extends Activity {
     public void pickPoints(View view){
         int currentPosition = 0; //in millisecond
         Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(currentPosition * 1000, OPTION_CLOSEST); //unit in microsecons
+        Matrix matrix = new Matrix();
+        matrix.preRotate(rotateDegreesPostProcess);
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         if (bitmap == null){
             Intent intent = new Intent(getApplicationContext(), offlineProcessing.class);
             Toast.makeText(this, "Please select a video first!", Toast.LENGTH_LONG).show();

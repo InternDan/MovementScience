@@ -43,6 +43,11 @@ public class postProcessing extends Activity {
     int clickTrack1 = 0;
     int clickTrack2 = 0;
 
+    public static int vid1Height;
+    public static int vid1Width;
+    public static int vid2Height;
+    public static int vid2Width;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +127,9 @@ public class postProcessing extends Activity {
                 return;
             }
             mediaMetadataRetriever.setDataSource(this, videoUri1);
+            bmp = mediaMetadataRetriever.getFrameAtTime(1000);
+            vid1Height = bmp.getHeight();
+            vid1Width = bmp.getWidth();
             vid1.setVideoURI(videoUri1);
             vid1.seekTo(200);
             //result_video.requestFocus();
@@ -139,6 +147,9 @@ public class postProcessing extends Activity {
                 return;
             }
             mediaMetadataRetriever.setDataSource(this, videoUri2);
+            bmp = mediaMetadataRetriever.getFrameAtTime(1000);
+            vid2Height = bmp.getHeight();
+            vid2Width = bmp.getWidth();
             vid2.setVideoURI(videoUri2);
             vid2.seekTo(200);
             //result_video.requestFocus();
