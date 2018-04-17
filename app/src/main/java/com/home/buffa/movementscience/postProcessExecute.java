@@ -131,6 +131,23 @@ public class postProcessExecute extends Activity {
         }
     };
 
+    public static Bitmap checkBitmapDimensions(Bitmap bmp){
+        Bitmap bmp2 = null;
+        if ( (bmp.getHeight() & 1) == 1 ){
+            bmp2 =  Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight()-1);//even
+        }
+        if ( (bmp.getWidth() & 1) == 1 ){
+            bmp2 =  Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth()-1, bmp.getHeight());//even
+        }
+        if (bmp2 == null){
+            return bmp;
+        }else if (bmp2 != null){
+            return bmp2;
+        }
+        bmp2.recycle();
+        return bmp;
+    }
+
     private ArrayList<Bitmap> resizeBitmap(Bitmap bmp1, Bitmap bmp2){
         //resize bitmaps
         if (ppSize.contains("s")) {
@@ -355,34 +372,10 @@ public class postProcessExecute extends Activity {
                 int padLeft = (int) Math.floor((double) diff / 2);
                 int padRight = (int) Math.ceil((double) diff / 2);
                 Bitmap holder = Bitmap.createBitmap(diff + bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-
-                //add zero padding on left
-                int[] pixels = new int[bitmap.getHeight() * padLeft];
-                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-                for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-                    pixels[i] = Color.BLACK;
-                }
-                holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
-
-                //add original image in middle
-                pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
-                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-                //  pixels[i] = Color.BLACK;
-                //}
-                holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth() - padLeft, holder.getHeight());
-
-                //add zero padding on right
-                pixels = new int[bitmap.getHeight() * padRight];
-                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-                for (int i = 0; i < holder.getHeight() * padRight; i++) {
-                    pixels[i] = Color.BLACK;
-                }
-                holder.setPixels(pixels, 0, padLeft + bitmap.getWidth(), 0, 0, padLeft + bitmap.getWidth(), holder.getHeight());
-
-                bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas comboImage = new Canvas(bitmap);
-                comboImage.drawBitmap(holder, 0f, 0f, null);
+                Canvas canvas = new Canvas(holder);
+                canvas.drawColor(Color.BLACK);
+                canvas.drawBitmap(bitmap,padLeft,0,null);
+                return holder;
             }
 
         }else if(hVid2 > hVid1){
@@ -404,34 +397,10 @@ public class postProcessExecute extends Activity {
                 int padLeft = (int) Math.floor((double) diff / 2);
                 int padRight = (int) Math.ceil((double) diff / 2);
                 Bitmap holder = Bitmap.createBitmap(diff + bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-
-                //add zero padding on left
-                int[] pixels = new int[bitmap.getHeight() * padLeft];
-                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-                for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-                    pixels[i] = Color.BLACK;
-                }
-                holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
-
-                //add original image in middle
-                pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
-                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-                //  pixels[i] = Color.BLACK;
-                //}
-                holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth() - padLeft, holder.getHeight());
-
-                //add zero padding on right
-                pixels = new int[bitmap.getHeight() * padRight];
-                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-                for (int i = 0; i < holder.getHeight() * padRight; i++) {
-                    pixels[i] = Color.BLACK;
-                }
-                holder.setPixels(pixels, 0, padLeft + bitmap.getWidth(), 0, 0, padLeft + bitmap.getWidth(), holder.getHeight());
-
-                bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas comboImage = new Canvas(bitmap);
-                comboImage.drawBitmap(holder, 0f, 0f, null);
+                Canvas canvas = new Canvas(holder);
+                canvas.drawColor(Color.BLACK);
+                canvas.drawBitmap(bitmap,padLeft,0,null);
+                return holder;
             }
         }else{
             int height = hVid1;
@@ -451,71 +420,11 @@ public class postProcessExecute extends Activity {
                 int padLeft = (int) Math.floor((double) diff / 2);
                 int padRight = (int) Math.ceil((double) diff / 2);
                 Bitmap holder = Bitmap.createBitmap(diff + bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-
-                //add zero padding on left
-                int[] pixels = new int[bitmap.getHeight() * padLeft];
-                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-                for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-                    pixels[i] = Color.BLACK;
-                }
-                holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
-
-                //add original image in middle
-                pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
-                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-                //  pixels[i] = Color.BLACK;
-                //}
-                holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth() - padLeft, holder.getHeight());
-
-                //add zero padding on right
-                pixels = new int[bitmap.getHeight() * padRight];
-                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-                for (int i = 0; i < holder.getHeight() * padRight; i++) {
-                    pixels[i] = Color.BLACK;
-                }
-                holder.setPixels(pixels, 0, padLeft + bitmap.getWidth(), 0, 0, padLeft + bitmap.getWidth(), holder.getHeight());
-
-                bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas comboImage = new Canvas(bitmap);
-                comboImage.drawBitmap(holder, 0f, 0f, null);
+                Canvas canvas = new Canvas(holder);
+                canvas.drawColor(Color.BLACK);
+                canvas.drawBitmap(bitmap,padLeft,0,null);
+                return holder;
             }
-        }
-
-        //now pad width from height scaled image
-        if (bitmap.getWidth() < wVid1){
-            int diff = wVid1 - bitmap.getWidth();
-            int padLeft = (int) Math.floor(( double) diff / 2);
-            int padRight = (int) Math.ceil(( double) diff / 2);
-            Bitmap holder = Bitmap.createBitmap(diff+bitmap.getWidth(),bitmap.getHeight(),Bitmap.Config.ARGB_8888);
-
-            //add zero padding on left
-            int[] pixels = new int[bitmap.getHeight() * padLeft];
-            //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-            for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-                pixels[i] = Color.BLACK;
-            }
-            holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
-
-            //add original image in middle
-            pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
-            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-            //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
-              //  pixels[i] = Color.BLACK;
-            //}
-            holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth()-padLeft, holder.getHeight());
-
-            //add zero padding on right
-            pixels = new int[bitmap.getHeight() * padRight];
-            //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
-            for (int i = 0; i < holder.getHeight() * padRight; i++) {
-                pixels[i] = Color.BLACK;
-            }
-            holder.setPixels(pixels, 0, padLeft+bitmap.getWidth(), 0, 0, padLeft+bitmap.getWidth(), holder.getHeight());
-
-            bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
-            Canvas comboImage = new Canvas(bitmap);
-            comboImage.drawBitmap(holder, 0f, 0f, null);
         }
 
         return bitmap;
@@ -676,11 +585,17 @@ public class postProcessExecute extends Activity {
                         double time1 = (i - (c-1)) * timePerFrame1;
                         bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     }
-                }else if (ppOrientation.contains("stacked")) {
+                }else {
+                    double time1 = i * timePerFrame1;
+                    bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    double time2 = i * timePerFrame2;
+                    bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                }
+
+                if (ppOrientation.contains("stacked")) {
                     if (i < frames1) {
                         double time1 = i * timePerFrame1;
                         bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-                        bmp1 = resizeForStacked(bmp1,h1,h2,w1,w2);
                         c++;
                     }else {
                         bmp1=null;
@@ -692,12 +607,8 @@ public class postProcessExecute extends Activity {
                         bmp1 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                         bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
                     }
-                }else{
-                    double time1 = i * timePerFrame1;
-                    bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-                    double time2 = i * timePerFrame2;
-                    bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                 }
+
                 if (bmp1 == null && bmp2 == null){
                     try {
                         enc.finish();
@@ -713,13 +624,6 @@ public class postProcessExecute extends Activity {
                 }else if (bmp2 == null && bmp1 != null){
                     bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
                 }
-
-                ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
-                bmpList = resizeBitmap(bmp1,bmp2);
-                bmp1 = bmpList.get(0);
-                bmp2 = bmpList.get(1);
-
-                //put bitmaps together
 
                 Matrix matrix = new Matrix();
                 if (h1 > w1) {
@@ -737,6 +641,15 @@ public class postProcessExecute extends Activity {
                 }
                 bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
                 bmp2 = Bitmap.createScaledBitmap(bmp2,w2, h2,false);
+
+                ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
+                bmpList = resizeBitmap(bmp1,bmp2);
+                bmp1 = bmpList.get(0);
+                bmp2 = bmpList.get(1);
+
+                //put bitmaps together
+
+
 
 
                 if (ppOrientation.contains("lr")) {
@@ -829,21 +742,7 @@ public class postProcessExecute extends Activity {
 
     }
 
-    public static Bitmap checkBitmapDimensions(Bitmap bmp){
-        Bitmap bmp2 = null;
-        if ( (bmp.getHeight() & 1) == 1 ){
-            bmp2 =  Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight()-1);//even
-        }
-        if ( (bmp.getWidth() & 1) == 1 ){
-            bmp2 =  Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth()-1, bmp.getHeight());//even
-        }
-        if (bmp2 == null){
-            return bmp;
-        }else if (bmp2 != null){
-            return bmp2;
-        }
-        return bmp;
-    }
+
 
     @Override
     public void onResume() {

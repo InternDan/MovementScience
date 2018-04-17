@@ -104,9 +104,9 @@ public class postProcessPreview extends Activity {
         ppOrder = sharedPref.getString("pref_postProcessingPlayOrder","s");
         ppSize = sharedPref.getString("pref_postProcessingSize","small");
         ppOrientation = sharedPref.getString("pref_postProcessingOrientation","lr");
-        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
+        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","0");
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
-        rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","90");
+        rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","0");
         rotateDegreesPostProcess2 = Integer.valueOf(rotDeg);
     }
 
