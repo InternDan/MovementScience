@@ -89,8 +89,10 @@ public class postProcessExecute extends Activity {
         vid1Uri = Uri.parse(vidPath);
         vidPath = intentReceive.getExtras().getString("videoPath2");
         vid2Uri = Uri.parse(vidPath);
-
-
+        h1 = intentReceive.getExtras().getInt("h1");
+        h2 = intentReceive.getExtras().getInt("h2");
+        w1 = intentReceive.getExtras().getInt("w1");
+        w2 = intentReceive.getExtras().getInt("w2");
 
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 
@@ -99,9 +101,9 @@ public class postProcessExecute extends Activity {
         ppOrder = sharedPref.getString("pref_postProcessingPlayOrder","s");
         ppSize = sharedPref.getString("pref_postProcessingSize","small");
         ppOrientation = sharedPref.getString("pref_postProcessingOrientation","lr");
-        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
+        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","0");
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
-        rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","90");
+        rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","0");
         rotateDegreesPostProcess2 = Integer.valueOf(rotDeg);
 
 
@@ -129,6 +131,51 @@ public class postProcessExecute extends Activity {
         }
     };
 
+    private ArrayList<Bitmap> resizeBitmap(Bitmap bmp1, Bitmap bmp2){
+        //resize bitmaps
+        if (ppSize.contains("s")) {
+            if (h1 == h2) {
+                h1 = h1;
+                h2 = h2;
+                w1 = w1;
+                w2 = w2;
+            } else if (h1 > h2) {
+                w1 = (int) Math.round((double)w1 * ((double)h2 / (double)h1));
+                bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                h2 = h2;
+                w2 = w2;
+            } else if (h2 > h1) {
+                w2 = (int) Math.round((double) w2 * ((double)h1 / (double) h2));
+                bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
+                h2 = h2;
+                w1 = w1;
+            }
+            //now scale width
+        } else if (ppSize.contains("l")) {
+            if (h1 == h2) {
+                bmp1 = bmp1;
+                bmp2 = bmp2;
+                h1 = bmp1.getHeight();
+                h2 = bmp2.getHeight();
+                w1 = bmp1.getWidth();
+                w2 = bmp2.getWidth();
+            } else if (h1 > h2) {
+                w2 = (int) Math.round((double)postProcessing.vid2Width * ((double)postProcessing.vid1Height / (double)postProcessing.vid2Height));
+                bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
+                h2 = bmp2.getHeight();
+            } else if (h2 > h1) {
+                w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
+                w2 = bmp2.getWidth();
+                bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+            }
+        }
+        ArrayList<Bitmap> bMaps = new ArrayList<Bitmap>();
+        bMaps.add(bmp1);
+        bMaps.add(bmp2);
+
+        return bMaps;
+    }
+
 
     public static Bitmap combineImagesLR(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
         Bitmap cs = null;
@@ -138,6 +185,7 @@ public class postProcessExecute extends Activity {
 
         int w1 = c.getWidth();
         int w2 = s.getWidth();
+
         width = w1 + w2;
         height = c.getHeight();
 
@@ -283,6 +331,197 @@ public class postProcessExecute extends Activity {
         return cs;
     }
 
+    public static Bitmap resizeForStacked(Bitmap bitmap,int hVid1,int hVid2,int wVid1, int wVid2){
+        int useHeight = 0;
+        int useWidth = 0;
+        double ratio = 0;
+        //Determine initial height scaling
+        if (hVid1 > hVid2){
+            int height = hVid2;
+            ratio = (double)height / (double)bitmap.getHeight();
+            useHeight = (int)Math.round((double)bitmap.getHeight() * ratio);
+            useWidth = (int)Math.round((double)bitmap.getWidth() * ratio);
+            bitmap = Bitmap.createScaledBitmap(bitmap,useWidth,useHeight,false);
+
+            int diff1 = wVid1 - bitmap.getWidth();
+            int diff2 = wVid2 - bitmap.getWidth();
+            int diff = 0;
+            if (diff1 > 0) {
+                diff = diff1;
+            }else if (diff2 > 0) {
+                diff = diff2;
+            }
+            if (diff != 0) {
+                int padLeft = (int) Math.floor((double) diff / 2);
+                int padRight = (int) Math.ceil((double) diff / 2);
+                Bitmap holder = Bitmap.createBitmap(diff + bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+                //add zero padding on left
+                int[] pixels = new int[bitmap.getHeight() * padLeft];
+                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+                for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+                    pixels[i] = Color.BLACK;
+                }
+                holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
+
+                //add original image in middle
+                pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+                //  pixels[i] = Color.BLACK;
+                //}
+                holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth() - padLeft, holder.getHeight());
+
+                //add zero padding on right
+                pixels = new int[bitmap.getHeight() * padRight];
+                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+                for (int i = 0; i < holder.getHeight() * padRight; i++) {
+                    pixels[i] = Color.BLACK;
+                }
+                holder.setPixels(pixels, 0, padLeft + bitmap.getWidth(), 0, 0, padLeft + bitmap.getWidth(), holder.getHeight());
+
+                bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas comboImage = new Canvas(bitmap);
+                comboImage.drawBitmap(holder, 0f, 0f, null);
+            }
+
+        }else if(hVid2 > hVid1){
+            int height = hVid1;
+            ratio = (double)height/ (double)bitmap.getHeight();
+            useHeight = (int)Math.round((double)bitmap.getHeight() * ratio);
+            useWidth = (int)Math.round((double)bitmap.getWidth() * ratio);
+            bitmap = Bitmap.createScaledBitmap(bitmap,useWidth,useHeight,false);
+
+            int diff1 = wVid1 - bitmap.getWidth();
+            int diff2 = wVid2 - bitmap.getWidth();
+            int diff = 0;
+            if (diff1 > 0) {
+                diff = diff1;
+            }else if (diff2 > 0) {
+                diff = diff2;
+            }
+            if (diff != 0) {
+                int padLeft = (int) Math.floor((double) diff / 2);
+                int padRight = (int) Math.ceil((double) diff / 2);
+                Bitmap holder = Bitmap.createBitmap(diff + bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+                //add zero padding on left
+                int[] pixels = new int[bitmap.getHeight() * padLeft];
+                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+                for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+                    pixels[i] = Color.BLACK;
+                }
+                holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
+
+                //add original image in middle
+                pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+                //  pixels[i] = Color.BLACK;
+                //}
+                holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth() - padLeft, holder.getHeight());
+
+                //add zero padding on right
+                pixels = new int[bitmap.getHeight() * padRight];
+                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+                for (int i = 0; i < holder.getHeight() * padRight; i++) {
+                    pixels[i] = Color.BLACK;
+                }
+                holder.setPixels(pixels, 0, padLeft + bitmap.getWidth(), 0, 0, padLeft + bitmap.getWidth(), holder.getHeight());
+
+                bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas comboImage = new Canvas(bitmap);
+                comboImage.drawBitmap(holder, 0f, 0f, null);
+            }
+        }else{
+            int height = hVid1;
+            ratio = (double)height / (double)bitmap.getHeight();
+            useHeight = (int)Math.round((double)bitmap.getHeight() * ratio);
+            useWidth = (int)Math.round((double)bitmap.getWidth() * ratio);
+            bitmap = Bitmap.createScaledBitmap(bitmap,useWidth,useHeight,false);
+            int diff1 = wVid1 - bitmap.getWidth();
+            int diff2 = wVid2 - bitmap.getWidth();
+            int diff = 0;
+            if (diff1 > 0) {
+                diff = diff1;
+            }else if (diff2 > 0) {
+                diff = diff2;
+            }
+            if (diff != 0) {
+                int padLeft = (int) Math.floor((double) diff / 2);
+                int padRight = (int) Math.ceil((double) diff / 2);
+                Bitmap holder = Bitmap.createBitmap(diff + bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+                //add zero padding on left
+                int[] pixels = new int[bitmap.getHeight() * padLeft];
+                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+                for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+                    pixels[i] = Color.BLACK;
+                }
+                holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
+
+                //add original image in middle
+                pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+                //  pixels[i] = Color.BLACK;
+                //}
+                holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth() - padLeft, holder.getHeight());
+
+                //add zero padding on right
+                pixels = new int[bitmap.getHeight() * padRight];
+                //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+                for (int i = 0; i < holder.getHeight() * padRight; i++) {
+                    pixels[i] = Color.BLACK;
+                }
+                holder.setPixels(pixels, 0, padLeft + bitmap.getWidth(), 0, 0, padLeft + bitmap.getWidth(), holder.getHeight());
+
+                bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas comboImage = new Canvas(bitmap);
+                comboImage.drawBitmap(holder, 0f, 0f, null);
+            }
+        }
+
+        //now pad width from height scaled image
+        if (bitmap.getWidth() < wVid1){
+            int diff = wVid1 - bitmap.getWidth();
+            int padLeft = (int) Math.floor(( double) diff / 2);
+            int padRight = (int) Math.ceil(( double) diff / 2);
+            Bitmap holder = Bitmap.createBitmap(diff+bitmap.getWidth(),bitmap.getHeight(),Bitmap.Config.ARGB_8888);
+
+            //add zero padding on left
+            int[] pixels = new int[bitmap.getHeight() * padLeft];
+            //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+            for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+                pixels[i] = Color.BLACK;
+            }
+            holder.setPixels(pixels, 0, padLeft, 0, 0, padLeft, holder.getHeight());
+
+            //add original image in middle
+            pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+            //for (int i = 0; i < holder.getHeight() * padLeft; i++) {
+              //  pixels[i] = Color.BLACK;
+            //}
+            holder.setPixels(pixels, 0, padLeft, 0, 0, holder.getWidth()-padLeft, holder.getHeight());
+
+            //add zero padding on right
+            pixels = new int[bitmap.getHeight() * padRight];
+            //holder.getPixels(pixels, 0, padLeft, 0, 0, holder.getWidth(), holder.getHeight());
+            for (int i = 0; i < holder.getHeight() * padRight; i++) {
+                pixels[i] = Color.BLACK;
+            }
+            holder.setPixels(pixels, 0, padLeft+bitmap.getWidth(), 0, 0, padLeft+bitmap.getWidth(), holder.getHeight());
+
+            bitmap = Bitmap.createBitmap(holder.getWidth(), holder.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas comboImage = new Canvas(bitmap);
+            comboImage.drawBitmap(holder, 0f, 0f, null);
+        }
+
+        return bitmap;
+
+    }
+
     public Bitmap resizeForInstagram(Bitmap bmp){
         //IG recommended size 600x600 max
         int hout;
@@ -324,7 +563,7 @@ public class postProcessExecute extends Activity {
             MediaFormat format = extractor.getTrackFormat(i);
             String mime = format.getString(MediaFormat.KEY_MIME);
             if (mime.startsWith("video/")) {
-                    Log.d(TAG, "Extractor selected track " + i + " (" + mime + "): " + format);
+                Log.d(TAG, "Extractor selected track " + i + " (" + mime + "): " + format);
                 return i;
             }
         }
@@ -405,7 +644,6 @@ public class postProcessExecute extends Activity {
                 e.printStackTrace();
             }
 
-
             int c = 0;
             for (int i = 0; i < (frames1+frames2); i++) {
                 bmp1 = null;
@@ -418,14 +656,12 @@ public class postProcessExecute extends Activity {
                     }else {
                         bmp1=null;
                     }
-
                     if (bmp1 != null) {
-                        bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
+                        bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);;
                     } else if (bmp1 == null) {
                         double time2 = (i - (c-1)) * timePerFrame2;
                         bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     }
-
                 }else if (ppOrder.contains("rl")){
                     if (i < frames2) {
                         double time2 = i * timePerFrame2;
@@ -435,7 +671,7 @@ public class postProcessExecute extends Activity {
                         bmp2 = null;
                     }
                     if (bmp2 != null) {
-                        bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
+                        bmp1 = Bitmap.createBitmap(w2,h1, Bitmap.Config.ARGB_8888);
                     } else if (bmp2 == null) {
                         double time1 = (i - (c-1)) * timePerFrame1;
                         bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
@@ -444,27 +680,24 @@ public class postProcessExecute extends Activity {
                     if (i < frames1) {
                         double time1 = i * timePerFrame1;
                         bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                        bmp1 = resizeForStacked(bmp1,h1,h2,w1,w2);
                         c++;
                     }else {
                         bmp1=null;
                     }
-
                     if (bmp1 != null) {
-                        bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
+                        bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
                     } else if (bmp1 == null) {
                         double time2 = (i - (c-1)) * timePerFrame2;
                         bmp1 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-                        bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);;
+                        bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
                     }
-
                 }else{
                     double time1 = i * timePerFrame1;
                     bmp1 = mmr1.getFrameAtTime((int) Math.round(time1), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     double time2 = i * timePerFrame2;
                     bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                 }
-
-
                 if (bmp1 == null && bmp2 == null){
                     try {
                         enc.finish();
@@ -476,54 +709,15 @@ public class postProcessExecute extends Activity {
                     }
                     return null;//handlesl both empty
                 }else if (bmp1 == null && bmp2 != null){
-                    bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
+                    bmp1 = Bitmap.createBitmap(w2,h1, Bitmap.Config.ARGB_8888);//may need fixing
                 }else if (bmp2 == null && bmp1 != null){
-                    bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
+                    bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
                 }
-                //resize bitmaps
-                if (ppSize.contains("s")) {
-                    if (postProcessing.vid1Height == postProcessing.vid2Height) {
-                        bmp1 = bmp1;
-                        bmp2 = bmp2;
-                        h1 = bmp1.getHeight();
-                        h2 = bmp2.getHeight();
-                        w1 = bmp1.getWidth();
-                        w2 = bmp2.getWidth();
-                    } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
-                        h1 = postProcessing.vid2Height;
-                        w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
-                        bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                        h2 = bmp2.getHeight();
-                        w2 = bmp2.getWidth();
-                    } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
-                        h1 = postProcessing.vid1Height;
-                        w2 = (int) Math.round((double) postProcessing.vid2Width * (double) ((double)postProcessing.vid1Height / (double) postProcessing.vid2Height));
-                        bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
-                        h2 = bmp2.getHeight();
-                        w1 = bmp1.getWidth();
-                    }
-                } else if (ppSize.contains("l")) {
-                    if (postProcessing.vid1Height == postProcessing.vid2Height) {
-                        bmp1 = bmp1;
-                        bmp2 = bmp2;
-                        h1 = bmp1.getHeight();
-                        h2 = bmp2.getHeight();
-                        w1 = bmp1.getWidth();
-                        w2 = bmp2.getWidth();
-                    } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
-                        h1 = postProcessing.vid1Height;
-                        w1 = postProcessing.vid1Width;
-                        w2 = (int) Math.round((double)postProcessing.vid2Width * ((double)postProcessing.vid1Height / (double)postProcessing.vid2Height));
-                        bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
-                        h2 = bmp2.getHeight();
-                    } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
-                        h2 = postProcessing.vid2Height;
-                        h1 = postProcessing.vid2Height;
-                        w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
-                        w2 = bmp2.getWidth();
-                        bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                    }
-                }
+
+                ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
+                bmpList = resizeBitmap(bmp1,bmp2);
+                bmp1 = bmpList.get(0);
+                bmp2 = bmpList.get(1);
 
                 //put bitmaps together
 
@@ -594,8 +788,9 @@ public class postProcessExecute extends Activity {
                         e.printStackTrace();
                     }
                 }else if (ppOrientation.contains("stacked")) {
-                    bmp1 = checkBitmapDimensions(bmp1);
                     try {
+                        bmp1 = resizeForStacked(bmp1,h1,h2,w1,w2);
+                        bmp1 = checkBitmapDimensions(bmp1);
                         enc.encodeImage(bmp1);
                         enc2.encodeImage(resizeForInstagram(bmp1));
                         bmp1.recycle();
@@ -615,7 +810,7 @@ public class postProcessExecute extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        return null;
+            return null;
         }
 
         protected void onProgressUpdate(Void... progress) {

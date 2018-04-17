@@ -253,6 +253,10 @@ public class postProcessPreview extends Activity {
         bmpJoined.recycle();
         intentPassPostProcessing.putExtra("videoPath1", videoUri1.toString());
         intentPassPostProcessing.putExtra("videoPath2", videoUri2.toString());
+        intentPassPostProcessing.putExtra("h1", h1);
+        intentPassPostProcessing.putExtra("h2", h2);
+        intentPassPostProcessing.putExtra("w1", w1);
+        intentPassPostProcessing.putExtra("w2", w2);//passing resized to desired heights height and widths
         startActivity(intentPassPostProcessing);
     }
 
