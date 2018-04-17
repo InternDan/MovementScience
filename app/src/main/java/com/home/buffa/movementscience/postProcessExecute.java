@@ -408,7 +408,7 @@ public class postProcessExecute extends Activity {
             useHeight = (int)Math.round((double)bitmap.getHeight() * ratio);
             useWidth = (int)Math.round((double)bitmap.getWidth() * ratio);
             bitmap = Bitmap.createScaledBitmap(bitmap,useWidth,useHeight,false);
-            int diff1 = wVid1 - bitmap.getWidth();
+            int diff1 = wVid1 - bitmap.getWidth(); //deal with signs
             int diff2 = wVid2 - bitmap.getWidth();
             int diff = 0;
             if (diff1 > 0) {
