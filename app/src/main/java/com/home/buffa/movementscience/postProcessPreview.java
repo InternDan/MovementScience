@@ -155,10 +155,10 @@ public class postProcessPreview extends Activity {
                 if (postProcessing.vid1Height == postProcessing.vid2Height) {
                     bmp1 = bmp1;
                     bmp2 = bmp2;
-                    h1 = bmp1.getHeight();
-                    h2 = bmp2.getHeight();
-                    w1 = bmp1.getWidth();
-                    w2 = bmp2.getWidth();
+                    h1 = postProcessing.vid1Height;
+                    h2 = postProcessing.vid2Height;
+                    w1 = postProcessing.vid1Width;
+                    w2 = postProcessing.vid2Width;
                 } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
                     h1 = postProcessing.vid2Height;
                     w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
