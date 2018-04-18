@@ -433,7 +433,7 @@ public class postProcessExecute extends Activity {
 
     }
 
-    public Bitmap resizeForInstagram(Bitmap bmp){
+    public static Bitmap resizeForInstagram(Bitmap bmp){
         //IG recommended size 600x600 max
         int hout;
         int wout;

@@ -3,7 +3,10 @@ package com.home.buffa.movementscience;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -14,11 +17,15 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.io.IOException;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class talkOverVideo extends Activity implements TextureView.SurfaceTextureListener{
 
@@ -35,19 +42,80 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     String videoAbsolutePath;
 
     TextureView textureView;
+    ImageView imageView;
 
     FrameLayout frameLayout;
     int bmpCount = 0;
 
+    SeekBar seekbar;
+
+    double frameRate;
+    int currentFrame = 0;
+    double duration;
+    double mspf;
+
+    FFmpegMediaMetadataRetriever mmr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_talk_over_video);
         mPreview = findViewById(R.id.textureView);
+        seekbar = findViewById(R.id.seekbar);
+        imageView = findViewById(R.id.imageView);
+        imageView.setVisibility(ImageView.INVISIBLE);
 
+        //need intent with video path
         Intent intentReceive = getIntent();
         videoAbsolutePath = intentReceive.getExtras().getString("videoPath");
+
+        //start mmr for video
+        mmr = new FFmpegMediaMetadataRetriever();
+        mmr.setDataSource(videoAbsolutePath);
+        //determine number of frames
+        String fr = mmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FRAMERATE);
+        frameRate = Double.valueOf(fr);
+        mspf = 1/(frameRate / 1000);//frames per microsecond
+        String dur = mmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);//in ms
+        duration = Double.valueOf(dur);//in ms
+        int frames = (int) Math.round( (duration/mspf));
+
+        //set max frames for seekbar
+        seekbar.setMax(frames);
+        seekbar.setProgress(0);
+
+        final Canvas[] canvas = new Canvas[1];
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progressChangedValue = 0;
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //grab frames based on integer in progressChangedValue
+                progressChangedValue = progress;
+                int pos = (int) Math.round( ((double)progressChangedValue * mspf));
+                //mMediaPlayer.seekTo(pos);//wants input in ms
+                Bitmap bmp = mmr.getFrameAtTime(pos*1000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                imageView.setImageBitmap(bmp);
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                String dur = mmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);//in ms
+                duration = Double.valueOf(dur);//in ms
+                int frames = (int) Math.round( (duration/mspf));
+                //set max frames for seekbar
+                seekbar.setMax(frames);
+                textureView.setVisibility(TextureView.INVISIBLE);
+                imageView.setVisibility(ImageView.VISIBLE);
+                //set image view as visible
+                // TODO Auto-generated method stub
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //possibly set some values for things, likely nothing
+                currentFrame = progressChangedValue;
+            }
+        });
+
+
 
         initView();
     }
@@ -63,6 +131,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
             mMediaPlayer.setLooping(false);
             mMediaPlayer.prepareAsync();
 
+
             // Play video when the media source is ready for playback.
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -71,7 +140,11 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                     vW = mMediaPlayer.getVideoWidth();
                     updateTextureViewSize(mPreview.getWidth(),mPreview.getHeight());
                     //textureView.setLayoutParams(new FrameLayout.LayoutParams(vW,vH));
-                    mediaPlayer.start();
+                    mMediaPlayer.seekTo(200);
+                    duration = mMediaPlayer.getDuration();
+                    int frames = (int) Math.round( (duration/mspf));
+                    //set max frames for seekbar
+                    seekbar.setMax(frames);
                 }
             });
 
