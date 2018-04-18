@@ -11,7 +11,9 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Environment;
@@ -27,12 +29,24 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
+import org.jcodec.api.SequenceEncoder;
+import org.jcodec.api.android.AndroidSequenceEncoder;
+import org.jcodec.common.io.NIOUtils;
+import org.jcodec.common.io.SeekableByteChannel;
+import org.jcodec.common.model.Rational;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
+
+import static android.media.MediaRecorder.AudioSource.MIC;
 
 public class talkOverVideo extends Activity implements TextureView.SurfaceTextureListener{
 
@@ -74,9 +88,13 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     int frameCounter = 0;
 
     ArrayList<String> voiceOverBmpPaths = new ArrayList<>();
+    String audioFileName;
 
     Thread recordBitmapInBackGround;
     Thread recordAudioInBackGround;
+    Thread mergeInBackGround;
+
+    MediaRecorder mediaRecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,11 +266,36 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
             @Override
             public void run() {
             //Your recording portion of the code goes here.
+                mediaRecorder = new MediaRecorder();
+                mediaRecorder.setAudioSource(MIC);
+                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+                    mediaRecorder.setAudioEncodingBitRate(48000);
+                } else {
+                    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                    mediaRecorder.setAudioEncodingBitRate(64000);
+                }
+                mediaRecorder.setAudioSamplingRate(16000);
+                File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                File mypath = new File(directory,"TalkFrame.mp4");
+                audioFileName = mypath.getAbsolutePath();
+                mediaRecorder.setOutputFile(mypath.getAbsolutePath());
+                try{
+                    mediaRecorder.prepare();
+                    mediaRecorder.start();
+                }catch (IOException e) {
+                    Log.e("Voice Recorder", "prepare() failed "+e.getMessage());
+                }
+                if (recordAudioInBackGround.isInterrupted()){
+                    return;
+                }
             }
         });
 
         recordAudioInBackGround.start();
     }
+
     private void beginRecordingBitmap(){
         recordBitmapInBackGround= new Thread(new Runnable() {
             @Override
@@ -267,11 +310,48 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                     Bitmap bitmap = mPreview.getBitmap();
                     saveBitmap(bitmap);
                 }
-
+                if(recordBitmapInBackGround.isInterrupted()){
+                    return;
+                }
             }
         });
 
         recordBitmapInBackGround.start();
+    }
+
+    private void mergeVideoAudio(){
+        mergeInBackGround = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Your recording portion of the code goes here.
+                DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+                String eMagTime = df2.format(Calendar.getInstance().getTime());
+                File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+                String outPath = directory.getAbsolutePath() + "/Voiceover-" + eMagTime + ".mp4";
+                SeekableByteChannel out = null;
+                //determine total time images were being recorded
+                Long lastmodified1;
+                Long lastmodifiedEnd;
+                File f = new File(voiceOverBmpPaths.get(0));
+                lastmodified1 = f.lastModified();
+                f = new File(voiceOverBmpPaths.get(voiceOverBmpPaths.size()-1));
+                lastmodifiedEnd = f.lastModified();
+
+
+                try {
+                    out = NIOUtils.writableFileChannel(outPath);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    AndroidSequenceEncoder enc = new AndroidSequenceEncoder(out, Rational.R(25,1));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        recordAudioInBackGround.start();
     }
 
     private void initView() {
@@ -345,8 +425,11 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
 
     public void endRecording(View view){
         saveBMPFlag = false;
+        mediaRecorder.stop();
+        mediaRecorder.release();
         recordAudioInBackGround.interrupt();
         recordBitmapInBackGround.interrupt();
+        mergeVideoAudio();
 
     }
 
