@@ -116,7 +116,9 @@ public class trackPointsOffline extends Activity {
     int angleTextSize;
 
     AndroidSequenceEncoder enc;
+    AndroidSequenceEncoder enc2;
     SeekableByteChannel out;
+    SeekableByteChannel out2;
 
     String eMagTime;//
 
@@ -304,10 +306,14 @@ public class trackPointsOffline extends Activity {
             try {
                 DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
                 eMagTime = df2.format(Calendar.getInstance().getTime());
-                outPath = directory.getAbsolutePath() + "/Tracked-" + eMagTime + ".mp4";
+                outPath = directory.getAbsolutePath() + "/FullSize-Tracked-" + eMagTime + ".mp4";
                 out = null;
                 out = NIOUtils.writableFileChannel(outPath);
                 enc = new AndroidSequenceEncoder(out, Rational.R(25,1));
+                outPath = directory.getAbsolutePath() + "/SmallSize-Tracked-" + eMagTime + ".mp4";
+                out2 = null;
+                out2 = NIOUtils.writableFileChannel(outPath);
+                enc2 = new AndroidSequenceEncoder(out2, Rational.R(25,1));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -495,6 +501,8 @@ public class trackPointsOffline extends Activity {
                         outputDone = true;
                         enc.finish();
                         NIOUtils.closeQuietly(out);
+                        enc2.finish();
+                        NIOUtils.closeQuietly(out2);
                         coords = null;
                     }
                 }
@@ -776,6 +784,8 @@ public class trackPointsOffline extends Activity {
 //            Picture pic = fromBitmap(bmp);
             try {
                 enc.encodeImage(bmp);
+                bmp = postProcessExecute.resizeForInstagram(bmp);
+                enc2.encodeImage(bmp);
             } catch (IOException e) {
                 e.printStackTrace();
             }
