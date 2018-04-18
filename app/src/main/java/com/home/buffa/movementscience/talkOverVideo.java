@@ -2,6 +2,7 @@ package com.home.buffa.movementscience;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -12,6 +13,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
@@ -54,6 +56,11 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     double duration;
     double mspf;
 
+    int h1;
+    int w1;
+
+    int rotateDegreesPostProcess;
+
     FFmpegMediaMetadataRetriever mmr;
 
     @Override
@@ -68,6 +75,10 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
         //need intent with video path
         Intent intentReceive = getIntent();
         videoAbsolutePath = intentReceive.getExtras().getString("videoPath");
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","0");
+        rotateDegreesPostProcess = Integer.valueOf(rotDeg);
 
         //start mmr for video
         mmr = new FFmpegMediaMetadataRetriever();
@@ -94,7 +105,13 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 int pos = (int) Math.round( ((double)progressChangedValue * mspf));
                 //mMediaPlayer.seekTo(pos);//wants input in ms
                 Bitmap bmp = mmr.getFrameAtTime(pos*1000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-                imageView.setImageBitmap(bmp);
+                if (bmp != null) {
+                    Matrix matrix = new Matrix();
+                    matrix.preRotate(rotateDegreesPostProcess);
+                    bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+                    //bmp = Bitmap.createScaledBitmap(bmp, w1, h1, false);
+                    imageView.setImageBitmap(bmp);
+                }
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -141,6 +158,8 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                     updateTextureViewSize(mPreview.getWidth(),mPreview.getHeight());
                     //textureView.setLayoutParams(new FrameLayout.LayoutParams(vW,vH));
                     mMediaPlayer.seekTo(200);
+                    h1 = mPreview.getHeight();
+                    w1 = mPreview.getWidth();
                     duration = mMediaPlayer.getDuration();
                     int frames = (int) Math.round( (duration/mspf));
                     //set max frames for seekbar
@@ -232,6 +251,8 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
 
         mPreview.setTransform(matrix);
         mPreview.setLayoutParams(new FrameLayout.LayoutParams(viewWidth, viewHeight));
+        imageView.setMaxHeight(viewHeight);
+        imageView.setMaxWidth(viewWidth);
     }
 
     public void playVideo(){
