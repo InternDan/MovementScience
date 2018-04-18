@@ -59,7 +59,7 @@
         <item>180</item>
         <item>270</item>
     </string-array>
-    <string name="pref_rotateDegreesPostProcess_default">90</string>
+    <string name="pref_rotateDegreesPostProcess_default">0</string>
 
     <string name="pref_rotateDegreesRealTime">Real-Time Frame Rotation Angle</string>
     <string-array name="pref_rotateDegreesRealTime_entries">

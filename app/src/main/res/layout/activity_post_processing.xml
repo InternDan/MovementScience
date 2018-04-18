@@ -64,7 +64,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:onClick="postProcessExectute"
-            android:text="Combine Videos" />
+            android:text="Preview" />
 
 
         <Button
