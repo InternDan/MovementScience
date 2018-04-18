@@ -9,10 +9,12 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
@@ -25,7 +27,10 @@ import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
@@ -62,6 +67,16 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     int rotateDegreesPostProcess;
 
     FFmpegMediaMetadataRetriever mmr;
+
+    Boolean saveBMPFlag = false;
+    Boolean bmpFromImageView = false;
+
+    int frameCounter = 0;
+
+    ArrayList<String> voiceOverBmpPaths = new ArrayList<>();
+
+    Thread recordBitmapInBackGround;
+    Thread recordAudioInBackGround;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +137,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 seekbar.setMax(frames);
                 textureView.setVisibility(TextureView.INVISIBLE);
                 imageView.setVisibility(ImageView.VISIBLE);
+                bmpFromImageView = true;
                 //set image view as visible
                 // TODO Auto-generated method stub
             }
@@ -204,6 +220,60 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
         }
     }
 
+    private void saveBitmap(Bitmap bmp){
+        frameCounter++;
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        // Create imageDir
+        File mypath=new File(directory,"TalkFrame" + Integer.toString(frameCounter) + ".png");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            voiceOverBmpPaths.add(mypath.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void beginRecordingAudio(){
+        recordAudioInBackGround = new Thread(new Runnable() {
+            @Override
+            public void run() {
+            //Your recording portion of the code goes here.
+            }
+        });
+
+        recordAudioInBackGround.start();
+    }
+    private void beginRecordingBitmap(){
+        recordBitmapInBackGround= new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Your recording portion of the code goes here.
+                while(saveBMPFlag == true && bmpFromImageView == true){
+                    BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+                    Bitmap bitmap = drawable.getBitmap();
+                    saveBitmap(bitmap);
+                }
+                while(saveBMPFlag == true && bmpFromImageView == false){
+                    Bitmap bitmap = mPreview.getBitmap();
+                    saveBitmap(bitmap);
+                }
+
+            }
+        });
+
+        recordBitmapInBackGround.start();
+    }
+
     private void initView() {
         textureView = findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
@@ -266,6 +336,21 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
             mMediaPlayer.stop();
         }
     }
+
+    public void beginRecording(View view){
+        saveBMPFlag = true;
+        beginRecordingAudio();
+        beginRecordingBitmap();
+    }
+
+    public void endRecording(View view){
+        saveBMPFlag = false;
+        recordAudioInBackGround.interrupt();
+        recordBitmapInBackGround.interrupt();
+
+    }
+
+
 
 
 
