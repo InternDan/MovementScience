@@ -79,6 +79,8 @@ public class postProcessExecute extends Activity {
     int h;
     int w;
 
+    boolean secondVidFlag = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -603,6 +605,7 @@ public class postProcessExecute extends Activity {
                     if (bmp1 != null) {
                         bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
                     } else if (bmp1 == null) {
+                        secondVidFlag = true;
                         double time2 = (i - (c-1)) * timePerFrame2;
                         bmp1 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                         bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
@@ -626,21 +629,39 @@ public class postProcessExecute extends Activity {
                 }
 
                 Matrix matrix = new Matrix();
-                if (h1 > w1) {
-                    matrix.preRotate(rotateDegreesPostProcess + 90);
-                }else {
-                    matrix.preRotate(rotateDegreesPostProcess);
+                if (secondVidFlag == false) {
+                    if (h1 > w1) {
+                        matrix.preRotate(rotateDegreesPostProcess + 90);
+                    } else {
+                        matrix.preRotate(rotateDegreesPostProcess);
+                    }
+                    bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
+                    bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
+                    matrix = new Matrix();
+                    if (h2 > w2) {
+                        matrix.preRotate(rotateDegreesPostProcess2 + 90);
+                    } else {
+                        matrix.preRotate(rotateDegreesPostProcess2);
+                    }
+                    bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
+                    bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
+                }else{
+                    if (h2 > w2) {
+                        matrix.preRotate(rotateDegreesPostProcess + 90);
+                    } else {
+                        matrix.preRotate(rotateDegreesPostProcess);
+                    }
+                    bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
+                    bmp1 = Bitmap.createScaledBitmap(bmp1, w2, h2, false);
+                    matrix = new Matrix();
+                    if (h2 > w2) {
+                        matrix.preRotate(rotateDegreesPostProcess2 + 90);
+                    } else {
+                        matrix.preRotate(rotateDegreesPostProcess2);
+                    }
+                    bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
+                    bmp2 = Bitmap.createScaledBitmap(bmp2, w1, h1, false);
                 }
-                bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
-                bmp1 = Bitmap.createScaledBitmap(bmp1,w1, h1,false);
-                matrix = new Matrix();
-                if (h2 > w2) {
-                    matrix.preRotate(rotateDegreesPostProcess2 + 90);
-                }else {
-                    matrix.preRotate(rotateDegreesPostProcess2);
-                }
-                bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
-                bmp2 = Bitmap.createScaledBitmap(bmp2,w2, h2,false);
 
                 ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
                 bmpList = resizeBitmap(bmp1,bmp2);
@@ -702,7 +723,11 @@ public class postProcessExecute extends Activity {
                     }
                 }else if (ppOrientation.contains("stacked")) {
                     try {
-                        bmp1 = resizeForStacked(bmp1,h1,h2,w1,w2);
+                        if (secondVidFlag == false) {
+                            bmp1 = resizeForStacked(bmp1, h1, h2, w1, w2);
+                        }else{
+                            bmp1 = resizeForStacked(bmp1, h2, h1, w2, w1);
+                        }
                         bmp1 = checkBitmapDimensions(bmp1);
                         enc.encodeImage(bmp1);
                         enc2.encodeImage(resizeForInstagram(bmp1));
