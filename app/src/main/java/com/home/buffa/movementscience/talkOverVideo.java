@@ -336,7 +336,9 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 lastmodified1 = f.lastModified();
                 f = new File(voiceOverBmpPaths.get(voiceOverBmpPaths.size()-1));
                 lastmodifiedEnd = f.lastModified();
-
+                long recordTime = lastmodifiedEnd - lastmodified1;
+                double fps = recordTime / (long)voiceOverBmpPaths.size();
+                Toast.makeText(getApplicationContext(),Double.toString(fps), Toast.LENGTH_LONG).show();
 
                 try {
                     out = NIOUtils.writableFileChannel(outPath);
@@ -429,7 +431,36 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
         mediaRecorder.release();
         recordAudioInBackGround.interrupt();
         recordBitmapInBackGround.interrupt();
-        mergeVideoAudio();
+
+
+        DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+        String eMagTime = df2.format(Calendar.getInstance().getTime());
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        String outPath = directory.getAbsolutePath() + "/Voiceover-" + eMagTime + ".mp4";
+        SeekableByteChannel out = null;
+        //determine total time images were being recorded
+        Long lastmodified1;
+        Long lastmodifiedEnd;
+        File f = new File(voiceOverBmpPaths.get(0));
+        lastmodified1 = f.lastModified();
+        f = new File(voiceOverBmpPaths.get(voiceOverBmpPaths.size()-1));
+        lastmodifiedEnd = f.lastModified();
+        long recordTime = lastmodifiedEnd - lastmodified1;
+        double fps = recordTime / (long)voiceOverBmpPaths.size();
+        Toast.makeText(getApplicationContext(),Double.toString(fps), Toast.LENGTH_LONG).show();
+
+        try {
+            out = NIOUtils.writableFileChannel(outPath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            AndroidSequenceEncoder enc = new AndroidSequenceEncoder(out, Rational.R(25,1));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //mergeVideoAudio();
 
     }
 

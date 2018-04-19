@@ -33,6 +33,7 @@ import org.opencv.android.OpenCVLoader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
@@ -258,6 +259,7 @@ public class postProcessExecute extends Activity {
 
         c.recycle();
         s.recycle();
+        pixels = null;
         return cs;
     }
 
@@ -502,7 +504,8 @@ public class postProcessExecute extends Activity {
                 outPath2 = directory.getAbsolutePath() + "/SmallComboVid" + eMagTime + ".mp4";
                 out2 = null;
                 out2 = NIOUtils.writableFileChannel(outPath2);
-
+                File file = new File(directory.getAbsolutePath() + "/RAF.txt");
+                RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -539,8 +542,6 @@ public class postProcessExecute extends Activity {
             frameRate2 = format2.getInteger("frame-rate");
             long duration2 = format2.getLong("durationUs");
 
-            Bitmap bmp1=null;
-            Bitmap bmp2=null;
 
             double frames1 = (int) duration1 / frameRate1 / 1000;
             double frames2 = (int) duration2 / frameRate2 / 1000;
@@ -557,8 +558,8 @@ public class postProcessExecute extends Activity {
 
             int c = 0;
             for (int i = 0; i < (frames1+frames2); i++) {
-                bmp1 = null;
-                bmp2 = null;
+                Bitmap bmp1 = null;
+                Bitmap bmp2 = null;
                 if (ppOrder.contains("lr")) {
                     if (i < frames1) {
                         double time1 = i * timePerFrame1;
@@ -567,9 +568,9 @@ public class postProcessExecute extends Activity {
                     }else {
                         bmp1=null;
                     }
-                    if (bmp1 != null) {
-                        bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);;
-                    } else if (bmp1 == null) {
+                    //if (bmp1 != null) {
+                        //bmp2 = Bitmap.createBitmap(w2,h2, Bitmap.Config.ARGB_8888);
+                    if (bmp1 == null) {//} else
                         double time2 = (i - (c-1)) * timePerFrame2;
                         bmp2 = mmr2.getFrameAtTime((int) Math.round(time2), FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
                     }
@@ -675,8 +676,14 @@ public class postProcessExecute extends Activity {
 
                 if (ppOrientation.contains("lr")) {
                     Bitmap bmpJoined = combineImagesLR(bmp1, bmp2);
-                    bmp1.recycle();
-                    bmp2.recycle();
+                    for (int j = 0; j < 3; j++) {
+                        if (bmp1.isRecycled()==false) {
+                            bmp1.recycle();
+                        }
+                        if (bmp2.isRecycled()==false) {
+                            bmp2.recycle();
+                        }
+                    }
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
@@ -687,8 +694,12 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("rl")) {
                     Bitmap bmpJoined = combineImagesLR(bmp2, bmp1);
-                    bmp1.recycle();
-                    bmp2.recycle();
+                    if (bmp1.isRecycled()==false) {
+                        bmp1.recycle();
+                    }
+                    if (bmp2.isRecycled()==false) {
+                        bmp2.recycle();
+                    }
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
@@ -699,8 +710,12 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("tb")) {
                     Bitmap bmpJoined = combineImagesUD(bmp1, bmp2);
-                    bmp1.recycle();
-                    bmp2.recycle();
+                    if (bmp1.isRecycled()==false) {
+                        bmp1.recycle();
+                    }
+                    if (bmp2.isRecycled()==false) {
+                        bmp2.recycle();
+                    }
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
@@ -711,8 +726,12 @@ public class postProcessExecute extends Activity {
                     }
                 } else if (ppOrientation.contains("bt")) {
                     Bitmap bmpJoined = combineImagesUD(bmp2, bmp1);
-                    bmp1.recycle();
-                    bmp2.recycle();
+                    if (bmp1.isRecycled()==false) {
+                        bmp1.recycle();
+                    }
+                    if (bmp2.isRecycled()==false) {
+                        bmp2.recycle();
+                    }
                     bmpJoined = checkBitmapDimensions(bmpJoined);
                     try {
                         enc.encodeImage(bmpJoined);
@@ -731,7 +750,12 @@ public class postProcessExecute extends Activity {
                         bmp1 = checkBitmapDimensions(bmp1);
                         enc.encodeImage(bmp1);
                         enc2.encodeImage(resizeForInstagram(bmp1));
-                        bmp1.recycle();
+                        if (bmp1.isRecycled()==false) {
+                            bmp1.recycle();
+                        }
+                        if (bmp2.isRecycled()==false) {
+                            bmp2.recycle();
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
