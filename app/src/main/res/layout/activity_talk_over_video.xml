@@ -22,7 +22,24 @@
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:max="10"
         android:progress="3" />
+
+    <Button
+        android:id="@+id/buttonStartVoiceRecording"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:onClick="beginRecording"
+        android:text="Start Recording" />
+
+    <Button
+        android:id="@+id/buttonStopVoiceRecording"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="135dp"
+        android:onClick="endRecording"
+        android:text="Stop Recording" />
 
 </FrameLayout>
