@@ -784,7 +784,7 @@ public class trackPointsOffline extends Activity {
 //            Picture pic = fromBitmap(bmp);
             try {
                 enc.encodeImage(bmp);
-                bmp = postProcessExecute.resizeForInstagram(bmp);
+                bmp = VideoProcessing.resizeForInstagram(bmp);
                 enc2.encodeImage(bmp);
             } catch (IOException e) {
                 e.printStackTrace();
