@@ -66,7 +66,6 @@ public class CombineVideos {
     VideoProcessing vp = new VideoProcessing();
 
     public void initialize(){
-        //try ExtractMpegFramesTest method to return a bitmap
         decoder1 = null;
         outputSurface1 = null;
         extractor1 = null;
@@ -152,7 +151,7 @@ public class CombineVideos {
         decoder2.configure(format2, outputSurface2.getSurface(), null, 0);
         decoder2.start();
 
-        double frOut = (double) frameRate1 / (double) frameRate2;
+        double frOut = ((double) frameRate1 + (double) frameRate2) / 2;
 
 
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
@@ -186,118 +185,126 @@ public class CombineVideos {
 
     public void combineVideos(){
         initialize();
+        boolean isDone = false;
 
-        try {
-            Bitmap bmp1 = null;
-            Bitmap bmp2 = null;
+        while (isDone == false) {
+            try {
+                Bitmap bmp1 = null;
+                Bitmap bmp2 = null;
 
-            //pull frames from each video as appropriate
-            if (ppOrder.contains("lr")) {
-                bmp1 = extractFrame1();
-            }else if (ppOrder.contains("rl")) {
-                bmp2 = extractFrame2();
-            }else if (ppOrder.contains("s")) {
-                if (secondVidFlag == false) {
-                    bmp1 = extractFrame1();
-                    if (bmp1 == null){
-                        secondVidFlag = true;
+                //pull frames from each video as appropriate
+                if (ppOrientation.contains("s")) {
+                    if (secondVidFlag == false) {
+                        bmp1 = extractFrame1();
+                        if (bmp1 == null) {
+                            secondVidFlag = true;
+                        }
+                    } else {
+                        bmp1 = extractFrame2();
                     }
-                }else{
-                    bmp1 = extractFrame2();
+                } else if (ppOrder.contains("lr")) {
+                    bmp1 = extractFrame1();
+                } else if (ppOrder.contains("rl")) {
+                    bmp2 = extractFrame2();
+                } else {
+                    bmp1 = extractFrame1();
+                    bmp2 = extractFrame2();
                 }
-            }
-            //check to see if we can close it out
-            if (bmp1 == null && bmp2 == null){
-                try {
-                    enc.finish();
-                    enc2.finish();
-                    NIOUtils.closeQuietly(out);
-                    NIOUtils.closeQuietly(out2);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                //check to see if we can close it out
+                if (bmp1 == null && bmp2 == null) {
+                    try {
+                        isDone = true;
+                        enc.finish();
+                        enc2.finish();
+                        NIOUtils.closeQuietly(out);
+                        NIOUtils.closeQuietly(out2);
+                        if (outputSurface1 != null) {
+                            outputSurface1.release();
+                            outputSurface1 = null;
+                        }
+                        if (decoder1 != null) {
+                            decoder1.stop();
+                            decoder1.release();
+                            decoder1 = null;
+                        }
+                        if (extractor1 != null) {
+                            extractor1.release();
+                            extractor1 = null;
+                        }
+                        if (outputSurface2 != null) {
+                            outputSurface2.release();
+                            outputSurface2 = null;
+                        }
+                        if (decoder2 != null) {
+                            decoder2.stop();
+                            decoder2.release();
+                            decoder2 = null;
+                        }
+                        if (extractor2 != null) {
+                            extractor2.release();
+                            extractor2 = null;
+                        }
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+                //if we can't close, set null bitmaps to zero for max compatibility
+                if (bmp1 == null) {
+                    bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH), format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bmp1);
+                    canvas.drawColor(Color.BLACK);
+                    canvas.drawBitmap(bmp1, 0, 0, null);
+                }
+                if (bmp2 == null) {
+                    bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH), format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bmp2);
+                    canvas.drawColor(Color.BLACK);
+                    canvas.drawBitmap(bmp2, 0, 0, null);
+                }
+                //intialize and store bitmaps in arraylist for processing
+                ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
+                bmpList.add(bmp1.copy(Bitmap.Config.ARGB_8888, true));
+                bmpList.add(bmp2.copy(Bitmap.Config.ARGB_8888, true));
+                bmp1.recycle();
+                bmp2.recycle();
+                //rotate bitmaps if needed
+                Bitmap bmp = bmpList.get(0).copy(Bitmap.Config.ARGB_8888, true);
+                vp.filePath = videoAbsolutePath1;
+                bmp = vp.rotateFrame(bmp, postRotate1);
+                bmpList.set(0, bmp.copy(Bitmap.Config.ARGB_8888, true));
+                bmp.recycle();
+                Bitmap bmptmp = bmpList.get(1).copy(Bitmap.Config.ARGB_8888, true);
+                vp.filePath = videoAbsolutePath2;
+                bmptmp = vp.rotateFrame(bmptmp, postRotate2);
+                bmpList.set(1, bmptmp.copy(Bitmap.Config.ARGB_8888, true));
+                bmptmp.recycle();
+                //resize bitmaps if needed
+                if (ppOrientation.contains("stacked") == false) {
+                    bmpList = vp.scaleHeightAndWidth(bmpList.get(0), bmpList.get(1), ppSize, ppOrientation);
+                } else {
+                    Bitmap bmptmp2 = bmpList.get(0).copy(Bitmap.Config.ARGB_8888, true);
+                    bmptmp2 = vp.resizeForStacked(bmptmp2, bmpList.get(0).getHeight(), bmpList.get(1).getHeight(), bmpList.get(0).getWidth(), bmpList.get(1).getWidth());
+                    bmpList.set(0, bmptmp2.copy(Bitmap.Config.ARGB_8888, true));
+                    bmptmp2.recycle();
+                }
+                //combine bitmaps if needed
+                Bitmap bmpJoined = null;
+                if (ppOrientation.contains("lr")) {
+                    bmpJoined = vp.combineImagesLR(bmpList.get(0), bmpList.get(1));
+                } else if (ppOrientation.contains("tb")) {
+                    bmpJoined = vp.combineImagesUD(bmpList.get(0), bmpList.get(1));
+                } else if (ppOrientation.contains("rl")) {
+                    bmpJoined = vp.combineImagesLR(bmpList.get(1), bmpList.get(0));
+                } else if (ppOrientation.contains("bt")) {
+                    bmpJoined = vp.combineImagesUD(bmpList.get(1), bmpList.get(0));
+                }
+                enc.encodeImage(bmpJoined);
+                enc2.encodeImage(vp.resizeForInstagram(bmpJoined));
+                bmpJoined.recycle();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            //if we can't close, set null bitmaps to zero for max compatibility
-            if (bmp1 == null) {
-                bmp1 = Bitmap.createBitmap(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bmp1);
-                canvas.drawColor(Color.BLACK);
-                canvas.drawBitmap(bmp1, 0, 0, null);
-            }
-            if (bmp2 == null) {
-                bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bmp2);
-                canvas.drawColor(Color.BLACK);
-                canvas.drawBitmap(bmp2, 0, 0, null);
-            }
-            //intialize and store bitmaps in arraylist for processing
-            ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
-            bmpList.add(bmp1.copy(Bitmap.Config.ARGB_8888,true));
-            bmpList.add(bmp2.copy(Bitmap.Config.ARGB_8888,true));
-            bmp1.recycle();
-            bmp2.recycle();
-            //rotate bitmaps if needed
-            Bitmap bmp = bmpList.get(0).copy(Bitmap.Config.ARGB_8888,true);
-            vp.filePath = videoAbsolutePath1;
-            bmp = vp.rotateFrame(bmp,postRotate1);
-            bmpList.set(0,bmp.copy(Bitmap.Config.ARGB_8888,true));
-            bmp.recycle();
-            Bitmap bmptmp = bmpList.get(1).copy(Bitmap.Config.ARGB_8888,true);
-            vp.filePath = videoAbsolutePath2;
-            bmptmp = vp.rotateFrame(bmptmp,postRotate2);
-            bmpList.set(1,bmptmp.copy(Bitmap.Config.ARGB_8888,true));
-            bmptmp.recycle();
-            //resize bitmaps if needed
-            if (ppOrientation.contains("stacked") == false){
-                bmpList = vp.scaleHeightAndWidth(bmpList.get(0),bmpList.get(1),ppSize,ppOrientation);
-            } else{
-                Bitmap bmptmp2 = bmpList.get(0).copy(Bitmap.Config.ARGB_8888,true);
-                bmptmp2 = vp.resizeForStacked(bmptmp2,bmpList.get(0).getHeight(),bmpList.get(1).getHeight(),bmpList.get(0).getWidth(),bmpList.get(1).getWidth());
-                bmpList.set(0,bmptmp2.copy(Bitmap.Config.ARGB_8888,true));
-                bmptmp2.recycle();
-            }
-            //combine bitmaps if needed
-            Bitmap bmpJoined = null;
-            if (ppOrientation.contains("lr")){
-                bmpJoined = vp.combineImagesLR(bmpList.get(0),bmpList.get(1));
-            }else if(ppOrientation.contains("tb")){
-                bmpJoined = vp.combineImagesUD(bmpList.get(0),bmpList.get(1));
-            }else if (ppOrientation.contains("rl")){
-                bmpJoined = vp.combineImagesLR(bmpList.get(1),bmpList.get(0));
-            }else if (ppOrientation.contains("bt")){
-                bmpJoined = vp.combineImagesUD(bmpList.get(1),bmpList.get(0));
-            }
-            enc.encodeImage(bmpJoined);
-            enc2.encodeImage(vp.resizeForInstagram(bmpJoined));
-            bmpJoined.recycle();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (outputSurface1 != null) {
-            outputSurface1.release();
-            outputSurface1 = null;
-        }
-        if (decoder1 != null) {
-            decoder1.stop();
-            decoder1.release();
-            decoder1 = null;
-        }
-        if (extractor1 != null) {
-            extractor1.release();
-            extractor1 = null;
-        }
-        if (outputSurface2 != null) {
-            outputSurface2.release();
-            outputSurface2 = null;
-        }
-        if (decoder2 != null) {
-            decoder2.stop();
-            decoder2.release();
-            decoder2 = null;
-        }
-        if (extractor2 != null) {
-            extractor2.release();
-            extractor2 = null;
         }
     }
 
@@ -493,6 +500,7 @@ public class CombineVideos {
                         outputSurface1.drawImage(true);
                         bmp = outputSurface1.returnFrame();
                         outputDone = true;
+
                         return bmp;
                     }
                 }
@@ -502,7 +510,7 @@ public class CombineVideos {
     }
 
     public Bitmap extractFrame2()throws IOException{
-        final int TIMEOUT_USEC = 10000;
+        final int TIMEOUT_USEC = 100000;
         ByteBuffer[] decoderInputBuffers = decoder2.getInputBuffers();
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;

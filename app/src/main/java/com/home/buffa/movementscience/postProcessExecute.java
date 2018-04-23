@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaFormat;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -78,7 +80,7 @@ public class postProcessExecute extends Activity {
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
         rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","0");
         rotateDegreesPostProcess2 = Integer.valueOf(rotDeg);
-        CombineVideos cv = new CombineVideos();
+        final CombineVideos cv = new CombineVideos();
         cv.videoAbsolutePath1 = FileUtils.getPath(getApplicationContext(),vid1Uri);
         cv.videoAbsolutePath2 = FileUtils.getPath(getApplicationContext(),vid2Uri);
         cv.ppOrder = ppOrder;
@@ -86,8 +88,20 @@ public class postProcessExecute extends Activity {
         cv.ppOrientation = ppOrientation;
         cv.postRotate1 = rotateDegreesPostProcess;
         cv.postRotate2 = rotateDegreesPostProcess2;
-        cv.initialize();
-        cv.combineVideos();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                //TODO your background code
+                cv.combineVideos();
+            }
+        });
+        Toast.makeText(getApplicationContext(),"Video will build in the background; this may take a while", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+
+
+
 
     }
 
