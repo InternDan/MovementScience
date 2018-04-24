@@ -30,6 +30,7 @@ import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
@@ -54,12 +55,17 @@ public class postProcessPreview extends Activity {
     MediaFormat format1;
     MediaFormat format2;
 
-    Bitmap bmpJoined;
+    Bitmap bmpJoined = null;
 
     int h1;
     int h2;
     int w1;
     int w2;
+
+    String videoAbsolutePath1;
+    String videoAbsolutePath2;
+
+    VideoProcessing vp = new VideoProcessing();
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @SuppressLint("LongLogTag")
@@ -100,6 +106,9 @@ public class postProcessPreview extends Activity {
         videoUri1 = Uri.parse(videoPath1);
         videoUri2 = Uri.parse(videoPath2);
 
+        videoAbsolutePath1 = FileUtils.getPath(getApplicationContext(),videoUri1);
+        videoAbsolutePath2 = FileUtils.getPath(getApplicationContext(),videoUri2);
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         ppOrder = sharedPref.getString("pref_postProcessingPlayOrder","s");
         ppSize = sharedPref.getString("pref_postProcessingSize","small");
@@ -113,122 +122,16 @@ public class postProcessPreview extends Activity {
     private class beginCombiningProcedure extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
+            CombineVideos cv = new CombineVideos();
+            cv.videoAbsolutePath1 = videoAbsolutePath1;
+            cv.videoAbsolutePath2 = videoAbsolutePath2;
+            cv.ppOrder = ppOrder;
+            cv.ppSize = ppSize;
+            cv.ppOrientation = ppOrientation;
+            cv.postRotate1 = rotateDegreesPostProcess;
+            cv.postRotate2 = rotateDegreesPostProcess2;
+            bmpJoined = cv.getPreviewFrame();
 
-            FFmpegMediaMetadataRetriever mmr1 = new FFmpegMediaMetadataRetriever();
-            mmr1.setDataSource(FileUtils.getPath(getApplicationContext(), videoUri1));
-            FFmpegMediaMetadataRetriever mmr2 = new FFmpegMediaMetadataRetriever();
-            mmr2.setDataSource(FileUtils.getPath(getApplicationContext(), videoUri2));
-
-            MediaExtractor extractor1 = new MediaExtractor();
-            File inputFile1 = new File(FileUtils.getPath(getApplicationContext(), videoUri1));
-            try {
-                extractor1.setDataSource(inputFile1.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            int trackIndex1 = postProcessExecute.selectTrack(extractor1);
-            extractor1.selectTrack(trackIndex1);
-            format1 = extractor1.getTrackFormat(trackIndex1);
-            long duration1 = format1.getLong("durationUs");
-
-            MediaExtractor extractor2 = new MediaExtractor();
-            File inputFile2 = new File(FileUtils.getPath(getApplicationContext(), videoUri2));
-            try {
-                extractor2.setDataSource(inputFile2.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            int trackIndex2 = postProcessExecute.selectTrack(extractor2);
-            extractor2.selectTrack(trackIndex2);
-            format2 = extractor2.getTrackFormat(trackIndex2);
-            long duration2 = format2.getLong("durationUs");
-
-            Bitmap bmp1 = null;
-            Bitmap bmp2 = null;
-
-            int time = 0;
-
-            bmp1 = mmr1.getFrameAtTime(time, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-            bmp2 = mmr2.getFrameAtTime(time, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-
-            if (ppSize.contains("s")) {
-                if (postProcessing.vid1Height == postProcessing.vid2Height) {
-                    bmp1 = bmp1;
-                    bmp2 = bmp2;
-                    h1 = postProcessing.vid1Height;
-                    h2 = postProcessing.vid2Height;
-                    w1 = postProcessing.vid1Width;
-                    w2 = postProcessing.vid2Width;
-                } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
-                    h1 = postProcessing.vid2Height;
-                    w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
-                    bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                    h2 = bmp2.getHeight();
-                    w2 = bmp2.getWidth();
-                } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
-                    h1 = postProcessing.vid1Height;
-                    w2 = (int) Math.round((double) postProcessing.vid2Width * (double) ((double)postProcessing.vid1Height / (double) postProcessing.vid2Height));
-                    bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
-                    h2 = bmp2.getHeight();
-                    w1 = bmp1.getWidth();
-                }
-            } else if (ppSize.contains("l")) {
-                if (postProcessing.vid1Height == postProcessing.vid2Height) {
-                    bmp1 = bmp1;
-                    bmp2 = bmp2;
-                    h1 = bmp1.getHeight();
-                    h2 = bmp2.getHeight();
-                    w1 = bmp1.getWidth();
-                    w2 = bmp2.getWidth();
-                } else if (postProcessing.vid1Height > postProcessing.vid2Height) {
-                    h1 = postProcessing.vid1Height;
-                    w1 = postProcessing.vid1Width;
-                    w2 = (int) Math.round((double)postProcessing.vid2Width * ((double)postProcessing.vid1Height / (double)postProcessing.vid2Height));
-                    bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h1, false);
-                    h2 = bmp2.getHeight();
-                } else if (postProcessing.vid2Height > postProcessing.vid1Height) {
-                    h2 = postProcessing.vid2Height;
-                    h1 = postProcessing.vid2Height;
-                    w1 = (int) Math.round((double)postProcessing.vid1Width * ((double)postProcessing.vid2Height / (double)postProcessing.vid1Height));
-                    w2 = bmp2.getWidth();
-                    bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-                }
-            }
-
-            Matrix matrix = new Matrix();
-            if (h1 > w1) {
-                matrix.preRotate(rotateDegreesPostProcess + 90);
-            } else {
-                matrix.preRotate(rotateDegreesPostProcess);
-            }
-            bmp1 = Bitmap.createBitmap(bmp1, 0, 0, bmp1.getWidth(), bmp1.getHeight(), matrix, true);
-            bmp1 = Bitmap.createScaledBitmap(bmp1, w1, h1, false);
-            matrix = new Matrix();
-            if (h2 > w2) {
-                matrix.preRotate(rotateDegreesPostProcess2 + 90);
-            } else {
-                matrix.preRotate(rotateDegreesPostProcess2);
-            }
-            bmp2 = Bitmap.createBitmap(bmp2, 0, 0, bmp2.getWidth(), bmp2.getHeight(), matrix, true);
-            bmp2 = Bitmap.createScaledBitmap(bmp2, w2, h2, false);
-
-            if (ppOrientation.contains("lr")) {
-                bmpJoined = postProcessExecute.combineImagesLR(bmp1, bmp2);
-                bmpJoined = postProcessExecute.checkBitmapDimensions(bmpJoined);
-            } else if (ppOrientation.contains("rl")) {
-                bmpJoined = postProcessExecute.combineImagesLR(bmp2, bmp1);
-                bmpJoined = postProcessExecute.checkBitmapDimensions(bmpJoined);
-            } else if (ppOrientation.contains("tb")) {
-                bmpJoined = postProcessExecute.combineImagesUD(bmp1, bmp2);
-                bmpJoined = postProcessExecute.checkBitmapDimensions(bmpJoined);
-            } else if (ppOrientation.contains("bt")) {
-                bmpJoined = postProcessExecute.combineImagesUD(bmp2, bmp1);
-                bmpJoined = postProcessExecute.checkBitmapDimensions(bmpJoined);
-            } else if (ppOrientation.contains("stacked")) {
-                bmpJoined = bmp1.copy(Bitmap.Config.ARGB_8888,false);
-            }
-            bmp1.recycle();
-            bmp2.recycle();
             return null;
         }
 
@@ -250,7 +153,7 @@ public class postProcessPreview extends Activity {
 
     public void postProcessExectute(View view){
         Intent intentPassPostProcessing = new Intent(getApplicationContext(),postProcessExecute.class);
-        bmpJoined.recycle();
+        //bmpJoined.recycle();
         intentPassPostProcessing.putExtra("videoPath1", videoUri1.toString());
         intentPassPostProcessing.putExtra("videoPath2", videoUri2.toString());
         intentPassPostProcessing.putExtra("h1", h1);
