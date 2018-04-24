@@ -298,6 +298,8 @@ public class CombineVideos {
                     bmpJoined = vp.combineImagesLR(bmpList.get(1), bmpList.get(0));
                 } else if (ppOrientation.contains("bt")) {
                     bmpJoined = vp.combineImagesUD(bmpList.get(1), bmpList.get(0));
+                }else{
+                    bmpJoined = bmpList.get(0);
                 }
                 enc.encodeImage(bmpJoined);
                 enc2.encodeImage(vp.resizeForInstagram(bmpJoined));
@@ -316,10 +318,10 @@ public class CombineVideos {
             Bitmap bmp2 = null;
 
             //pull frames from each video as appropriate
-            if (ppOrientation.contains("lr")) {
+            if (ppOrientation.contains("lr") || ppOrientation.contains("tb") ) {
                 bmp1 = extractFrame1();
                 bmp2 = extractFrame2();
-            } else if (ppOrientation.contains("rl")) {
+            } else if (ppOrientation.contains("rl") || ppOrientation.contains("bt")) {
                 bmp2 = extractFrame2();
                 bmp1 = extractFrame1();
             } else if (ppOrientation.contains("s")) {
@@ -381,6 +383,8 @@ public class CombineVideos {
                 bmpJoined = vp.combineImagesLR(bmpList.get(1), bmpList.get(0));
             } else if (ppOrientation.contains("bt")) {
                 bmpJoined = vp.combineImagesUD(bmpList.get(1), bmpList.get(0));
+            } else if (ppOrientation.contains("stacked")) {
+                bmpJoined = bmpList.get(0);
             }
             return bmpJoined;
         } catch (IOException e) {

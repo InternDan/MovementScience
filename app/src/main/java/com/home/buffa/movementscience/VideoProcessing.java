@@ -31,6 +31,9 @@ public class VideoProcessing {
         int orientation = exifInterface.getAttributeInt(TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
         Matrix matrix = new Matrix();
         switch (orientation) {
+            case ExifInterface.ORIENTATION_UNDEFINED:
+                matrix.postRotate(0+prefRotatePost);
+                break;
             case ExifInterface.ORIENTATION_ROTATE_90:
                 matrix.postRotate(90+prefRotatePost);
                 break;
