@@ -393,12 +393,11 @@ public class trackPointsOffline extends Activity {
 
         protected void onPostExecute(Void result) {
 
-            Intent intentPass = new Intent(getApplicationContext(), displayTrackingResults.class);
+            Intent intentPass = new Intent(getApplicationContext(), playVideo.class);
 
             File file = new File(outPath);
-            intentPass.putExtra("videoPath", file.toString());
-            intentPass.putExtra("duration", duration);
-            intentPass.putExtra("frameRate", frameRate);
+            Uri uri = Uri.fromFile(file);
+            intentPass.putExtra("vidUri", uri.toString());
             startActivity(intentPass);
         }
 

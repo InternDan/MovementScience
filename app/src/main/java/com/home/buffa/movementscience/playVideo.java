@@ -61,7 +61,7 @@ public class playVideo extends Activity {
         Bitmap bmp = null;
 
         retriever.setDataSource(FileUtils.getPath(getApplicationContext(),vidUri));
-        bmp = retriever.getFrameAtTime(500,MediaMetadataRetriever.OPTION_CLOSEST);
+        bmp = retriever.getFrameAtTime(200,MediaMetadataRetriever.OPTION_CLOSEST);
         height =bmp.getHeight();
         width=bmp.getWidth();
 
