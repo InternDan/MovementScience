@@ -76,6 +76,7 @@ dependencies {
     compile 'org.jcodec:jcodec:0.2.3'
     compile 'org.jcodec:jcodec-android:0.2.3'
     compile 'com.android.support:multidex:1.0.0'
+    compile 'com.googlecode.mp4parser:isoparser:1.1.21'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
     implementation project(':FileChooser')
