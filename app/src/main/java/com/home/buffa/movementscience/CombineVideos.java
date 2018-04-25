@@ -1,13 +1,17 @@
 package com.home.buffa.movementscience;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.jcodec.api.android.AndroidSequenceEncoder;
 import org.jcodec.common.io.NIOUtils;
@@ -39,6 +43,7 @@ public class CombineVideos {
     public static String ppOrientation;
     public static int postRotate1;
     public static int postRotate2;
+    public static Context context;
 
 
     int frameRate1;
@@ -156,7 +161,7 @@ public class CombineVideos {
 
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
         eMagTime = df2.format(Calendar.getInstance().getTime());
-        outPath = directory.getAbsolutePath() + "/FullSize-Tracked-" + eMagTime + ".mp4";
+        outPath = directory.getAbsolutePath() + "/FullSize-Combined-" + eMagTime + ".mp4";
         out = null;
         try {
             out = NIOUtils.writableFileChannel(outPath);
@@ -168,7 +173,7 @@ public class CombineVideos {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        outPath = directory.getAbsolutePath() + "/SmallSize-Tracked-" + eMagTime + ".mp4";
+        outPath = directory.getAbsolutePath() + "/SmallSize-Combined-" + eMagTime + ".mp4";
         out2 = null;
         try {
             out2 = NIOUtils.writableFileChannel(outPath);
@@ -301,6 +306,7 @@ public class CombineVideos {
                 }else{
                     bmpJoined = bmpList.get(0);
                 }
+                bmpJoined = vp.checkBitmapDimensions(bmpJoined);
                 enc.encodeImage(bmpJoined);
                 enc2.encodeImage(vp.resizeForInstagram(bmpJoined));
                 bmpJoined.recycle();
@@ -386,6 +392,7 @@ public class CombineVideos {
             } else if (ppOrientation.contains("stacked")) {
                 bmpJoined = bmpList.get(0);
             }
+            bmpJoined = vp.checkBitmapDimensions(bmpJoined);
             return bmpJoined;
         } catch (IOException e) {
             e.printStackTrace();
@@ -423,7 +430,7 @@ public class CombineVideos {
 
 
     public Bitmap extractFrame1()throws IOException{
-        final int TIMEOUT_USEC = 100000;
+        final int TIMEOUT_USEC = 1000000;
         ByteBuffer[] decoderInputBuffers = decoder1.getInputBuffers();
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;
@@ -514,7 +521,7 @@ public class CombineVideos {
     }
 
     public Bitmap extractFrame2()throws IOException{
-        final int TIMEOUT_USEC = 100000;
+        final int TIMEOUT_USEC = 1000000;
         ByteBuffer[] decoderInputBuffers = decoder2.getInputBuffers();
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;

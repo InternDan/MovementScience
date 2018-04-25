@@ -91,7 +91,13 @@
         <activity
             android:name=".talkOverVideoLoadAndPass"
             android:label="@string/title_activity_talk_over_video_load_and_pass" />
-        <activity android:name=".postProcessPreview"></activity>
+        <activity android:name=".postProcessPreview" />
+        <activity
+            android:name=".PlayMovie"
+            android:label="@string/title_activity_play_movie" />
+        <activity
+            android:name=".playVideo"
+            android:label="@string/title_activity_play_video"></activity>
     </application>
 
 </manifest>

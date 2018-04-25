@@ -386,5 +386,7 @@
     <string name="title_activity_save_folder_chooser_settings">SaveFolderChooserSettings</string>
     <string name="title_activity_talk_over_video">talkOverVideo</string>
     <string name="title_activity_talk_over_video_load_and_pass">talkOverVideoLoadAndPass</string>
+    <string name="title_activity_play_movie">PlayMovie</string>
+    <string name="title_activity_play_video">playVideo</string>
 
 </resources>
