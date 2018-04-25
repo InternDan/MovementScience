@@ -2,25 +2,33 @@ package com.home.buffa.movementscience;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.Manifest;
 import android.widget.Toast;
 
 
+import com.ipaulpro.afilechooser.utils.FileUtils;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +38,7 @@ import static android.content.ContentValues.TAG;
 
 public class MainActivity extends Activity {
 
+    static final int READ_REQUEST_CODE_VIDEO = 2;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -133,6 +142,13 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void watchVideo(View view){
+        Intent intentGetVideo = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intentGetVideo.addCategory(Intent.CATEGORY_OPENABLE);
+        intentGetVideo.setType("video/*");
+        startActivityForResult(intentGetVideo, READ_REQUEST_CODE_VIDEO);
+    }
+
     private  boolean checkAndRequestPermissions() {
         int permissionCamera = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA);
@@ -221,6 +237,18 @@ public class MainActivity extends Activity {
                 .create()
                 .show();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == READ_REQUEST_CODE_VIDEO && resultCode == RESULT_OK) {
+            Uri videoUri = data.getData();
+            Intent intent = new Intent(getApplicationContext(),playVideo.class);
+            intent.putExtra("vidUri",videoUri.toString());
+            startActivity(intent);
+        }
+    }
+
+
 
 
 }

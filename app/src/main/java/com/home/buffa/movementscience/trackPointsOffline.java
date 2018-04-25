@@ -354,7 +354,7 @@ public class trackPointsOffline extends Activity {
                 frameRate = 30;
             }
             duration = format.getLong("durationUs");
-            outputSurface = new ExtractMpegFramesTest.CodecOutputSurface(frameWidth,frameHeight);//format.getInteger(MediaFormat.KEY_WIDTH),format.getInteger(MediaFormat.KEY_HEIGHT));//check!
+            outputSurface = new ExtractMpegFramesTest.CodecOutputSurface(format.getInteger(MediaFormat.KEY_WIDTH),format.getInteger(MediaFormat.KEY_HEIGHT));//check!frameWidth,frameHeight);
             String mime = format.getString(MediaFormat.KEY_MIME);
             try {
                 decoder = MediaCodec.createDecoderByType(mime);
@@ -393,13 +393,13 @@ public class trackPointsOffline extends Activity {
 
         protected void onPostExecute(Void result) {
 
-            Intent intentPass = new Intent(getApplicationContext(), displayTrackingResults.class);
+            //Intent intentPass = new Intent(getApplicationContext(), playVideo.class);
 
-            File file = new File(outPath);
-            intentPass.putExtra("videoPath", file.toString());
-            intentPass.putExtra("duration", duration);
-            intentPass.putExtra("frameRate", frameRate);
-            startActivity(intentPass);
+            //File file = new File(outPath);
+           // Uri uri = Uri.fromFile(file);
+            //intentPass.putExtra("vidUri", uri.toString());
+            //startActivity(intentPass);
+            Toast.makeText(trackPointsOffline.this, "Tracking completed!", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -411,7 +411,6 @@ public class trackPointsOffline extends Activity {
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;
         int decodeCount = 0;
-        Bitmap bmp2;
 
         boolean outputDone = false;
         boolean inputDone = false;
@@ -485,16 +484,7 @@ public class trackPointsOffline extends Activity {
                         outputSurface.awaitNewImage();
                         outputSurface.drawImage(true);
                         Bitmap bmp = outputSurface.returnFrame();
-                        Matrix matrix = new Matrix();
-                        //float sW = (float)frameWidth /(float)bmp.getWidth();
-                        //float sH = (float)frameHeight /(float)bmp.getHeight();
-                        if (frameHeight > frameWidth) {
-                            matrix.preRotate(rotateDegreesPostProcess + 90);
-                        }else {
-                            matrix.preRotate(rotateDegreesPostProcess);
-                        }
-                        bmp = Bitmap.createBitmap(bmp, 0, 0, frameWidth, frameHeight, matrix, true);
-                        bmp = Bitmap.createScaledBitmap(bmp,frameWidth,frameHeight,false);
+                        bmp = VideoProcessing.rotateFrame(bmp,rotateDegreesPostProcess);
                         trackPoints(bmp);
 //                        bmp.recycle();
                     }else{
@@ -504,11 +494,14 @@ public class trackPointsOffline extends Activity {
                         enc2.finish();
                         NIOUtils.closeQuietly(out2);
                         coords = null;
+
                     }
                 }
             }
         }
     }
+
+
 
     private void trackPoints(Bitmap bmp){
         if (allPoints.size() == 0){

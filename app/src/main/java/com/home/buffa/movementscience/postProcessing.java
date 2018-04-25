@@ -69,10 +69,12 @@ public class postProcessing extends Activity {
                 MediaController(this);
         mediaController1.setAnchorView(vid1);
         vid1.setMediaController(mediaController1);
+        vid1.seekTo(200);
         MediaController mediaController2 = new
                 MediaController(this);
         mediaController2.setAnchorView(vid2);
         vid2.setMediaController(mediaController2);
+        vid2.seekTo(200);
 
 
         final View button1 = findViewById(R.id.linearLayoutVid1);

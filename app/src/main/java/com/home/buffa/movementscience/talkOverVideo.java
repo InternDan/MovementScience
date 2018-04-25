@@ -30,6 +30,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.coremedia.iso.boxes.Container;
+import com.googlecode.mp4parser.DataSource;
 import com.googlecode.mp4parser.FileDataSourceImpl;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
@@ -350,6 +351,8 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                         Bitmap writeBmp = BitmapFactory.decodeFile(voiceOverBmpPaths.get(i));
                         try {
                             enc.encodeImage(writeBmp);
+                            File f = new File(voiceOverBmpPaths.get(i));
+                            f.delete();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -363,7 +366,9 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 }
                 //add audio
                 try {
-                    H264TrackImpl h264Track = new H264TrackImpl(new FileDataSourceImpl("outPath"));
+                    File f = new File(outPath);
+                    DataSource ds = new FileDataSourceImpl(f);
+                    H264TrackImpl h264Track = new H264TrackImpl(ds);//not correct
                     String aPath = FileUtils.getPath(getApplicationContext(),Uri.fromFile(mypath));
                     AACTrackImpl aacTrack = new AACTrackImpl(new FileDataSourceImpl(aPath));
                     Movie movie = new Movie();

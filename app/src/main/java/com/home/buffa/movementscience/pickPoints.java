@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.ipaulpro.afilechooser.utils.FileUtils;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -46,7 +48,7 @@ public class pickPoints extends Activity {
     String path;
     Point X;
     Uri imageUri;
-    static Bitmap bmp;
+    Bitmap bmp;
     Mat m;
     int frameRows;
     int frameCols;
@@ -77,14 +79,7 @@ public class pickPoints extends Activity {
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     Log.i("OpenCV", "OpenCV loaded successfully");
-                    Intent intentReceive = getIntent();
-                    String path = intentReceive.getExtras().getString("firstFramePathString");
-                    File image2 = new File(path);
-                    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                    Bitmap bmp2 = BitmapFactory.decodeFile(image2.getAbsolutePath(),bmOptions);
-                    int frameRows = bmp2.getHeight();
-                    int frameCols = bmp2.getWidth();
-                    m = new Mat(frameRows, frameCols, CvType.CV_8UC1);
+
                 } break;
                 default:
                 {
@@ -187,24 +182,22 @@ public class pickPoints extends Activity {
         String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
 
+
+
         Intent intentReceive = getIntent();
+        String path = intentReceive.getExtras().getString("firstFramePathString");
+        File image2 = new File(path);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmp = BitmapFactory.decodeFile(image2.getAbsolutePath(),bmOptions);
+        frameRows = bmp.getHeight();
+        frameCols = bmp.getWidth();
+        m = new Mat(frameRows, frameCols, CvType.CV_8UC1);
         coords = null;
-        path = intentReceive.getExtras().getString("firstFramePathString");
-        String vidPath = intentReceive.getExtras().getString("videoPath");
-        vidPathPass = vidPath;
         videoAbsolutePath = intentReceive.getExtras().getString("videoAbsolutePath");
-        videoUri = Uri.parse(vidPath);
+        videoUri = Uri.parse(videoAbsolutePath);
 //        int firstFramePosition = 0;
         imageViewPicker = (ImageView) findViewById(R.id.imageViewPicker);
-        Uri imageUri = Uri.parse(path);
-        File image = new File(path);
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmp = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
-        Matrix matrix = new Matrix();
-        if (rotateDegreesPostProcess != 0) {
-            matrix.postRotate(rotateDegreesPostProcess);
-            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-        }
+        //get first frame bitmap
         frameRows = bmp.getHeight();
         frameCols = bmp.getWidth();
         imageViewPicker.setImageBitmap(bmp);
@@ -389,6 +382,8 @@ public class pickPoints extends Activity {
         }
         return m;
     }
+
+
 
     public void goHome(View view){
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
