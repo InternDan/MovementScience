@@ -1,3 +1,0 @@
-D:/MovementScience/app/.externalNativeBuild/cmake/release/mips/CMakeFiles/native-lib.dir
-D:/MovementScience/app/.externalNativeBuild/cmake/release/mips/CMakeFiles/edit_cache.dir
-D:/MovementScience/app/.externalNativeBuild/cmake/release/mips/CMakeFiles/rebuild_cache.dir

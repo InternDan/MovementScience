@@ -3,6 +3,8 @@ package com.home.buffa.movementscience;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,6 +13,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaCodec;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
+import android.media.MediaMuxer;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -48,6 +54,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -108,6 +115,10 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     MediaRecorder mediaRecorder;
 
     File mypath;
+
+    String eMagTime;
+
+    String outPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -309,13 +320,16 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
             @Override
             public void run() {
                 //Your recording portion of the code goes here.
+                Bitmap bitmap;
                 while (saveBMPFlag == true && bmpFromImageView == false) {
                     BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-                    Bitmap bitmap = drawable.getBitmap();
-                    saveBitmap(bitmap);
+                    if (drawable != null) {
+                        bitmap = drawable.getBitmap();
+                        saveBitmap(bitmap);
+                    }
                 }
                 while (saveBMPFlag == true && bmpFromImageView == true) {
-                    Bitmap bitmap = mPreview.getBitmap();
+                    bitmap = mPreview.getBitmap();
                     saveBitmap(bitmap);
                 }
             }
@@ -329,9 +343,9 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 AndroidSequenceEncoder enc = null;
                 //Your recording portion of the code goes here.
                 DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
-                String eMagTime = df2.format(Calendar.getInstance().getTime());
+                eMagTime = df2.format(Calendar.getInstance().getTime());
                 File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-                String outPath = directory.getAbsolutePath() + "/VoiceoverTmp-" + eMagTime + ".mp4";
+                outPath = directory.getAbsolutePath() + "/VoiceoverTmp-" + eMagTime + ".mp4";
                 SeekableByteChannel out = null;
                 //determine total time images were being recorded
 
@@ -365,25 +379,9 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                     }
                 }
                 //add audio
-                try {
-                    File f = new File(outPath);
-                    DataSource ds = new FileDataSourceImpl(f);
-                    H264TrackImpl h264Track = new H264TrackImpl(ds);//not correct
-                    String aPath = FileUtils.getPath(getApplicationContext(),Uri.fromFile(mypath));
-                    AACTrackImpl aacTrack = new AACTrackImpl(new FileDataSourceImpl(aPath));
-                    Movie movie = new Movie();
-                    movie.addTrack(h264Track);
-                    movie.addTrack(aacTrack);
-                    Container mp4file = new DefaultMp4Builder().build(movie);
-                    File d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-                    String Path = d.getAbsolutePath() + "/Voiceover-" + eMagTime + ".mp4";
-                    FileChannel fc = new FileOutputStream(new File(Path)).getChannel();
-                    mp4file.writeContainer(fc);
-                    fc.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                MediaMultiplexer mm = new MediaMultiplexer();
+                mm.context = getApplicationContext();
+                mm.startMuxing(getApplicationContext());
             }
         });
     }
@@ -463,9 +461,9 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
         mediaRecorder.release();
 
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
-        String eMagTime = df2.format(Calendar.getInstance().getTime());
+        eMagTime = df2.format(Calendar.getInstance().getTime());
         File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        String outPath = directory.getAbsolutePath() + "/Voiceover-" + eMagTime + ".mp4";
+        outPath = directory.getAbsolutePath() + "/Voiceover-" + eMagTime + ".mp4";
         SeekableByteChannel out = null;
         //determine total time images were being recorded
         Long lastmodified1;
@@ -481,7 +479,98 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     }
 
 
+    public class MediaMultiplexer {
+        private static final int MAX_SAMPLE_SIZE = 8 * 2880 * 2880;
+        public Context context;
 
+        public void startMuxing(Context context) {
+            MediaMuxer muxer = null;
+            MediaFormat VideoFormat = null;
+            File d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+            String Path = d.getAbsolutePath() + "/Voiceover-" + eMagTime + ".mp4";
+            String outputVideoFileName = Path;
+            try {
+                muxer = new MediaMuxer(outputVideoFileName, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            MediaExtractor extractorVideo = new MediaExtractor();
+            try {
+                extractorVideo.setDataSource(outPath);
+                int tracks = extractorVideo.getTrackCount();
+                for (int i = 0; i < tracks; i++) {
+                    MediaFormat mf = extractorVideo.getTrackFormat(i);
+                    String mime = mf.getString(MediaFormat.KEY_MIME);
+                    if (mime.startsWith("video/")) {
+                        extractorVideo.selectTrack(i);
+                        VideoFormat = extractorVideo.getTrackFormat(i);
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            MediaExtractor extractorAudio = new MediaExtractor();
+            try {
+                audioFileName = FileUtils.getPath(getApplicationContext(),Uri.fromFile(mypath));;
+                extractorAudio.setDataSource(audioFileName);
+                int tracks = extractorAudio.getTrackCount();
+                extractorAudio.selectTrack(0);
+
+                MediaFormat AudioFormat = extractorAudio.getTrackFormat(0);
+                int audioTrackIndex = muxer.addTrack(AudioFormat);
+                int videoTrackIndex = muxer.addTrack(VideoFormat);
+
+                boolean sawEOS = false;
+                boolean sawAudioEOS = false;
+                int bufferSize = MAX_SAMPLE_SIZE;
+                ByteBuffer dstBuf = ByteBuffer.allocate(bufferSize);
+                int offset = 100;
+                MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+                muxer.start();
+
+                while (!sawEOS) {
+                    bufferInfo.offset = offset;
+                    bufferInfo.size = extractorVideo.readSampleData(dstBuf, offset);
+                    if (bufferInfo.size < 0) {
+                        sawEOS = true;
+                        bufferInfo.size = 0;
+                    } else {
+                        bufferInfo.presentationTimeUs = extractorVideo.getSampleTime();
+                        bufferInfo.flags = extractorVideo.getSampleFlags();
+                        int trackIndex = extractorVideo.getSampleTrackIndex();
+                        muxer.writeSampleData(videoTrackIndex, dstBuf, bufferInfo);
+                        extractorVideo.advance();
+                    }
+                }
+                ByteBuffer audioBuf = ByteBuffer.allocate(bufferSize);
+                while (!sawAudioEOS) {
+                    bufferInfo.offset = offset;
+                    bufferInfo.size = extractorAudio.readSampleData(audioBuf, offset);
+                    if (bufferInfo.size < 0) {
+                        sawAudioEOS = true;
+                        bufferInfo.size = 0;
+                    } else {
+                        bufferInfo.presentationTimeUs = extractorAudio.getSampleTime();
+                        bufferInfo.flags = extractorAudio.getSampleFlags();
+                        int trackIndex = extractorAudio.getSampleTrackIndex();
+                        muxer.writeSampleData(audioTrackIndex, audioBuf, bufferInfo);
+                        extractorAudio.advance();
+                    }
+                }
+                muxer.stop();
+                muxer.release();
+                Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+
+    }
 
 
 
