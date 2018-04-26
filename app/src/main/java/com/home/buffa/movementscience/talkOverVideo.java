@@ -355,7 +355,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                     e.printStackTrace();
                 }
                 try {
-                    enc = new AndroidSequenceEncoder(out, Rational.R((int)(Math.round(frameRate)),1));
+                    enc = new AndroidSequenceEncoder(out, Rational.R((int)(Math.round(fps)),1));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -380,7 +380,6 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 }
                 //add audio
                 MediaMultiplexer mm = new MediaMultiplexer();
-                mm.context = getApplicationContext();
                 mm.startMuxing(getApplicationContext());
             }
         });
@@ -475,13 +474,15 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
         long recordTime = lastmodifiedEnd - lastmodified1;
         fps = (double)voiceOverBmpPaths.size() / (double)(recordTime / 1000);
         mergeVideoAudio();
+        Toast.makeText(this, "Merging audio and captured video, may take a minute or two depending on length", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
 
     }
 
 
     public class MediaMultiplexer {
         private static final int MAX_SAMPLE_SIZE = 8 * 2880 * 2880;
-        public Context context;
 
         public void startMuxing(Context context) {
             MediaMuxer muxer = null;
@@ -561,7 +562,6 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 }
                 muxer.stop();
                 muxer.release();
-                Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Exception ex) {
