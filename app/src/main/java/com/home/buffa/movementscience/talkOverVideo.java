@@ -115,6 +115,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     MediaRecorder mediaRecorder;
 
     File mypath;
+    File tmpVid;
 
     String eMagTime;
 
@@ -346,6 +347,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 eMagTime = df2.format(Calendar.getInstance().getTime());
                 File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
                 outPath = directory.getAbsolutePath() + "/VoiceoverTmp-" + eMagTime + ".mp4";
+                tmpVid = new File(outPath);
                 SeekableByteChannel out = null;
                 //determine total time images were being recorded
 
@@ -562,6 +564,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 }
                 muxer.stop();
                 muxer.release();
+                tmpVid.delete();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Exception ex) {
