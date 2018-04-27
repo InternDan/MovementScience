@@ -97,7 +97,10 @@
             android:label="@string/title_activity_play_movie" />
         <activity
             android:name=".playVideo"
-            android:label="@string/title_activity_play_video"></activity>
+            android:label="@string/title_activity_play_video" />
+        <activity
+            android:name=".addTextBox"
+            android:label="@string/title_activity_add_text_box"></activity>
     </application>
 
 </manifest>

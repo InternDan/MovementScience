@@ -1,6 +1,8 @@
 package com.home.buffa.movementscience;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -8,12 +10,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -61,6 +65,8 @@ public class keyFrame extends Activity {
 
     Point X;
     Integer ptType;
+
+    String text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -360,6 +366,9 @@ public class keyFrame extends Activity {
         if (ptType == 5){
             addScribble();
         }
+        if (ptType == 6){
+            getTextAndAdd();
+        }
     }
 
     public ArrayList<Double> calculateAngles(ArrayList<Point> points){
@@ -393,6 +402,40 @@ public class keyFrame extends Activity {
             Imgproc.line(m,pts.get(2),pts.get(3),angleLineColor,8 );
         }
         return m;
+    }
+
+    private void getTextAndAdd(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Title");
+
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                text = input.getText().toString();
+                Intent intentPassAddText = new Intent(getApplicationContext(),addTextBox.class);
+                pathKeyFrame = createImageFromBitmap(bmp);
+                intentPassAddText.putExtra("keyFramePathString",pathKeyFrame);
+                intentPassAddText.putExtra("keyFrameText",text);
+                startActivity(intentPassAddText);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+
     }
 
     public void goHome(View view){

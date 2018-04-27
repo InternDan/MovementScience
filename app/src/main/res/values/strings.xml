@@ -348,6 +348,7 @@
         <item>3-Point Angle</item>
         <item>4-Point Angle</item>
         <item>Scribble</item>
+        <item>Text Box</item>
     </string-array>
 
 
@@ -397,5 +398,6 @@
     <string name="title_activity_talk_over_video_load_and_pass">talkOverVideoLoadAndPass</string>
     <string name="title_activity_play_movie">PlayMovie</string>
     <string name="title_activity_play_video">playVideo</string>
+    <string name="title_activity_add_text_box">addTextBox</string>
 
 </resources>
