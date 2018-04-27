@@ -2,23 +2,36 @@ package com.home.buffa.movementscience;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class keyFrame extends Activity {
 
@@ -27,6 +40,27 @@ public class keyFrame extends Activity {
     ImageView keyFrameView;
     String pathKeyFrame;
 
+    Spinner pointDropdown;
+    ArrayList<Point> points = new ArrayList<>();
+    ArrayList<Integer> ptTypes = new ArrayList<>();
+    ArrayList<Double> angles = new ArrayList<Double>();
+    String gText;
+    Scalar anglePointColor;
+    Scalar angleLineColor;
+    Scalar angleTextColor;
+    Scalar currentPointColor;
+    int currentPointSize;
+    int angleTextSize;
+    int rotateDegreesPostProcess;
+
+    int selectionCap;
+    int selectionCounter;
+
+    String coordType = null;
+    String coords = null;
+
+    Point X;
+    Integer ptType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +69,86 @@ public class keyFrame extends Activity {
         setContentView(R.layout.activity_key_frame);
         keyFrameView = (ImageView)findViewById(R.id.imageViewKeyFrame);
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String curPtSize = sharedPref.getString("pref_currentPointSize","5");
+        currentPointSize = Integer.valueOf(curPtSize);
+
+        String curPtClr = sharedPref.getString("pref_currentPointColor","r");
+        if (Objects.equals(curPtClr,new String("r")) == true){
+            currentPointColor = new Scalar(255,0,0);
+        }else if(Objects.equals(curPtClr,new String("g")) == true){
+            currentPointColor = new Scalar(0,255,0);
+        }else if(Objects.equals(curPtClr,new String("b")) == true) {
+            currentPointColor = new Scalar(0, 0, 255);
+        }else if(Objects.equals(curPtClr,new String("y")) == true) {
+            currentPointColor = new Scalar(0, 255, 255);
+        }else if(Objects.equals(curPtClr,new String("c")) == true) {
+            currentPointColor = new Scalar(255, 255, 0);
+        }else if(Objects.equals(curPtClr,new String("k")) == true) {
+            currentPointColor = new Scalar(0, 0, 0);
+        }else if(Objects.equals(curPtClr,new String("w")) == true) {
+            currentPointColor = new Scalar(255, 255, 255);
+        }
+
+        String aglPtClr = sharedPref.getString("pref_anglePointColor","r");
+        if (Objects.equals(aglPtClr,new String("r")) == true){
+            anglePointColor = new Scalar(255,0,0);
+        }else if(Objects.equals(aglPtClr,new String("g")) == true){
+            anglePointColor = new Scalar(0,255,0);
+        }else if(Objects.equals(aglPtClr,new String("b")) == true) {
+            anglePointColor = new Scalar(0, 0, 255);
+        }else if(Objects.equals(aglPtClr,new String("y")) == true) {
+            anglePointColor = new Scalar(0, 255, 255);
+        }else if(Objects.equals(aglPtClr,new String("c")) == true) {
+            anglePointColor = new Scalar(255, 255, 0);
+        }else if(Objects.equals(aglPtClr,new String("k")) == true) {
+            anglePointColor = new Scalar(0, 0, 0);
+        }else if(Objects.equals(aglPtClr,new String("w")) == true) {
+            anglePointColor = new Scalar(255, 255, 255);
+        }
+
+        String aglLnClr = sharedPref.getString("pref_angleLineColor","r");
+        if (Objects.equals(aglLnClr,new String("r")) == true){
+            angleLineColor = new Scalar(255,0,0);
+        }else if(Objects.equals(aglLnClr,new String("g")) == true){
+            angleLineColor = new Scalar(0,255,0);
+        }else if(Objects.equals(aglLnClr,new String("b")) == true) {
+            angleLineColor = new Scalar(0, 0, 255);
+        }else if(Objects.equals(aglLnClr,new String("y")) == true) {
+            angleLineColor = new Scalar(0, 255, 255);
+        }else if(Objects.equals(aglLnClr,new String("c")) == true) {
+            angleLineColor = new Scalar(255, 255, 0);
+        }else if(Objects.equals(aglLnClr,new String("k")) == true) {
+            angleLineColor = new Scalar(0, 0, 0);
+        }else if(Objects.equals(aglLnClr,new String("w")) == true) {
+            angleLineColor = new Scalar(255, 255, 255);
+        }
+
+        String txtLnClr = sharedPref.getString("pref_angleTextColor","r");
+        if (Objects.equals(txtLnClr,new String("r")) == true){
+            angleTextColor = new Scalar(255,0,0);
+        }else if(Objects.equals(txtLnClr,new String("g")) == true){
+            angleTextColor = new Scalar(0,255,0);
+        }else if(Objects.equals(txtLnClr,new String("b")) == true) {
+            angleTextColor = new Scalar(0, 0, 255);
+        }else if(Objects.equals(txtLnClr,new String("y")) == true) {
+            angleTextColor = new Scalar(0, 255, 255);
+        }else if(Objects.equals(txtLnClr,new String("c")) == true) {
+            angleTextColor = new Scalar(255, 255, 0);
+        }else if(Objects.equals(txtLnClr,new String("k")) == true) {
+            angleTextColor = new Scalar(0, 0, 0);
+        }else if(Objects.equals(txtLnClr,new String("w")) == true) {
+            angleTextColor = new Scalar(255, 255, 255);
+        }
+
+        String txtBoxTxtSize = sharedPref.getString("pref_angleTextSize","5");
+        angleTextSize = Integer.valueOf(txtBoxTxtSize);
+
+        String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
+        rotateDegreesPostProcess = Integer.valueOf(rotDeg);
+
+        pointDropdown = findViewById(R.id.spinnerOfflineKeyFrame);
     }
 
 
@@ -86,14 +200,9 @@ public class keyFrame extends Activity {
         }
     }
 
-    public void addAngle(View view){
-        Intent intentPassAddAngle = new Intent(this,addAngle.class);
-        pathKeyFrame = createImageFromBitmap(bmp);
-        intentPassAddAngle.putExtra("keyFramePathString",pathKeyFrame);
-        startActivity(intentPassAddAngle);
-    }
 
-    public void addScribble(View view){
+
+    public void addScribble(){
         Intent intentPassAddScribble = new Intent(this,addScribble.class);
         pathKeyFrame = createImageFromBitmap(bmp);
         intentPassAddScribble.putExtra("keyFramePathString",pathKeyFrame);
@@ -126,6 +235,164 @@ public class keyFrame extends Activity {
         }
         return pathKeyFrame;
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // MotionEvent object holds X-Y values
+        if(event.getAction() == MotionEvent.ACTION_DOWN && selectionCounter < selectionCap) {
+            coordType = coordType + "," + ptType + "," + ptType;
+            selectionCounter++;
+
+            int height = bmp.getHeight();
+            int width = bmp.getWidth();
+            Display display = getWindowManager().getDefaultDisplay();
+            DisplayMetrics metrics = new DisplayMetrics();
+            display.getRealMetrics(metrics);
+            int heightScreen = metrics.heightPixels;
+            int widthScreen = metrics.widthPixels;
+
+            float scaleHeight = (float) height / (float) heightScreen;
+            float scaleWidth = (float) width / (float) widthScreen;
+
+            float x = event.getX() * scaleWidth;
+            float y = event.getY() * scaleHeight;
+
+            coords = coords + "," + x + "," + y;
+
+            X = new Point((double) x, (double) y);
+            points.add(X);
+            ptTypes.add(ptType);
+            //convert imageUri to Mat and draw this
+            m = new Mat(height, width, CvType.CV_8UC3);
+            Utils.bitmapToMat(bmp, m);
+            if (selectionCounter == selectionCap){
+                selectionCap = 0;
+                selectionCounter = 0;
+            }
+            for (int i = 0; i<points.size(); i++) {
+                if (ptTypes.get(i) == 0) {
+                    Imgproc.circle(m, points.get(i), currentPointSize, currentPointColor, 8, 8, 0);
+                } else if (ptTypes.get(i) == 1) {
+                    ArrayList<Point> pts = new ArrayList<>();
+                    for (int j = 0; j < 2; j++) {
+                        if (points.size() > i + j) {
+                            pts.add(points.get(i + j));
+                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                        }
+                        if (pts.size() == 2) {
+                            m = addLinesBetweenAngles(m, pts);
+                        }
+                    }
+                    i++;
+                } else if (ptTypes.get(i) == 2) {
+                    ArrayList<Point> pts = new ArrayList<Point>();
+                    for (int j = 0; j < 2; j++) {
+                        if (points.size() > i + j) {
+                            pts.add(points.get(i + j));
+                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                        }
+                    }
+                    if (pts.size() == 2) {
+                        m = addLinesBetweenAngles(m, pts);
+                        angles = calculateAngles(pts);
+                        gText = String.format("%.2f", (angles.get(angles.size() - 1)));
+                        Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
+                        i++;
+                    }
+                } else if (ptTypes.get(i) == 3) {
+                    ArrayList<Point> pts = new ArrayList<Point>();
+                    for (int j = 0; j < 3; j++) {
+                        if (points.size() > i + j) {
+                            pts.add(points.get(i + j));
+                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                        }
+                    }
+                    if (pts.size() == 3) {
+                        m = addLinesBetweenAngles(m, pts);
+                        angles = calculateAngles(pts);
+                        gText = String.format("%.2f", (angles.get(angles.size() - 1)));
+                        Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
+                        i++;
+                        i++;
+                    }
+                } else if (ptTypes.get(i) == 4) {
+                    ArrayList<Point> pts = new ArrayList<Point>();
+                    for (int j = 0; j < 4; j++) {
+                        if (points.size() > i + j) {
+                            pts.add(points.get(i + j));
+                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                        }
+                    }
+                    if (pts.size() == 4) {
+                        m = addLinesBetweenAngles(m, pts);
+                        angles = calculateAngles(pts);
+                        gText = String.format("%.2f", (angles.get(angles.size() - 1)));
+                        Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
+                        i++;
+                        i++;
+                        i++;
+                    }
+                }
+            }
+            Imgproc.cvtColor(m,m, Imgproc.COLOR_RGBA2RGB);
+            Utils.matToBitmap(m,bmp);
+            keyFrameView.setImageBitmap(bmp);
+            keyFrameView.requestFocus();
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public void addFeature(View view) {
+        ptType = pointDropdown.getSelectedItemPosition();
+        selectionCounter = 0;
+        if (ptType == 0) {
+            selectionCap = 1;
+        } else if (ptType == 1) {
+            selectionCap = 2;
+        } else if (ptType == 2) {
+            selectionCap = 2;
+        } else if (ptType == 3) {
+            selectionCap = 3;
+        } else if (ptType == 4){
+            selectionCap = 4;
+        }
+        if (ptType == 5){
+            addScribble();
+        }
+    }
+
+    public ArrayList<Double> calculateAngles(ArrayList<Point> points){
+        ArrayList<Double> angles = new ArrayList<Double>();
+        if (points.size() == 2) {
+            angles = nonlinearMath.twoPointGlobalAngle(points);
+            return angles;
+        }
+        if (points.size() == 3) {
+            angles = nonlinearMath.threePointSegmentAngle(points);
+            return angles;
+        }
+        if (points.size() == 4) {
+            angles = nonlinearMath.fourPointSegmentAngle(points);
+            return angles;
+        }
+        angles.add((double) 0);
+        return angles;
+    }
+
+    public Mat addLinesBetweenAngles(Mat m, ArrayList<Point> pts){
+        if (pts.size() == 2) {
+            Imgproc.line(m,pts.get(0),pts.get(1),angleLineColor,8 );
+        }
+        if (pts.size() == 3) {
+            Imgproc.line(m,pts.get(0),pts.get(1),angleLineColor,8 );
+            Imgproc.line(m,pts.get(0),pts.get(2),angleLineColor,8 );
+        }
+        if (pts.size() == 4) {
+            Imgproc.line(m,pts.get(0),pts.get(1),angleLineColor,8 );
+            Imgproc.line(m,pts.get(2),pts.get(3),angleLineColor,8 );
+        }
+        return m;
     }
 
     public void goHome(View view){

@@ -41,6 +41,9 @@ public class addScribble extends Activity {
     String scribClr;
     int scribbleWeight;
 
+    int origHeight;
+    int origWidth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +109,8 @@ public class addScribble extends Activity {
         File imageKeyFrame = new File(pathKeyFrame);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmp = BitmapFactory.decodeFile(imageKeyFrame.getAbsolutePath(),bmOptions);
+        origHeight = bmp.getHeight();
+        origWidth = bmp.getWidth();
         dv.setBackgroundDrawable(new BitmapDrawable(bmp));
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -249,6 +254,7 @@ public class addScribble extends Activity {
     public void saveDrawing()
     {
         Bitmap whatTheUserDrewBitmap = dv.getDrawingCache();
+
         // don't forget to clear it (see above) or you just get duplicates
 
 //        // almost always you will want to reduce res from the very high screen res
@@ -258,7 +264,8 @@ public class addScribble extends Activity {
 //        // http://stackoverflow.com/a/17733530/294884
 
         // you can now save the bitmap to a file, or display it in an ImageView:
-        putOverlay(bmp,whatTheUserDrewBitmap);
+        //putOverlay(bmp,whatTheUserDrewBitmap);
+        bmp = Bitmap.createScaledBitmap(whatTheUserDrewBitmap,origWidth,origHeight,false);
         pathKeyFrame = createImageFromBitmapScribble(bmp);
     }
 

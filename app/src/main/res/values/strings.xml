@@ -341,6 +341,15 @@
         <item>4-Point Angle</item>
     </string-array>
 
+    <string-array name="add_tracking_features_key_frame">
+        <item>Point</item>
+        <item>Line</item>
+        <item>2-Point Angle</item>
+        <item>3-Point Angle</item>
+        <item>4-Point Angle</item>
+        <item>Scribble</item>
+    </string-array>
+
 
     <string name="pref_postProcessingOrientation">Post-Processing - Orientation</string>
     <string-array name="pref_postProcessingOrientation_entries">
