@@ -190,26 +190,34 @@ public class offlineProcessing extends Activity {
 
     public void pickPoints(View view){
         int currentPosition = 200; //in millisecond
-        Toast.makeText(offlineProcessing.this, "Loading first frame", Toast.LENGTH_LONG).show();
-        new offlineProcessing.beginExtractionProcedure().execute(null, null, null);//
+        if (videoAbsolutePath != null) {
+            Toast.makeText(offlineProcessing.this, "Loading first frame", Toast.LENGTH_LONG).show();
+            new offlineProcessing.beginExtractionProcedure().execute(null, null, null);//
+        }else {
+            Toast.makeText(this, "Please select a video first!", Toast.LENGTH_LONG).show();
+        }
 
     }
 
     public void keyFrame(View view){
-        int currentPosition = result_video.getCurrentPosition(); //in millisecond, change to get current frame
-        FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
-        mmr.setDataSource(videoAbsolutePath);
-        Bitmap bitmap = mmr.getFrameAtTime(currentPosition*1000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
-        if (bitmap == null){
-            Intent intent = new Intent(getApplicationContext(), offlineProcessing.class);
+        if (videoAbsolutePath != null){
+            int currentPosition = result_video.getCurrentPosition(); //in millisecond, change to get current frame
+            FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
+            mmr.setDataSource(videoAbsolutePath);
+            Bitmap bitmap = mmr.getFrameAtTime(currentPosition * 1000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+            if (bitmap == null) {
+                Intent intent = new Intent(getApplicationContext(), offlineProcessing.class);
+                Toast.makeText(this, "Please select a video first!", Toast.LENGTH_LONG).show();
+                startActivity(intent);
+                return;
+            }
+            Intent intentPassKeyFrame = new Intent(this, keyFrame.class);
+            String path = createImageFromBitmapKey(bitmap);
+            intentPassKeyFrame.putExtra("keyFramePathString", path);
+            startActivity(intentPassKeyFrame);
+        }else {
             Toast.makeText(this, "Please select a video first!", Toast.LENGTH_LONG).show();
-            startActivity(intent);
-            return;
         }
-        Intent intentPassKeyFrame = new Intent(this,keyFrame.class);
-        String path = createImageFromBitmapKey(bitmap);
-        intentPassKeyFrame.putExtra("keyFramePathString",path);
-        startActivity(intentPassKeyFrame);
     }
 
     public String createImageFromBitmapFirst(Bitmap bitmap){

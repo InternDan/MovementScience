@@ -185,9 +185,13 @@ public class postProcessing extends Activity {
     }
 
     public void postProcessExectute(View view){
-        Intent intentPassPostProcessing = new Intent(getApplicationContext(),postProcessPreview.class);
-        intentPassPostProcessing.putExtra("videoPath1", videoUri1.toString());
-        intentPassPostProcessing.putExtra("videoPath2", videoUri2.toString());
-        startActivity(intentPassPostProcessing);
+        if (videoUri1 != null && videoUri2 != null) {
+            Intent intentPassPostProcessing = new Intent(getApplicationContext(), postProcessPreview.class);
+            intentPassPostProcessing.putExtra("videoPath1", videoUri1.toString());
+            intentPassPostProcessing.putExtra("videoPath2", videoUri2.toString());
+            startActivity(intentPassPostProcessing);
+        }else{
+            Toast.makeText(this, "Make sure both videos are selected!", Toast.LENGTH_LONG).show();
+        }
     }
 }
