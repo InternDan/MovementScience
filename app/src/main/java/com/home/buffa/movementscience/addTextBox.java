@@ -2,6 +2,7 @@ package com.home.buffa.movementscience;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,6 +14,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,6 +35,12 @@ public class addTextBox extends Activity {
     Paint paint;
     ImageView imageViewTextBox;
 
+    String textColor;
+    Integer textSize;
+
+    float scaleHeight;
+    float scaleWidth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,10 +58,27 @@ public class addTextBox extends Activity {
         pathKeyFrame = intentReceive.getExtras().getString("keyFramePathString");
         text = intentReceive.getExtras().getString("keyFrameText");
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        textColor = sharedPref.getString("pref_textBoxTextColor","r");
+        String textSizeStr = sharedPref.getString("pref_trailingPointNumber","20");
+        textSize = Integer.valueOf(textSizeStr);
+
+
         File imageKeyFrame = new File(pathKeyFrame);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmp = BitmapFactory.decodeFile(imageKeyFrame.getAbsolutePath(),bmOptions);
         imageViewTextBox = findViewById(R.id.imageViewTextBox);
+
+        int height = bmp.getHeight();
+        int width = bmp.getWidth();
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getRealMetrics(metrics);
+        int heightScreen = metrics.heightPixels;
+        int widthScreen = metrics.widthPixels;
+
+        scaleHeight = (float) height / (float) heightScreen;
+        scaleWidth = (float) width / (float) widthScreen;
         //get first frame bitmap
         imageViewTextBox.setImageBitmap(bmp);
         if (text != null) {
@@ -62,12 +89,12 @@ public class addTextBox extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        Point pt = new Point( (int)event.getX(),(int)event.getY());
+        Point pt = new Point( (int)Math.round(event.getX() * scaleWidth),(int)Math.round(event.getY() * scaleHeight));
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             bmpOut = writeTextOnDrawable(bmp,text,pt.x,pt.y);
             imageViewTextBox.setImageBitmap(bmpOut);
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            pt = new Point( (int)event.getX(),(int)event.getY());
+            pt = new Point( (int)Math.round(event.getX() * scaleWidth),(int)Math.round(event.getY() * scaleHeight));
             bmpOut = writeTextOnDrawable(bmp,text,pt.x,pt.y);
             imageViewTextBox.setImageBitmap(bmpOut);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -83,10 +110,27 @@ public class addTextBox extends Activity {
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
+        if (textColor.contains("r")) {
+            paint.setColor(Color.RED);
+        }else if(textColor.contains("g")) {
+            paint.setColor(Color.GREEN);
+        }else if(textColor.contains("b")) {
+            paint.setColor(Color.BLUE);
+        }else if(textColor.contains("y")) {
+            paint.setColor(Color.YELLOW);
+        }else if(textColor.contains("c")) {
+            paint.setColor(Color.CYAN);
+        }else if(textColor.contains("k")) {
+            paint.setColor(Color.BLACK);
+        }else if(textColor.contains("w")) {
+            paint.setColor(Color.WHITE);
+        }else {
+            paint.setColor(Color.WHITE);
+        }
+
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(convertToPixels(getApplicationContext(), 11));
+        paint.setTextSize(convertToPixels(getApplicationContext(), textSize));
 
         Rect textRect = new Rect();
         paint.getTextBounds(text, 0, text.length(), textRect);

@@ -1,16 +1,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-    <PreferenceCategory
-        android:title="Point Tracking Options">
-
+    <PreferenceScreen
+        android:key="button_tracking_options_key"
+        android:title="Tracking"
+        android:persistent="false">
         <EditTextPreference
             android:key="pref_trackingSearchWindowSize"
             android:title="@string/pref_trackingSearchWindowSize"
             android:dialogTitle="@string/pref_trackingSearchWindowSize_disp"
             android:defaultValue="@string/pref_trackingSearchWindowSize_default"
             />
-
         <EditTextPreference
             android:key="pref_trackingSearchEpsilon"
             android:title="@string/pref_trackingSearchEpsilon"
@@ -31,13 +30,12 @@
             android:dialogTitle="@string/pref_trackingSearchMinEigenThreshold_disp"
             android:defaultValue="@string/pref_trackingSearchMinEigenThreshold_default"
             />
+    </PreferenceScreen>
 
-    </PreferenceCategory>
-
-
-    <PreferenceCategory
-        android:title="Point Display Options">
-
+    <PreferenceScreen
+        android:key="button_point_display_options_key"
+        android:title="Point Display"
+        android:persistent="false">
         <EditTextPreference
             android:key="pref_currentPointSize"
             android:title="@string/pref_currentPointSize"
@@ -82,7 +80,6 @@
             android:entries="@array/pref_anglePointColor_entries"
             android:entryValues="@array/pref_anglePointColor_values"
             android:defaultValue="@string/pref_anglePointColor_default" />
-
         <ListPreference
             android:key="pref_linePointColor"
             android:title="@string/pref_linePointColor"
@@ -90,12 +87,13 @@
             android:entries="@array/pref_linePointColor_entries"
             android:entryValues="@array/pref_linePointColor_values"
             android:defaultValue="@string/pref_linePointColor_default" />
+    </PreferenceScreen>
 
-    </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="Line Display Options">
-
+    <PreferenceScreen
+        android:key="button_line_display_options_key"
+        android:title="Line Display"
+        android:persistent="false">
         <ListPreference
             android:key="pref_lineNoAngleColor"
             android:title="@string/pref_lineNoAngleColor"
@@ -103,7 +101,6 @@
             android:entries="@array/pref_lineNoAngleColor_entries"
             android:entryValues="@array/pref_lineNoAngleColor_values"
             android:defaultValue="@string/pref_lineNoAngleColor_default" />
-
         <ListPreference
             android:key="pref_angleLineColor"
             android:title="@string/pref_angleLineColor"
@@ -111,7 +108,6 @@
             android:entries="@array/pref_angleLineColor_entries"
             android:entryValues="@array/pref_angleLineColor_values"
             android:defaultValue="@string/pref_angleLineColor_default" />
-
         <ListPreference
             android:key="pref_scribbleColor"
             android:title="@string/pref_scribbleColor"
@@ -119,33 +115,30 @@
             android:entries="@array/pref_scribbleColor_entries"
             android:entryValues="@array/pref_scribbleColor_values"
             android:defaultValue="@string/pref_scribbleColor_default" />
-
         <EditTextPreference
             android:key="pref_scribbleWeight"
             android:title="@string/pref_scribbleWeight"
             android:dialogTitle="@string/pref_scribbleWeight_disp"
             android:defaultValue="@string/pref_scribbleWeight_default"
             />
+    </PreferenceScreen>
 
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="Text Options">
-
+    <PreferenceScreen
+        android:key="button_text_display_options_key"
+        android:title="Text Display"
+        android:persistent="false">
         <EditTextPreference
             android:key="pref_textBoxTextSize"
             android:title="@string/pref_textBoxTextSize"
             android:dialogTitle="@string/pref_textBoxTextSize_disp"
             android:defaultValue="@string/pref_textBoxTextSize_default"
             />
-
         <EditTextPreference
             android:key="pref_angleTextSize"
             android:title="@string/pref_angleTextSize"
             android:dialogTitle="@string/pref_angleTextSize_disp"
             android:defaultValue="@string/pref_angleTextSize_default"
             />
-
         <ListPreference
             android:key="pref_angleTextColor"
             android:title="@string/pref_angleTextColor"
@@ -153,7 +146,6 @@
             android:entries="@array/pref_angleTextColor_entries"
             android:entryValues="@array/pref_angleTextColor_values"
             android:defaultValue="@string/pref_angleTextColor_default" />
-
         <ListPreference
             android:key="pref_textBoxTextColor"
             android:title="@string/pref_textBoxTextColor"
@@ -161,11 +153,12 @@
             android:entries="@array/pref_textBoxTextColor_entries"
             android:entryValues="@array/pref_textBoxTextColor_values"
             android:defaultValue="@string/pref_textBoxTextColor_default" />
+    </PreferenceScreen>
 
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="Real-Time Video Options">
+    <PreferenceScreen
+        android:key="button_real_time_video_options_key"
+        android:title="Real-Time Video"
+        android:persistent="false">
 
         <ListPreference
             android:key="pref_rotateDegreesRealTime"
@@ -175,10 +168,12 @@
             android:entryValues="@array/pref_rotateDegreesRealTime_values"
             android:defaultValue="@string/pref_rotateDegreesRealTime_default" />
 
-    </PreferenceCategory>
+    </PreferenceScreen>
 
-    <PreferenceCategory
-        android:title="Video Post Processing Options">
+    <PreferenceScreen
+    android:key="button_post_processing_options_key"
+    android:title="Video Post-Processing"
+    android:persistent="false">
 
         <ListPreference
             android:key="pref_postProcessingOrientation"
@@ -206,35 +201,21 @@
 
         <ListPreference
             android:key="pref_rotateDegreesPostProcess"
-            android:title="Post-Processing Rotation Vid 1"
-            android:dialogTitle="@string/pref_rotateDegreesPostProcess"
+            android:title="Rotation Vid 1"
+            android:dialogTitle="Rotation Vid 1"
             android:entries="@array/pref_rotateDegreesPostProcess_entries"
             android:entryValues="@array/pref_rotateDegreesPostProcess_values"
-            android:defaultValue="90" />
+            android:defaultValue="0" />
 
         <ListPreference
             android:key="pref_rotateDegreesPostProcess2"
-            android:title="Post-Processing Rotation Vid 2"
-            android:dialogTitle="@string/pref_rotateDegreesPostProcess"
+            android:title="Rotation Vid 2"
+            android:dialogTitle="Rotation Vid 2"
             android:entries="@array/pref_rotateDegreesPostProcess_entries"
             android:entryValues="@array/pref_rotateDegreesPostProcess_values"
-            android:defaultValue="90" />
+            android:defaultValue="0" />
 
 
-    </PreferenceCategory>
-
-
-    <!--<PreferenceCategory
-        android:title="File Storage Options">
-        <EditTextPreference
-            android:title="Set Save Folder"
-            android:key = "pref_saveFolderKey"
-            android:defaultValue="saveFolder">
-            <intent android:action="android.intent.action.VIEW"
-                android:targetPackage="com.home.buffa.movementscience"
-                android:targetClass="com.home.buffa.movementscience.SaveFolderChooserSettings" />
-        </EditTextPreference>
-    </PreferenceCategory> -->
-
+    </PreferenceScreen>
 
 </PreferenceScreen>
