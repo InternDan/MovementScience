@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -62,30 +63,34 @@ public class playVideo extends Activity {
 
         retriever.setDataSource(FileUtils.getPath(getApplicationContext(),vidUri));
         bmp = retriever.getFrameAtTime(200,MediaMetadataRetriever.OPTION_CLOSEST);
-        height =bmp.getHeight();
-        width=bmp.getWidth();
+        if (bmp != null) {
+            height = bmp.getHeight();
+            width = bmp.getWidth();
 
-        int swidth = getWindowManager().getDefaultDisplay().getWidth();
-        int sheight = getWindowManager().getDefaultDisplay().getHeight();
+            int swidth = getWindowManager().getDefaultDisplay().getWidth();
+            int sheight = getWindowManager().getDefaultDisplay().getHeight();
 
-        double hRatio = (double)sheight / (double)height;
-        double wRatio = (double)swidth / (double)width;
+            double hRatio = (double) sheight / (double) height;
+            double wRatio = (double) swidth / (double) width;
 
-        height = (int) Math.round(hRatio * (double)height);
-        width = (int) Math.round(wRatio * (double)width);
+            height = (int) Math.round(hRatio * (double) height);
+            width = (int) Math.round(wRatio * (double) width);
 
 
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width,height);
-        int topMargin = (int)Math.ceil(((int)height - (int)sheight) / 2);
-        int bottomMargin = (int)Math.floor(((int)height - (int)sheight) / 2);
-        int leftMargin = (int)Math.ceil(((int)width - (int)swidth) / 2);
-        int rightMargin = (int)Math.floor(((int)width - (int)swidth) / 2);
-        lp.leftMargin = leftMargin;
-        lp.rightMargin = rightMargin;
-        lp.topMargin = topMargin;
-        lp.bottomMargin = bottomMargin;
-        videoView.setLayoutParams(lp);
-        videoView.seekTo(200);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, height);
+            int topMargin = (int) Math.ceil(((int) height - (int) sheight) / 2);
+            int bottomMargin = (int) Math.floor(((int) height - (int) sheight) / 2);
+            int leftMargin = (int) Math.ceil(((int) width - (int) swidth) / 2);
+            int rightMargin = (int) Math.floor(((int) width - (int) swidth) / 2);
+            lp.leftMargin = leftMargin;
+            lp.rightMargin = rightMargin;
+            lp.topMargin = topMargin;
+            lp.bottomMargin = bottomMargin;
+            videoView.setLayoutParams(lp);
+            videoView.seekTo(200);
+        }else{
+            Toast.makeText(this, "Video is not yet fully created", Toast.LENGTH_LONG).show();
+        }
     }
 
 
