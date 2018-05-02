@@ -46,7 +46,7 @@
     <string name="paste_video_address">Paste Video Address</string>
 
     <string name="settings">Settings</string>
-    <string name="pref_rotateDegreesPostProcess">Post-Processing Frame Rotation Angle</string>
+    <string name="pref_rotateDegreesPostProcess">Frame Rotation Angle</string>
     <string-array name="pref_rotateDegreesPostProcess_entries">
         <item>0</item>
         <item>90</item>
@@ -61,7 +61,7 @@
     </string-array>
     <string name="pref_rotateDegreesPostProcess_default">0</string>
 
-    <string name="pref_rotateDegreesRealTime">Real-Time Frame Rotation Angle</string>
+    <string name="pref_rotateDegreesRealTime">Frame Rotation Angle</string>
     <string-array name="pref_rotateDegreesRealTime_entries">
         <item>0</item>
         <item>90</item>
@@ -118,7 +118,7 @@
     </string-array>
     <string name="pref_currentPointColor_default">g</string>
 
-    <string name="pref_angleTextColor">Color - Angle Display Text</string>
+    <string name="pref_angleTextColor">Color - Angle Text</string>
     <string-array name="pref_angleTextColor_entries">
         <item>r</item>
         <item>g</item>
@@ -202,7 +202,7 @@
     </string-array>
     <string name="pref_scribbleColor_default">y</string>
 
-    <string name="pref_angleLineColor">Color - Angle Display Lines</string>
+    <string name="pref_angleLineColor">Color - Angle Lines</string>
     <string-array name="pref_angleLineColor_entries">
         <item>r</item>
         <item>g</item>
@@ -302,27 +302,27 @@
     <string name="pref_angleTextSize_disp">Size - Angle Text</string>
     <string name="pref_angleTextSize_default">2</string>
 
-    <string name="pref_textBoxTextSize">Size - Text Box Text</string>
-    <string name="pref_textBoxTextSize_disp">Size - Text Box Text</string>
+    <string name="pref_textBoxTextSize">Size - Text Box Characters</string>
+    <string name="pref_textBoxTextSize_disp">Size - Text Box Characters</string>
     <string name="pref_textBoxTextSize_default">2</string>
 
     <string name="pref_scribbleWeight">Weight - Scribble Line</string>
     <string name="pref_scribbleWeight_disp">Weight - Scribble Line</string>
     <string name="pref_scribbleWeight_default">8</string>
 
-    <string name="pref_trackingSearchWindowSize">Tracking - Search Window Size</string>
-    <string name="pref_trackingSearchWindowSize_disp">Tracking - Search Window Size</string>
+    <string name="pref_trackingSearchWindowSize">Search Window</string>
+    <string name="pref_trackingSearchWindowSize_disp">Search Window</string>
     <string name="pref_trackingSearchWindowSize_default">20</string>
 
-    <string name="pref_trackingSearchEpsilon">Tracking - Epsilon</string>
+    <string name="pref_trackingSearchEpsilon">Epsilon</string>
     <string name="pref_trackingSearchEpsilon_disp">Tracking - Epsilon</string>
     <string name="pref_trackingSearchEpsilon_default">0.1</string>
 
-    <string name="pref_trackingSearchMaxLevel">Tracking - MaxLevel</string>
+    <string name="pref_trackingSearchMaxLevel">MaxLevel</string>
     <string name="pref_trackingSearchMaxLevel_disp">Tracking - MaxLevel</string>
     <string name="pref_trackingSearchMaxLevel_default">3</string>
 
-    <string name="pref_trackingSearchMinEigenThreshold">Tracking - MinEigenThreshold</string>
+    <string name="pref_trackingSearchMinEigenThreshold">MinEigenThreshold</string>
     <string name="pref_trackingSearchMinEigenThreshold_disp">Tracking - MinEigenThreshold</string>
     <string name="pref_trackingSearchMinEigenThreshold_default">0.001</string>
 
@@ -352,7 +352,7 @@
     </string-array>
 
 
-    <string name="pref_postProcessingOrientation">Post-Processing - Orientation</string>
+    <string name="pref_postProcessingOrientation">Orientation</string>
     <string-array name="pref_postProcessingOrientation_entries">
         <item>top/bottom</item>
         <item>left/right</item>
@@ -369,7 +369,7 @@
     </string-array>
     <string name="pref_postProcessingOrientation_default">lr</string>
 
-    <string name="pref_postProcessingSize">Post-Processing - Size</string>
+    <string name="pref_postProcessingSize">Size</string>
     <string-array name="pref_postProcessingSize_entries">
         <item>Match Smallest</item>
         <item>Match Largest</item>
@@ -380,7 +380,7 @@
     </string-array>
     <string name="pref_postProcessingSize_default">small</string>
 
-    <string name="pref_postProcessingPlayOrder">Post-Processing - Play Order</string>
+    <string name="pref_postProcessingPlayOrder">Play Order</string>
     <string-array name="pref_postProcessingPlayOrder_entries">
         <item>Simultaneous</item>
         <item>Left/Right - Top/Bottom</item>
