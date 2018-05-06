@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class playVideo extends Activity {
 
-
+    Uri vidUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +37,7 @@ public class playVideo extends Activity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
-        Uri vidUri;
-        VideoView videoView;
+        resizableVideoView videoView;
 
         int width;
         int height;
@@ -51,12 +50,6 @@ public class playVideo extends Activity {
         uri = intentReceive.getExtras().getString("vidUri");
         vidUri = Uri.parse(uri);
         videoView = findViewById(R.id.videoViewPlayVideo);
-
-        MediaController mediaController = new
-                MediaController(this);
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
-        videoView.setVideoURI(vidUri);
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         Bitmap bmp = null;
@@ -77,23 +70,27 @@ public class playVideo extends Activity {
             width = (int) Math.round(wRatio * (double) width);
 
 
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, height);
-            int topMargin = (int) Math.ceil(((int) height - (int) sheight) / 2);
-            int bottomMargin = (int) Math.floor(((int) height - (int) sheight) / 2);
-            int leftMargin = (int) Math.ceil(((int) width - (int) swidth) / 2);
-            int rightMargin = (int) Math.floor(((int) width - (int) swidth) / 2);
-            lp.leftMargin = leftMargin;
-            lp.rightMargin = rightMargin;
-            lp.topMargin = topMargin;
-            lp.bottomMargin = bottomMargin;
-            videoView.setLayoutParams(lp);
+            videoView.setDimensions(width,height);
             videoView.seekTo(200);
+
+            MediaController mediaController = new
+                    MediaController(this);
+            mediaController.setAnchorView(videoView);
+            videoView.setMediaController(mediaController);
+            videoView.setVideoURI(vidUri);
+
         }else{
             Toast.makeText(this, "Video is not yet fully created", Toast.LENGTH_LONG).show();
         }
     }
 
 
+    public void shareVideo(View view){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("video/*");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM,vidUri);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+    }
 
     public void goHome(View view){
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
