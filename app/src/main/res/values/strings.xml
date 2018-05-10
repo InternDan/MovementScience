@@ -399,5 +399,6 @@
     <string name="title_activity_play_movie">PlayMovie</string>
     <string name="title_activity_play_video">playVideo</string>
     <string name="title_activity_add_text_box">addTextBox</string>
+    <string name="title_activity_combine_images">CombineImages</string>
 
 </resources>
