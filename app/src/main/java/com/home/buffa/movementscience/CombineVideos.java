@@ -431,7 +431,7 @@ public class CombineVideos {
 
 
     public Bitmap extractFrame1()throws IOException{
-        final int TIMEOUT_USEC = 1000000;
+        final int TIMEOUT_USEC = 10000;
         ByteBuffer[] decoderInputBuffers = decoder1.getInputBuffers();
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;
@@ -522,7 +522,7 @@ public class CombineVideos {
     }
 
     public Bitmap extractFrame2()throws IOException{
-        final int TIMEOUT_USEC = 1000000;
+        final int TIMEOUT_USEC = 10000;
         ByteBuffer[] decoderInputBuffers = decoder2.getInputBuffers();
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int inputChunk = 0;
