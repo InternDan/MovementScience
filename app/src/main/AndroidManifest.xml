@@ -100,7 +100,10 @@
             android:label="@string/title_activity_play_video" />
         <activity
             android:name=".addTextBox"
-            android:label="@string/title_activity_add_text_box"></activity>
+            android:label="@string/title_activity_add_text_box" />
+        <activity
+            android:name=".CombineImages"
+            android:label="@string/title_activity_combine_images"></activity>
     </application>
 
 </manifest>

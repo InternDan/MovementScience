@@ -142,6 +142,11 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void combineImages(View view){
+        Intent intent = new Intent(getApplicationContext(),CombineImages.class);
+        startActivity(intent);
+    }
+
     public void watchVideo(View view){
         Intent intentGetVideo = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intentGetVideo.addCategory(Intent.CATEGORY_OPENABLE);
