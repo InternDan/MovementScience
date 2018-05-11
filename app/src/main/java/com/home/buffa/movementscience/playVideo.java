@@ -1,14 +1,19 @@
 package com.home.buffa.movementscience;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.constraint.ConstraintLayout;
 import android.view.Gravity;
+import android.view.SurfaceView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
@@ -21,7 +26,18 @@ import java.io.IOException;
 
 public class playVideo extends Activity {
 
+    static final int READ_REQUEST_CODE_VIDEO = 1;
+    MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+    Uri uri;
     Uri vidUri;
+    Bitmap bmp;
+    VideoView vid;
+    LinearLayout linearLayoutVid;
+
+    int clickTrack = 0;
+
+    int height;
+    int width;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +53,6 @@ public class playVideo extends Activity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
-        resizableVideoView videoView;
-
-        int width;
-        int height;
-
         ExifInterface exifInterface;
 
         String uri;
@@ -49,7 +60,8 @@ public class playVideo extends Activity {
         Intent intentReceive = getIntent();
         uri = intentReceive.getExtras().getString("vidUri");
         vidUri = Uri.parse(uri);
-        videoView = findViewById(R.id.videoViewPlayVideo);
+        vid = findViewById(R.id.videoView);
+
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         Bitmap bmp = null;
@@ -57,27 +69,26 @@ public class playVideo extends Activity {
         retriever.setDataSource(FileUtils.getPath(getApplicationContext(),vidUri));
         bmp = retriever.getFrameAtTime(200,MediaMetadataRetriever.OPTION_CLOSEST);
         if (bmp != null) {
+
             height = bmp.getHeight();
             width = bmp.getWidth();
-
             int swidth = getWindowManager().getDefaultDisplay().getWidth();
             int sheight = getWindowManager().getDefaultDisplay().getHeight();
-
             double hRatio = (double) sheight / (double) height;
             double wRatio = (double) swidth / (double) width;
-
             height = (int) Math.round(hRatio * (double) height);
             width = (int) Math.round(wRatio * (double) width);
 
+            //RelativeLayout videoHolder = findViewById(R.id.videoHolder);
+            //videoHolder.setLayoutParams(new FrameLayout.LayoutParams(width,height));
 
-            videoView.setDimensions(width,height);
-            videoView.seekTo(200);
+            vid.seekTo(200);
 
             MediaController mediaController = new
                     MediaController(this);
-            mediaController.setAnchorView(videoView);
-            videoView.setMediaController(mediaController);
-            videoView.setVideoURI(vidUri);
+            mediaController.setAnchorView(vid);
+            vid.setMediaController(mediaController);
+            vid.setVideoURI(vidUri);
 
         }else{
             Toast.makeText(this, "Video is not yet fully created", Toast.LENGTH_LONG).show();
