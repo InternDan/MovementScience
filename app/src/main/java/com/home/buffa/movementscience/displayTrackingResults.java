@@ -46,7 +46,7 @@ public class displayTrackingResults extends Activity {
         mediaController.setAnchorView(videoViewResult);
         videoViewResult.setMediaController(mediaController);
         videoViewResult.setVideoURI(videoUri);
-        videoViewResult.seekTo(0);
+        videoViewResult.seekTo(300);
         videoViewResult.start();
     }
 
