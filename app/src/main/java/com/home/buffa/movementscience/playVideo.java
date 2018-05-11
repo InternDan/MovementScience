@@ -75,27 +75,11 @@ public class playVideo extends Activity {
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width,height);
 
-            //int top = (int) Math.round((((double)sheight - (double)height)/2));
-            //int bottom = top + height;
-            //lp.setMargins(0,top,width,bottom);
+            int top = (int) Math.round((((double)sheight - (double)height)/2));
+            int bottom = top + height;
+            lp.setMargins(0,top,0,0);
             linearLayoutVid = findViewById(R.id.linearLayoutVid);
-            //linearLayoutVid.setLayoutParams(lp);
-
-            LinearLayout linearLayoutButton = findViewById(R.id.linearLayoutButton);
-            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(width,(int)Math.round((double)sheight*0.2));
-            //lp2.setMargins(0,sheight - (int)Math.round((double)sheight*0.2),width,sheight);
-            //lp2.gravity = Gravity.BOTTOM;
-            //linearLayoutButton.setLayoutParams(lp2);
-
-            float x = ((float)sheight - (float)height) / 2;
-
-            linearLayoutVid.setX(0);
-            linearLayoutVid.setY(x);
             linearLayoutVid.setLayoutParams(lp);
-
-            linearLayoutButton.setX(0);
-            linearLayoutButton.setY(x + (float)height);
-            linearLayoutButton.setLayoutParams(lp2);
 
             vid.seekTo(500);
 
