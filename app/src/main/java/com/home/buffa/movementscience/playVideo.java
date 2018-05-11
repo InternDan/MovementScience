@@ -38,6 +38,8 @@ public class playVideo extends Activity {
 
     int height;
     int width;
+    int swidth;
+    int sheight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,25 +66,38 @@ public class playVideo extends Activity {
 
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        Bitmap bmp = null;
+        bmp = null;
 
         retriever.setDataSource(FileUtils.getPath(getApplicationContext(),vidUri));
         bmp = retriever.getFrameAtTime(200,MediaMetadataRetriever.OPTION_CLOSEST);
         if (bmp != null) {
+            scaleVideo();
 
-            height = bmp.getHeight();
-            width = bmp.getWidth();
-            int swidth = getWindowManager().getDefaultDisplay().getWidth();
-            int sheight = getWindowManager().getDefaultDisplay().getHeight();
-            double hRatio = (double) sheight / (double) height;
-            double wRatio = (double) swidth / (double) width;
-            height = (int) Math.round(hRatio * (double) height);
-            width = (int) Math.round(wRatio * (double) width);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width,height);
 
-            //RelativeLayout videoHolder = findViewById(R.id.videoHolder);
-            //videoHolder.setLayoutParams(new FrameLayout.LayoutParams(width,height));
+            //int top = (int) Math.round((((double)sheight - (double)height)/2));
+            //int bottom = top + height;
+            //lp.setMargins(0,top,width,bottom);
+            linearLayoutVid = findViewById(R.id.linearLayoutVid);
+            //linearLayoutVid.setLayoutParams(lp);
 
-            vid.seekTo(200);
+            LinearLayout linearLayoutButton = findViewById(R.id.linearLayoutButton);
+            LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(width,(int)Math.round((double)sheight*0.2));
+            //lp2.setMargins(0,sheight - (int)Math.round((double)sheight*0.2),width,sheight);
+            //lp2.gravity = Gravity.BOTTOM;
+            //linearLayoutButton.setLayoutParams(lp2);
+
+            float x = ((float)sheight - (float)height) / 2;
+
+            linearLayoutVid.setX(0);
+            linearLayoutVid.setY(x);
+            linearLayoutVid.setLayoutParams(lp);
+
+            linearLayoutButton.setX(0);
+            linearLayoutButton.setY(x + (float)height);
+            linearLayoutButton.setLayoutParams(lp2);
+
+            vid.seekTo(500);
 
             MediaController mediaController = new
                     MediaController(this);
@@ -95,6 +110,30 @@ public class playVideo extends Activity {
         }
     }
 
+    private void scaleVideo(){
+
+        double ratio;
+
+        //get height and width of video
+        height = bmp.getHeight();
+        width = bmp.getWidth();
+        //get height and width of available screen
+        swidth = getWindowManager().getDefaultDisplay().getWidth();
+        sheight = getWindowManager().getDefaultDisplay().getHeight();//1.8 is linearlayout weight
+        //calculate height and weight of video that will fit in this available space
+        if (height > sheight){
+             ratio = sheight / (double)height;
+             height = (int)Math.round((double)height * ratio);
+             width = (int)Math.round((double)width * ratio);
+        }
+        if (width > swidth){
+            ratio = swidth / (double)width;
+            width = (int)Math.round((double)width * ratio);
+            height = (int)Math.round((double)height * ratio);
+        }
+
+
+    }
 
     public void shareVideo(View view){
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
