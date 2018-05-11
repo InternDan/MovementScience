@@ -115,6 +115,26 @@ public class playVideo extends Activity {
             width = (int)Math.round((double)width * ratio);
             height = (int)Math.round((double)height * ratio);
         }
+        if (width < swidth){
+            ratio = swidth / (double)width;
+            width = (int)Math.round((double)width * ratio);
+            height = (int)Math.round((double)height * ratio);
+            if (height > sheight){
+                ratio = sheight / (double)height;
+                height = (int)Math.round((double)height * ratio);
+                width = (int)Math.round((double)width * ratio);
+            }
+        }
+        if (height < sheight){
+            ratio = sheight / (double)height;
+            height = (int)Math.round((double)height * ratio);
+            width = (int)Math.round((double)width * ratio);
+            if (width > swidth){
+                ratio = swidth / (double)width;
+                width = (int)Math.round((double)width * ratio);
+                height = (int)Math.round((double)height * ratio);
+            }
+        }
 
 
     }
