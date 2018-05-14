@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.InputType;
@@ -62,6 +63,7 @@ public class keyFrame extends Activity {
 
     String coordType = null;
     String coords = null;
+    String pathKeyFrameOut;
 
     Point X;
     Integer ptType;
@@ -176,6 +178,7 @@ public class keyFrame extends Activity {
                     Intent intentReceive = getIntent();
                     pathKeyFrame = intentReceive.getExtras().getString("keyFramePathString");
                     File imageKeyFrame = new File(pathKeyFrame);
+                    pathKeyFrameOut = "Edited-" + pathKeyFrame;
                     bmp = BitmapFactory.decodeFile(imageKeyFrame.getAbsolutePath());
                     m = new Mat();
 
@@ -218,8 +221,8 @@ public class keyFrame extends Activity {
 
     public void addScribble(){
         Intent intentPassAddScribble = new Intent(this,addScribble.class);
-        pathKeyFrame = createImageFromBitmap(bmp);
-        intentPassAddScribble.putExtra("keyFramePathString",pathKeyFrame);
+        pathKeyFrameOut = createImageFromBitmap(bmp);
+        intentPassAddScribble.putExtra("keyFramePathString",pathKeyFrameOut);
         startActivity(intentPassAddScribble);
     }
 
@@ -228,6 +231,7 @@ public class keyFrame extends Activity {
         matrix.postRotate(90);
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bmp,bmp.getWidth(),bmp.getHeight(),true);
         bmp = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap .getWidth(), scaledBitmap .getHeight(), matrix, true);
+        pathKeyFrameOut = createImageFromBitmap(bmp);
         keyFrameView.setImageBitmap(bmp);
     }
 
@@ -351,6 +355,7 @@ public class keyFrame extends Activity {
             }
             Imgproc.cvtColor(m,m, Imgproc.COLOR_RGBA2RGB);
             Utils.matToBitmap(m,bmp);
+            pathKeyFrameOut = createImageFromBitmap(bmp);
             keyFrameView.setImageBitmap(bmp);
             keyFrameView.requestFocus();
         }
@@ -429,7 +434,7 @@ public class keyFrame extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 text = input.getText().toString();
                 Intent intentPassAddText = new Intent(getApplicationContext(),addTextBox.class);
-                pathKeyFrame = createImageFromBitmap(bmp);
+                pathKeyFrameOut = createImageFromBitmap(bmp);
                 intentPassAddText.putExtra("keyFramePathString",pathKeyFrame);
                 intentPassAddText.putExtra("keyFrameText",text);
                 startActivity(intentPassAddText);
@@ -442,8 +447,15 @@ public class keyFrame extends Activity {
             }
         });
         builder.show();
+    }
 
-
+    public void shareImage(View view){
+        File fShare = new File(pathKeyFrameOut);
+        Uri imgUri = Uri.fromFile(fShare);
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("image/*");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM,imgUri);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
     public void goHome(View view){
