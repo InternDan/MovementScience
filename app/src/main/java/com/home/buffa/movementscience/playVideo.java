@@ -10,6 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.constraint.ConstraintLayout;
+import android.text.BoringLayout;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
@@ -76,8 +79,8 @@ public class playVideo extends Activity {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width,height);
 
             int top = (int) Math.round((((double)sheight - (double)height)/2));
-            int bottom = top + height;
-            lp.setMargins(0,top,0,0);
+            int left = (int) Math.round((((double)swidth - (double)width)/2));
+            lp.setMargins(left,top,0,0);
             linearLayoutVid = findViewById(R.id.linearLayoutVid);
             linearLayoutVid.setLayoutParams(lp);
 
@@ -104,6 +107,9 @@ public class playVideo extends Activity {
         //get height and width of available screen
         swidth = getWindowManager().getDefaultDisplay().getWidth();
         sheight = getWindowManager().getDefaultDisplay().getHeight();//1.8 is linearlayout weight
+        DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
+
+        sheight = sheight - (int)Math.round((TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40,dm)));//leave room for button
         //calculate height and weight of video that will fit in this available space
         if (height > sheight){
              ratio = sheight / (double)height;
