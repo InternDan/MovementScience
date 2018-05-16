@@ -32,7 +32,6 @@ import java.util.Calendar;
 public class CombineImagesExecute extends Activity {
 
     ImageView img;
-    Bitmap bmp;
 
     String ppOrder;
     String ppSize;
@@ -86,13 +85,20 @@ public class CombineImagesExecute extends Activity {
         bmp2Path = intentReceive.getExtras().getString("imgPath2");
         redoFlag = intentReceive.getExtras().getString("redo");
 
+        showToasts();
         makeCombinedImage();
     }
 
-    public void makeCombinedImage(){
+    public void showToasts(){
         if (redoFlag == null) {
             Toast.makeText(this, "Putting your pictures together...", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(this, "Putting your pictures together again...", Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    public void makeCombinedImage(){
         final CombineVideos cv = new CombineVideos();
         cv.ppOrder = ppOrder;
         cv.ppSize = ppSize;
@@ -112,9 +118,9 @@ public class CombineImagesExecute extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        bmp = cv.combineImagePair(bmp1,bmp2);
+        Bitmap bmp = cv.combineImagePair(bmp1,bmp2);
         if (bmp != null) {
-            scaleImage();
+            scaleImage(bmp);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width,height);
             int top = (int) Math.round((((double)sheight - (double)height)/2));
             int left = (int) Math.round((((double)swidth - (double)width)/2));
@@ -142,7 +148,6 @@ public class CombineImagesExecute extends Activity {
         intent.putExtra("imgPath1", bmp1Path);
         intent.putExtra("imgPath2", bmp2Path);
         intent.putExtra("redo", bmp2Path);
-        Toast.makeText(this, "Putting your pictures together again...", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
 
@@ -175,7 +180,7 @@ public class CombineImagesExecute extends Activity {
         startActivity(intent);
     }
 
-    private void scaleImage(){
+    private void scaleImage(Bitmap bmp){
 
         double ratio;
 
