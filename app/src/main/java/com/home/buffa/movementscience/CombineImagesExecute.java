@@ -51,6 +51,8 @@ public class CombineImagesExecute extends Activity {
     int sheight;
     int swidth;
 
+    String redoFlag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,16 +79,26 @@ public class CombineImagesExecute extends Activity {
         rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","0");
         rotateDegreesPostProcess2 = Integer.valueOf(rotDeg);
 
+
+        //load two bitmaps
+        Intent intentReceive = getIntent();
+        bmp1Path = intentReceive.getExtras().getString("imgPath1");
+        bmp2Path = intentReceive.getExtras().getString("imgPath2");
+        redoFlag = intentReceive.getExtras().getString("redo");
+
+        makeCombinedImage();
+    }
+
+    public void makeCombinedImage(){
+        if (redoFlag == null) {
+            Toast.makeText(this, "Putting your pictures together...", Toast.LENGTH_LONG).show();
+        }
         final CombineVideos cv = new CombineVideos();
         cv.ppOrder = ppOrder;
         cv.ppSize = ppSize;
         cv.ppOrientation = ppOrientation;
         cv.postRotate1 = rotateDegreesPostProcess;
         cv.postRotate2 = rotateDegreesPostProcess2;
-        //load two bitmaps
-        Intent intentReceive = getIntent();
-        bmp1Path = intentReceive.getExtras().getString("imgPath1");
-        bmp2Path = intentReceive.getExtras().getString("imgPath2");
 
         Bitmap bmp1 = null;
         Bitmap bmp2 = null;
@@ -100,7 +112,6 @@ public class CombineImagesExecute extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(this, "Mergine images", Toast.LENGTH_SHORT).show();
         bmp = cv.combineImagePair(bmp1,bmp2);
         if (bmp != null) {
             scaleImage();
@@ -115,7 +126,7 @@ public class CombineImagesExecute extends Activity {
             File img = new File(imagePath);
             imgUri = Uri.fromFile(img);
         }else{
-            Toast.makeText(this, "An error occurred creating this image", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "An error occurred creating these images", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -130,6 +141,8 @@ public class CombineImagesExecute extends Activity {
         Intent intent = new Intent(this, CombineImagesExecute.class);
         intent.putExtra("imgPath1", bmp1Path);
         intent.putExtra("imgPath2", bmp2Path);
+        intent.putExtra("redo", bmp2Path);
+        Toast.makeText(this, "Putting your pictures together again...", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
 
