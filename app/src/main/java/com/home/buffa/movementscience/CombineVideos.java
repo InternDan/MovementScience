@@ -610,6 +610,46 @@ public class CombineVideos {
         return bmp;
     }
 
+    public Bitmap combineImagePair(Bitmap bmp1,Bitmap bmp2){
+
+        VideoProcessing vp = new VideoProcessing();
+        //intialize and store bitmaps in arraylist for processing
+        ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
+        bmpList.add(bmp1.copy(Bitmap.Config.ARGB_8888, true));
+        bmpList.add(bmp2.copy(Bitmap.Config.ARGB_8888, true));
+        bmp1.recycle();
+        bmp2.recycle();
+        //rotate bitmaps if needed
+        Bitmap bmp = bmpList.get(0).copy(Bitmap.Config.ARGB_8888, true);
+        bmp = vp.rotateImage(bmp, postRotate1);
+        bmpList.set(0, bmp.copy(Bitmap.Config.ARGB_8888, true));
+        bmp.recycle();
+        Bitmap bmptmp = bmpList.get(1).copy(Bitmap.Config.ARGB_8888, true);
+        bmptmp = vp.rotateImage(bmptmp, postRotate2);
+        bmpList.set(1, bmptmp.copy(Bitmap.Config.ARGB_8888, true));
+        bmptmp.recycle();
+        //resize bitmaps if needed
+        if (ppOrientation.contains("stacked") == false) {
+            bmpList = vp.scaleHeightAndWidth(bmpList.get(0), bmpList.get(1), ppSize, ppOrientation);
+        } else {
+            Toast.makeText(context, "Cannot stack two images front to back; cancelling! Check your settings for post-processing", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        //combine bitmaps if needed
+        Bitmap bmpJoined = null;
+        if (ppOrientation.contains("lr")) {
+            bmpJoined = vp.combineImagesLR(bmpList.get(0), bmpList.get(1));
+        } else if (ppOrientation.contains("tb")) {
+            bmpJoined = vp.combineImagesUD(bmpList.get(0), bmpList.get(1));
+        } else if (ppOrientation.contains("rl")) {
+            bmpJoined = vp.combineImagesLR(bmpList.get(1), bmpList.get(0));
+        } else if (ppOrientation.contains("bt")) {
+            bmpJoined = vp.combineImagesUD(bmpList.get(1), bmpList.get(0));
+        }
+        bmpJoined = vp.checkBitmapDimensions(bmpJoined);
+        return bmpJoined;
+    }
+
     private int selectTrack(MediaExtractor extractor) {
         // Select the first video track we find, ignore the rest.
         int numTracks = extractor.getTrackCount();

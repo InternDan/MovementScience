@@ -50,6 +50,13 @@ public class VideoProcessing {
         return bmp;
     }
 
+    public static Bitmap rotateImage(Bitmap bmp, Integer prefRotatePost){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(prefRotatePost);
+        bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+        return bmp;
+    }
+
     //scale the height and width of the images based on the settings of the user (passed in as arguments)
     public static ArrayList<Bitmap> scaleHeightAndWidth(Bitmap bmp1, Bitmap bmp2, String ppSize, String ppOrientation) {
         ArrayList<Bitmap> outBmps = new ArrayList<Bitmap>();

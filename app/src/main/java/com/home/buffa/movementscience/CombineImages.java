@@ -29,6 +29,9 @@ public class CombineImages extends Activity {
     int clickTrack1;
     int clickTrack2;
 
+    Uri uri1 = null;
+    Uri uri2 = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,9 +91,9 @@ public class CombineImages extends Activity {
     {
         if (requestCode == READ_REQUEST_CODE_IMAGE1) {
             if (resultCode==RESULT_OK){
-                Uri uri = data.getData();
+                uri1 = data.getData();
                 try {
-                    bmp1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri);
+                    bmp1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri1);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -102,9 +105,9 @@ public class CombineImages extends Activity {
         }
         if (requestCode == READ_REQUEST_CODE_IMAGE2) {
             if (resultCode==RESULT_OK){
-                Uri uri = data.getData();
+                uri2 = data.getData();
                 try {
-                    bmp2 = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri);
+                    bmp2 = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri2);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -115,7 +118,14 @@ public class CombineImages extends Activity {
             }
         }
     }
-
-
-
+    public void previewImage(View view){
+        if (uri1 != null && uri2 != null) {
+            Intent intentPassPostProcessing = new Intent(getApplicationContext(), CombineImagesExecute.class);
+            intentPassPostProcessing.putExtra("imgPath1", uri1.toString());
+            intentPassPostProcessing.putExtra("imgPath2", uri2.toString());
+            startActivity(intentPassPostProcessing);
+        }else{
+            Toast.makeText(this, "Make sure both  are selected!", Toast.LENGTH_LONG).show();
+        }
+    }
 }
