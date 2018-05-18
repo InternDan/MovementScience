@@ -280,7 +280,7 @@ public class trackPointsOffline extends Activity {
                 {
                     new trackPointsOffline.beginTrackingProcedure().execute(null, null, null);//
                     Intent intent = new Intent(getApplicationContext(), offlineProcessing.class);
-                    Toast.makeText(getApplicationContext(),"Application will load video once tracked", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Tracking video - this may take a while", Toast.LENGTH_LONG).show();
                     startActivity(intent);
 
                 } break;

@@ -23,7 +23,6 @@
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:orientation="horizontal" >
-
                 <Button
                     android:id="@+id/buttonRecordVideo"
                     android:layout_width="69dp"
@@ -35,7 +34,6 @@
                     android:textStyle="bold|normal"
                     android:layout_gravity="center"
                     android:visibility="visible"/>
-
             </LinearLayout>
 
             <LinearLayout
@@ -44,7 +42,6 @@
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:orientation="horizontal" >
-
                 <Button
                     android:id="@+id/buttonRealTimeTracking"
                     android:layout_width="match_parent"
@@ -56,8 +53,26 @@
                     android:textSize="20sp"
                     android:layout_gravity="center"
                     android:textStyle="bold|normal"/>
-
             </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+                <Button
+                    android:id="@+id/buttonWatchVideo"
+                    android:layout_width="68dp"
+                    android:layout_height="57dp"
+                    android:background="@drawable/ic_video_play"
+                    android:onClick="watchVideo"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+
+
 
         </LinearLayout>
 
@@ -69,24 +84,57 @@
             android:background="@drawable/border">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:orientation="horizontal"
                 android:layout_gravity="center"
-                android:orientation="horizontal" >
-
+                >
                 <Button
-                android:id="@+id/buttonOfflineProcessing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00999999"
-                android:onClick="launchOfflineTracking"
-                android:text="@string/offline_processing"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="20sp"
-                android:textStyle="bold|normal"
-                android:layout_gravity="center" />
+                    android:id="@+id/buttonCropVideo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="launchGooglePhotos"
+                    android:text="Crop Video"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|left"
+                    />
+                <Button
+                    android:id="@+id/buttonStabilizeVideo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="launchGooglePhotos"
+                    android:text="Stabilize Video"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|right"
+                    />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                >
+                <Button
+                    android:id="@+id/buttonPostProcessing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="postProcessing"
+                    android:text="Merge Videos"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|left"
+                    />
+                <Button
+                    android:id="@+id/buttonMergeImages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="combineImages"
+                    android:text="Merge Images"
+                    android:layout_weight="1"
+                    android:layout_gravity="center|right"
+                    />
             </LinearLayout>
 
         </LinearLayout>
@@ -112,47 +160,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:layout_gravity="center">
-
-                <Button
-                    android:id="@+id/buttonWatchVideo"
-                    android:layout_width="68dp"
-                    android:layout_height="57dp"
-                    android:background="@drawable/ic_video_play"
-                    android:onClick="watchVideo"
-                    android:layout_gravity="center"
-                     />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal"
                 android:layout_gravity="center"
-                >
+                android:orientation="horizontal" >
                 <Button
-                    android:id="@+id/buttonPostProcessing"
+                    android:id="@+id/buttonOfflineProcessing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="postProcessing"
-                    android:text="Merge Videos"
-                    android:layout_weight="1"
-                    android:layout_gravity="center|left"
-                    />
-
-                <Button
-                    android:id="@+id/buttonMergeImages"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="combineImages"
-                    android:text="Merge Images"
-                    android:layout_weight="1"
-                    android:layout_gravity="center|right"
-                     />
+                    android:background="#00999999"
+                    android:onClick="launchOfflineTracking"
+                    android:text="@string/offline_processing"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="20sp"
+                    android:textStyle="bold|normal"
+                    android:layout_gravity="center" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -169,8 +190,6 @@
                     />
             </LinearLayout>
 
-
-
         </LinearLayout>
 
         <LinearLayout
@@ -180,13 +199,13 @@
             android:orientation="vertical"
             android:background="@drawable/border"
             >
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:orientation="horizontal" >
-
                 <Button
                     android:id="@+id/buttonSettings"
                     android:layout_width="wrap_content"
@@ -198,8 +217,30 @@
                     android:textSize="20sp"
                     android:textStyle="bold|normal"
                     android:layout_gravity="center"
-                     />
+                    />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:orientation="horizontal" >
+                <Button
+                    android:id="@+id/buttonHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00999999"
+                    android:onClick="launchHelp"
+                    android:text="Online Help"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="20sp"
+                    android:textStyle="bold|normal"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+
+
+
         </LinearLayout>
 
     </LinearLayout>

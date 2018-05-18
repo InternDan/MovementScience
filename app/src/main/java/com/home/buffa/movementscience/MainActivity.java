@@ -2,6 +2,7 @@ package com.home.buffa.movementscience;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -241,6 +242,14 @@ public class MainActivity extends Activity {
                 .setNegativeButton("Cancel", okListener)
                 .create()
                 .show();
+    }
+
+    public void launchGooglePhotos(View view){
+        Intent intent = new Intent("android.intent.action.MAIN");
+        intent.setComponent(ComponentName.unflattenFromString("com.google.android.apps.photos.home.HomeActivity"));
+        intent.addCategory("android.intent.category.LAUNCHER");
+        intent.setPackage("com.google.android.apps.photos");
+        startActivity(intent);
     }
 
     @Override
