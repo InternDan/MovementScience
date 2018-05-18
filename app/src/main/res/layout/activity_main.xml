@@ -8,13 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:background="@drawable/border">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -64,7 +65,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:background="@drawable/border">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -96,13 +98,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        >
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:background="@drawable/border">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -170,23 +174,32 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <Button
-                android:id="@+id/buttonSettings"
+            android:orientation="vertical"
+            android:background="@drawable/border"
+            >
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#00999999"
-                android:onClick="editSettings"
-                android:text="@string/settings"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="20sp"
-                android:textStyle="bold|normal"
+                android:layout_weight="1"
                 android:layout_gravity="center"
-                 />
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/buttonSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00999999"
+                    android:onClick="editSettings"
+                    android:text="@string/settings"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="20sp"
+                    android:textStyle="bold|normal"
+                    android:layout_gravity="center"
+                     />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
