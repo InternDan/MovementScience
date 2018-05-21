@@ -63,8 +63,8 @@ public class playVideo extends Activity {
         String uri;
 
         Intent intentReceive = getIntent();
-        uri = intentReceive.getExtras().getString("vidUri");
-        vidUri = Uri.parse(uri);
+        String uriString = intentReceive.getExtras().getString("vidUri");
+        vidUri = Uri.parse(uriString);
         vid = findViewById(R.id.videoView);
 
 

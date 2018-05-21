@@ -2,6 +2,7 @@ package com.home.buffa.movementscience;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -58,6 +60,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
+import static com.home.buffa.movementscience.MainActivity.notificationID;
 import static junit.framework.Assert.fail;
 import static org.opencv.core.TermCriteria.COUNT;
 
@@ -119,6 +122,10 @@ public class trackPointsOffline extends Activity {
     AndroidSequenceEncoder enc2;
     SeekableByteChannel out;
     SeekableByteChannel out2;
+    String uriPass;
+
+    double seconds;
+    int frames;
 
     String eMagTime;//
 
@@ -280,7 +287,7 @@ public class trackPointsOffline extends Activity {
                 {
                     new trackPointsOffline.beginTrackingProcedure().execute(null, null, null);//
                     Intent intent = new Intent(getApplicationContext(), offlineProcessing.class);
-                    Toast.makeText(getApplicationContext(),"Tracking video - this may take a while", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Tracking video - see notification for progress", Toast.LENGTH_LONG).show();
                     startActivity(intent);
 
                 } break;
@@ -307,6 +314,7 @@ public class trackPointsOffline extends Activity {
                 DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
                 eMagTime = df2.format(Calendar.getInstance().getTime());
                 outPath = directory.getAbsolutePath() + "/FullSize-Tracked-" + eMagTime + ".mp4";
+                uriPass = outPath;
                 out = null;
                 out = NIOUtils.writableFileChannel(outPath);
                 enc = new AndroidSequenceEncoder(out, Rational.R(25,1));
@@ -412,6 +420,17 @@ public class trackPointsOffline extends Activity {
         int inputChunk = 0;
         int decodeCount = 0;
 
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try{
+            retriever.setDataSource(videoAbsolutePath);
+        }catch (Exception e) {
+            System.out.println("Exception= "+e);
+        }
+        String duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        int duration_millisec = Integer.parseInt(duration); //duration in millisec
+        seconds = ((double)duration_millisec / 1000);
+        frames = (int)Math.round(seconds) * (int)Math.round(frameRate);
+
         boolean outputDone = false;
         boolean inputDone = false;
         while (!outputDone) {
@@ -486,15 +505,28 @@ public class trackPointsOffline extends Activity {
                         Bitmap bmp = outputSurface.returnFrame();
                         bmp = VideoProcessing.rotateFrame(bmp,rotateDegreesPostProcess);
                         trackPoints(bmp);
+                        decodeCount++;
+                        String msg = String.valueOf((int)Math.round(((double)decodeCount / (double)frames)*100));
+                        MainActivity.mBuilder.setContentText(msg + "% completed");
+                        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
 //                        bmp.recycle();
                     }else{
+                        //make notification clickable link to play back
                         outputDone = true;
                         enc.finish();
                         NIOUtils.closeQuietly(out);
                         enc2.finish();
                         NIOUtils.closeQuietly(out2);
                         coords = null;
-
+                        Intent intent = new Intent(this, playVideo.class);
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        File file = new File(uriPass);
+                        Uri vidUriActual = Uri.fromFile(file);
+                        intent.putExtra("vidUri",vidUriActual.toString());
+                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        MainActivity.mBuilder.setContentIntent(pendingIntent);
+                        MainActivity.mBuilder.setContentText("Processing completed! Click to play.");
+                        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
                     }
                 }
             }

@@ -79,5 +79,6 @@ dependencies {
     compile 'com.googlecode.mp4parser:isoparser:1.1.21'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
+    implementation "com.android.support:support-compat:27.1.1"
     implementation project(':FileChooser')
 }
