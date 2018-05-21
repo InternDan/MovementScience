@@ -12,6 +12,7 @@ import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -58,6 +59,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
+import static com.home.buffa.movementscience.MainActivity.notificationID;
 import static junit.framework.Assert.fail;
 import static org.opencv.core.TermCriteria.COUNT;
 
@@ -119,6 +121,9 @@ public class trackPointsOffline extends Activity {
     AndroidSequenceEncoder enc2;
     SeekableByteChannel out;
     SeekableByteChannel out2;
+
+    double seconds;
+    int frames;
 
     String eMagTime;//
 
@@ -412,6 +417,17 @@ public class trackPointsOffline extends Activity {
         int inputChunk = 0;
         int decodeCount = 0;
 
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try{
+            retriever.setDataSource(videoAbsolutePath);
+        }catch (Exception e) {
+            System.out.println("Exception= "+e);
+        }
+        String duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        int duration_millisec = Integer.parseInt(duration); //duration in millisec
+        seconds = ((double)duration_millisec / 1000);
+        frames = (int)Math.round(seconds) * (int)Math.round(frameRate);
+
         boolean outputDone = false;
         boolean inputDone = false;
         while (!outputDone) {
@@ -486,6 +502,10 @@ public class trackPointsOffline extends Activity {
                         Bitmap bmp = outputSurface.returnFrame();
                         bmp = VideoProcessing.rotateFrame(bmp,rotateDegreesPostProcess);
                         trackPoints(bmp);
+                        decodeCount++;
+                        String msg = String.valueOf((int)Math.round(((double)decodeCount / (double)frames)*100));
+                        MainActivity.mBuilder.setContentText(msg + "% completed");
+                        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
 //                        bmp.recycle();
                     }else{
                         outputDone = true;

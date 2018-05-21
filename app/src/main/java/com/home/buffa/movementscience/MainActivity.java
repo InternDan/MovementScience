@@ -2,6 +2,8 @@ package com.home.buffa.movementscience;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,10 +12,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -41,6 +46,10 @@ import static android.content.ContentValues.TAG;
 public class MainActivity extends Activity {
 
     static final int READ_REQUEST_CODE_VIDEO = 2;
+    public static NotificationCompat.Builder mBuilder;
+    public final String CHANNEL_ID = "MovSci";
+    public static NotificationManagerCompat notificationManager;
+    public static int notificationID = 2235;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -60,6 +69,17 @@ public class MainActivity extends Activity {
         if(checkAndRequestPermissions()) {
             // carry on the normal flow, as the case of  permissions  granted.
         }
+        createNotificationChannel();
+        notificationManager = NotificationManagerCompat.from(this);
+        //create notification for progress updates
+        mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_recorder)
+                .setContentTitle("MovSci Progress")
+                .setContentText("No progress yet")
+                //.setStyle(new NotificationCompat.BigTextStyle()
+                //        .bigText("Much longer text that cannot fit one line..."))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        notificationManager.notify(notificationID, mBuilder.build());
 
     }
 
@@ -163,7 +183,6 @@ public class MainActivity extends Activity {
         int permissionWriteExternalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int permissionGetAccounts = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS);
         int permissionRecordAudio = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
-        int permissionChatHeads = ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW);
         List<String> listPermissionsNeeded = new ArrayList<>();
         if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.CAMERA);
@@ -176,9 +195,6 @@ public class MainActivity extends Activity {
         }
         if (permissionRecordAudio != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.RECORD_AUDIO);
-        }
-        if (permissionChatHeads != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.SYSTEM_ALERT_WINDOW);
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -199,7 +215,7 @@ public class MainActivity extends Activity {
                     for (int i = 0; i < permissions.length; i++)
                         perms.put(permissions[i], grantResults[i]);
                     // Check for both permissions
-                    if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&  perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED && perms.get(Manifest.permission.SYSTEM_ALERT_WINDOW) == PackageManager.PERMISSION_GRANTED){
+                    if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&  perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED){
                         Log.d(TAG, "camera, write, and account permission granted");
                         // process the normal flow
                         //else any one or both the permissions are not granted
@@ -235,10 +251,6 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:" + getPackageName()));
-        startActivity(intent);
-
     }
 
     private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
@@ -267,6 +279,23 @@ public class MainActivity extends Activity {
             startActivity(intent);
         }
     }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "MovSciChannel";
+            String description = "MovSci Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
 
 
