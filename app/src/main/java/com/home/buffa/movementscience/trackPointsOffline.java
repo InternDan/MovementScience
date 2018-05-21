@@ -2,6 +2,7 @@ package com.home.buffa.movementscience;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -121,6 +122,7 @@ public class trackPointsOffline extends Activity {
     AndroidSequenceEncoder enc2;
     SeekableByteChannel out;
     SeekableByteChannel out2;
+    String uriPass;
 
     double seconds;
     int frames;
@@ -285,7 +287,7 @@ public class trackPointsOffline extends Activity {
                 {
                     new trackPointsOffline.beginTrackingProcedure().execute(null, null, null);//
                     Intent intent = new Intent(getApplicationContext(), offlineProcessing.class);
-                    Toast.makeText(getApplicationContext(),"Tracking video - this may take a while", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Tracking video - see notification for progress", Toast.LENGTH_LONG).show();
                     startActivity(intent);
 
                 } break;
@@ -312,6 +314,7 @@ public class trackPointsOffline extends Activity {
                 DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
                 eMagTime = df2.format(Calendar.getInstance().getTime());
                 outPath = directory.getAbsolutePath() + "/FullSize-Tracked-" + eMagTime + ".mp4";
+                uriPass = outPath;
                 out = null;
                 out = NIOUtils.writableFileChannel(outPath);
                 enc = new AndroidSequenceEncoder(out, Rational.R(25,1));
@@ -508,13 +511,22 @@ public class trackPointsOffline extends Activity {
                         MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
 //                        bmp.recycle();
                     }else{
+                        //make notification clickable link to play back
                         outputDone = true;
                         enc.finish();
                         NIOUtils.closeQuietly(out);
                         enc2.finish();
                         NIOUtils.closeQuietly(out2);
                         coords = null;
-
+                        Intent intent = new Intent(this, playVideo.class);
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        File file = new File(uriPass);
+                        Uri vidUriActual = Uri.fromFile(file);
+                        intent.putExtra("vidUri",vidUriActual.toString());
+                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        MainActivity.mBuilder.setContentIntent(pendingIntent);
+                        MainActivity.mBuilder.setContentText("Processing completed! Click to play.");
+                        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
                     }
                 }
             }
