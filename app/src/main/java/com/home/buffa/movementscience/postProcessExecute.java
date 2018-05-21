@@ -88,6 +88,7 @@ public class postProcessExecute extends Activity {
         cv.ppOrientation = ppOrientation;
         cv.postRotate1 = rotateDegreesPostProcess;
         cv.postRotate2 = rotateDegreesPostProcess2;
+        cv.context = getApplicationContext();
 
         AsyncTask.execute(new Runnable() {
             @Override

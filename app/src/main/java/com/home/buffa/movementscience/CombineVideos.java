@@ -1,5 +1,6 @@
 package com.home.buffa.movementscience;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -45,10 +47,17 @@ public class CombineVideos {
     public static int postRotate1;
     public static int postRotate2;
     public static Context context;
+    String passPath;
 
 
     int frameRate1;
     int frameRate2;
+    int frames1;
+    int frames2;
+    int frames;
+    int duration1;
+    int duration2;
+
     String eMagTime;
     String outPath;
     SeekableByteChannel out;
@@ -94,6 +103,10 @@ public class CombineVideos {
             throw new RuntimeException("No video track found in " + inputFile1);
         }
         extractor1.selectTrack(trackIndex1);
+
+
+
+
         format1 = extractor1.getTrackFormat(trackIndex1);
         Log.d(TAG, "Video size is " + format1.getInteger(MediaFormat.KEY_WIDTH) + "x" +
                 format1.getInteger(MediaFormat.KEY_HEIGHT));
@@ -159,10 +172,33 @@ public class CombineVideos {
 
         double frOut = ((double) frameRate1 + (double) frameRate2) / 2;
 
+        MediaMetadataRetriever retriever1 = new MediaMetadataRetriever();
+        try{
+            retriever1.setDataSource(videoAbsolutePath1);
+        }catch (Exception e) {
+            System.out.println("Exception= "+e);
+        }
+        String duration1 = retriever1.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        int duration_millisec1 = Integer.parseInt(duration1); //duration in millisec
+        double seconds1 = ((double)duration_millisec1 / 1000);
+        frames1 = (int)Math.round(seconds1) * (int)Math.round(frameRate1);
+
+        MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
+        try{
+            retriever2.setDataSource(videoAbsolutePath2);
+        }catch (Exception e) {
+            System.out.println("Exception= "+e);
+        }
+        String duration2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        int duration_millisec2 = Integer.parseInt(duration2); //duration in millisec
+        double seconds2 = ((double)duration_millisec2 / 1000);
+        frames2 = (int)Math.round(seconds2) * (int)Math.round(frameRate2);
+
 
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
         eMagTime = df2.format(Calendar.getInstance().getTime());
         outPath = directory.getAbsolutePath() + "/FullSize-Combined-" + eMagTime + ".mp4";
+        passPath = outPath;
         out = null;
         try {
             out = NIOUtils.writableFileChannel(outPath);
@@ -191,6 +227,7 @@ public class CombineVideos {
 
     public void combineVideos(){
         initialize();
+        int framesMerged = 0;
         boolean isDone = false;
 
         while (isDone == false) {
@@ -199,7 +236,13 @@ public class CombineVideos {
                 Bitmap bmp2 = null;
 
                 //pull frames from each video as appropriate
+                if (frames1 > frames2){
+                    frames = frames1;
+                }else{
+                    frames = frames2;
+                }
                 if (ppOrientation.contains("s")) {
+                    frames = frames1+frames2;
                     if (secondVidFlag == false) {
                         bmp1 = extractFrame1();
                         if (bmp1 == null) {
@@ -250,6 +293,15 @@ public class CombineVideos {
                             extractor2.release();
                             extractor2 = null;
                         }
+                        Intent intent = new Intent(context, playVideo.class);
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        File file = new File(passPath);
+                        Uri vidUriActual = Uri.fromFile(file);
+                        intent.putExtra("vidUri",vidUriActual.toString());
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        MainActivity.mBuilder.setContentIntent(pendingIntent);
+                        MainActivity.mBuilder.setContentText("Processing completed! Click to play.");
+                        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
                         return;
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -310,6 +362,12 @@ public class CombineVideos {
                 bmpJoined = vp.checkBitmapDimensions(bmpJoined);
                 enc.encodeImage(bmpJoined);
                 enc2.encodeImage(vp.resizeForInstagram(bmpJoined));
+                //update notification
+                framesMerged++;
+                String msg = String.valueOf((int)Math.round(((double)framesMerged / (double)frames)*100));
+                MainActivity.mBuilder.setContentText(msg + "% completed");
+                MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
+
                 bmpJoined.recycle();
             } catch (IOException e) {
                 e.printStackTrace();
