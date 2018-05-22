@@ -225,6 +225,8 @@ public class CombineVideos {
         initialize();
         int framesMerged = 0;
         boolean isDone = false;
+        boolean vid1Done = false;
+        boolean vid2Done = false;
 
         while (isDone == false) {
             try {
@@ -249,14 +251,30 @@ public class CombineVideos {
                         bmp1 = extractFrame2();
                     }
                 } else if (ppOrder.contains("lr")) {
-                    bmp1 = extractFrame1();
                     frames = frames1+frames2;
+                    if (secondVidFlag==false){
+                        bmp1 = extractFrame1();
+                    }
+                    if (bmp1 == null){
+                        secondVidFlag = true;
+                        bmp2 = extractFrame2();
+                    }
                 } else if (ppOrder.contains("rl")) {
-                    bmp1 = extractFrame2();
                     frames = frames1+frames2;
+                    if (secondVidFlag==false){
+                        bmp1 = extractFrame2();
+                    }
+                    if (bmp1 == null){
+                        secondVidFlag = true;
+                        bmp2 = extractFrame1();
+                    }
                 } else {
-                    bmp1 = extractFrame1();
-                    bmp2 = extractFrame2();
+                    if (vid1Done == false) {
+                        bmp1 = extractFrame1();
+                    }
+                    if (vid2Done == false) {
+                        bmp2 = extractFrame2();
+                    }
                 }
                 //check to see if we can close it out
                 if (bmp1 == null && bmp2 == null) {
@@ -312,12 +330,14 @@ public class CombineVideos {
                     Canvas canvas = new Canvas(bmp1);
                     canvas.drawColor(Color.BLACK);
                     canvas.drawBitmap(bmp1, 0, 0, null);
+                    vid1Done = true;
                 }
                 if (bmp2 == null) {
                     bmp2 = Bitmap.createBitmap(format2.getInteger(MediaFormat.KEY_WIDTH), format2.getInteger(MediaFormat.KEY_HEIGHT), Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(bmp2);
                     canvas.drawColor(Color.BLACK);
                     canvas.drawBitmap(bmp2, 0, 0, null);
+                    vid2Done = true;
                 }
                 //intialize and store bitmaps in arraylist for processing
                 ArrayList<Bitmap> bmpList = new ArrayList<Bitmap>();
