@@ -103,10 +103,6 @@ public class CombineVideos {
             throw new RuntimeException("No video track found in " + inputFile1);
         }
         extractor1.selectTrack(trackIndex1);
-
-
-
-
         format1 = extractor1.getTrackFormat(trackIndex1);
         Log.d(TAG, "Video size is " + format1.getInteger(MediaFormat.KEY_WIDTH) + "x" +
                 format1.getInteger(MediaFormat.KEY_HEIGHT));
@@ -150,9 +146,9 @@ public class CombineVideos {
             throw new RuntimeException("No video track found in " + inputFile2);
         }
         extractor2.selectTrack(trackIndex2);
-        format2 = extractor1.getTrackFormat(trackIndex2);
-        Log.d(TAG, "Video size is " + format1.getInteger(MediaFormat.KEY_WIDTH) + "x" +
-                format1.getInteger(MediaFormat.KEY_HEIGHT));
+        format2 = extractor2.getTrackFormat(trackIndex2);
+        Log.d(TAG, "Video size is " + format2.getInteger(MediaFormat.KEY_WIDTH) + "x" +
+                format2.getInteger(MediaFormat.KEY_HEIGHT));
         // Could use width/height from the MediaFormat to get full-size frames.
         format2.setInteger("rotation-degrees", 0);
         if (format2.containsKey("frame-rate")) {
@@ -247,14 +243,17 @@ public class CombineVideos {
                         bmp1 = extractFrame1();
                         if (bmp1 == null) {
                             secondVidFlag = true;
+                            bmp1 = extractFrame2();
                         }
                     } else {
                         bmp1 = extractFrame2();
                     }
                 } else if (ppOrder.contains("lr")) {
                     bmp1 = extractFrame1();
+                    frames = frames1+frames2;
                 } else if (ppOrder.contains("rl")) {
-                    bmp2 = extractFrame2();
+                    bmp1 = extractFrame2();
+                    frames = frames1+frames2;
                 } else {
                     bmp1 = extractFrame1();
                     bmp2 = extractFrame2();
