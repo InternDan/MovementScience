@@ -92,6 +92,7 @@ public class trackPointsOffline extends Activity {
 
     String videoPath;
     String videoAbsolutePath;
+    String outPath;
 
     int c = 0;
     int numPoints = 0;
@@ -301,7 +302,7 @@ public class trackPointsOffline extends Activity {
 
     private class beginTrackingProcedure extends AsyncTask<Void, Void, Void> {
 
-        String outPath;
+
 
         protected Void doInBackground(Void... params) {
 
@@ -520,7 +521,7 @@ public class trackPointsOffline extends Activity {
                         coords = null;
                         Intent intent = new Intent(this, playVideo.class);
                         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        File file = new File(uriPass);
+                        File file = new File(outPath);
                         Uri vidUriActual = Uri.fromFile(file);
                         intent.putExtra("vidUri",vidUriActual.toString());
                         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
