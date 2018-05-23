@@ -47,7 +47,7 @@ public class CombineVideos {
     public static int postRotate1;
     public static int postRotate2;
     public static Context context;
-    String passPath;
+
 
 
     int frameRate1;
@@ -194,7 +194,6 @@ public class CombineVideos {
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
         eMagTime = df2.format(Calendar.getInstance().getTime());
         outPath = directory.getAbsolutePath() + "/FullSize-Combined-" + eMagTime + ".mp4";
-        passPath = outPath;
         out = null;
         try {
             out = NIOUtils.writableFileChannel(outPath);
@@ -312,7 +311,7 @@ public class CombineVideos {
                         }
                         Intent intent = new Intent(context, playVideo.class);
                         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        File file = new File(passPath);
+                        File file = new File(outPath);
                         Uri vidUriActual = Uri.fromFile(file);
                         intent.putExtra("vidUri",vidUriActual.toString());
                         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);

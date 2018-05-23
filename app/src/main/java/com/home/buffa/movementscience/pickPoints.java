@@ -179,9 +179,8 @@ public class pickPoints extends Activity {
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
 
 
-
         Intent intentReceive = getIntent();
-        String path = intentReceive.getExtras().getString("firstFramePathString");
+        path = intentReceive.getExtras().getString("firstFramePathString");
         File image2 = new File(path);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmp = BitmapFactory.decodeFile(image2.getAbsolutePath(),bmOptions);
@@ -386,6 +385,11 @@ public class pickPoints extends Activity {
         startActivity(intent);
     }
 
+    public void editSettings(View view){
+        Intent intent = new Intent(getApplicationContext(),settingsActivity.class);
+        startActivity(intent);
+    }
+
     public void onResume() {
         super.onResume();
         coords = null;
@@ -410,5 +414,10 @@ public class pickPoints extends Activity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
+
+        /*Intent intentPass = new Intent(getApplicationContext(), pickPoints.class);
+        intentPass.putExtra("firstFramePathString",path);
+        intentPass.putExtra("videoAbsolutePath",videoAbsolutePath);
+        startActivity(intentPass);*/
     }
 }
