@@ -1,11 +1,14 @@
 package com.home.buffa.movementscience;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -409,8 +412,5 @@ public class VideoProcessing {
         bmp2.recycle();
         return bmp;
     }
-
-
-
 
 }

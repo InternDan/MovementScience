@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -35,6 +36,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,9 +59,7 @@ public class MainActivity extends Activity {
 
     }
 
-    final private int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 15342;
     final private int REQUEST_ID_MULTIPLE_PERMISSIONS = 124;
-    int READ_REQUEST_CODE = 333;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -294,6 +294,43 @@ public class MainActivity extends Activity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    public void updateThumbnails(View view){
+
+        String path = Environment.getExternalStorageDirectory().toString()+"/Pictures";
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                updateGallery(files[i]);
+            }
+        }
+
+        path = getApplicationContext().getFilesDir().toString()+"/Download";
+        directory = new File(path);
+        files = directory.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                updateGallery(files[i]);
+            }
+        }
+
+        path = Environment.getExternalStorageDirectory().toString()+"/Movies";
+        directory = new File(path);
+        files = directory.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                updateGallery(files[i]);
+            }
+        }
+    }
+
+    public void updateGallery(File file){
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri uri = Uri.fromFile(file);
+        mediaScanIntent.setData(uri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
 

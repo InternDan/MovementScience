@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.os.Bundle;
@@ -29,7 +33,8 @@ public class postProcessing extends Activity {
     AndroidSequenceEncoder enc;
     static final int READ_REQUEST_CODE_VIDEO1 = 1;
     static final int READ_REQUEST_CODE_VIDEO2 = 2;
-    MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+    MediaMetadataRetriever mediaMetadataRetriever1 = new MediaMetadataRetriever();
+    MediaMetadataRetriever mediaMetadataRetriever2 = new MediaMetadataRetriever();
     Uri videoUri1;
     Uri videoUri2;
     String videoAbsolutePath;
@@ -65,24 +70,13 @@ public class postProcessing extends Activity {
         vid1 = (VideoView)findViewById(R.id.videoViewVideo1);
         vid2 = (VideoView)findViewById(R.id.videoViewVideo2);
 
-        MediaController mediaController1 = new
-                MediaController(this);
-        mediaController1.setAnchorView(vid1);
-        vid1.setMediaController(mediaController1);
-        vid1.seekTo(200);
-        MediaController mediaController2 = new
-                MediaController(this);
-        mediaController2.setAnchorView(vid2);
-        vid2.setMediaController(mediaController2);
-        vid2.seekTo(200);
 
 
         final View button1 = findViewById(R.id.linearLayoutVid1);
         button1.setOnClickListener (new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickTrack1 < 1) {
-                    clickTrack1 = 1;
+                if (clickTrack1 == 0) {
                     loadVideo1();
 
                 }
@@ -93,8 +87,7 @@ public class postProcessing extends Activity {
         button2.setOnClickListener (new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickTrack2 < 1) {
-                    clickTrack2 = 1;
+                if (clickTrack2 == 0) {
                     loadVideo2();
                 }
             }
@@ -128,13 +121,28 @@ public class postProcessing extends Activity {
                 toast.show();
                 return;
             }
-            mediaMetadataRetriever.setDataSource(this, videoUri1);
-            bmp = mediaMetadataRetriever.getFrameAtTime(1000);
+            mediaMetadataRetriever1.setDataSource(this, videoUri1);
+            bmp = mediaMetadataRetriever1.getFrameAtTime(1000);
             vid1Height = bmp.getHeight();
             vid1Width = bmp.getWidth();
+            //BitmapDrawable bitmapDrawable = new BitmapDrawable(bmp);
+            //vid1.setBackground(bitmapDrawable);
+            MediaController mediaController1 = new MediaController(this);
+            mediaController1.setAnchorView(vid1);
+            vid1.setMediaController(mediaController1);
             vid1.setVideoURI(videoUri1);
-            vid1.seekTo(200);
+            vid1.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    vid1.setBackgroundColor(Color.TRANSPARENT);
+                }
+            });
+            clickTrack1 = 1;
             //result_video.requestFocus();
+            if (videoUri2 == null) {
+                loadVideo2();
+            }
+
 
         }
         if (requestCode == READ_REQUEST_CODE_VIDEO2 && resultCode == RESULT_OK) {
@@ -148,22 +156,33 @@ public class postProcessing extends Activity {
                 toast.show();
                 return;
             }
-            mediaMetadataRetriever.setDataSource(this, videoUri2);
-            bmp = mediaMetadataRetriever.getFrameAtTime(1000);
+            mediaMetadataRetriever2.setDataSource(this, videoUri2);
+            bmp = mediaMetadataRetriever2.getFrameAtTime(1000);
             vid2Height = bmp.getHeight();
             vid2Width = bmp.getWidth();
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(bmp);
+            vid2.setBackground(bitmapDrawable);
             vid2.setVideoURI(videoUri2);
-            vid2.seekTo(200);
+            MediaController mediaController2 = new MediaController(this);
+            mediaController2.setAnchorView(vid2);
+            vid2.setMediaController(mediaController2);
+            clickTrack2 = 1;
+            vid2.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    vid2.setBackgroundColor(Color.TRANSPARENT);
+                }
+            });
             //result_video.requestFocus();
-
+            if (videoUri1 == null) {
+                loadVideo1();
+            }
         }
     }
 
     public void resetViews(View view){
-        clickTrack1 = 0;
-        clickTrack2 = 0;
-        loadVideo1();
-        loadVideo2();
+        Intent intent = new Intent(getApplicationContext(),postProcessing.class);
+        startActivity(intent);
     }
 
     public void editSettings(View view){
