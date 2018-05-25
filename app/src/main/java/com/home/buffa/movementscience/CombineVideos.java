@@ -16,6 +16,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ipaulpro.afilechooser.utils.FileUtils;
+
 import org.jcodec.api.android.AndroidSequenceEncoder;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.io.SeekableByteChannel;
@@ -113,7 +115,12 @@ public class CombineVideos {
         }else{
             frameRate1 = 30;
         }
-        outputSurface1 = new ExtractMpegFramesTest.CodecOutputSurface(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT));//check!
+        /*MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        Bitmap testbmp = null;
+        retriever.setDataSource(videoAbsolutePath1);
+        testbmp = retriever.getFrameAtTime(200,MediaMetadataRetriever.OPTION_CLOSEST);*/
+        //outputSurface1 = new ExtractMpegFramesTest.CodecOutputSurface(testbmp.getWidth(), testbmp.getHeight());//check!
+        outputSurface1 = new ExtractMpegFramesTest.CodecOutputSurface(format1.getInteger(MediaFormat.KEY_WIDTH),format1.getInteger(MediaFormat.KEY_HEIGHT));
         String mime1 = format1.getString(MediaFormat.KEY_MIME);
         try {
             decoder1 = MediaCodec.createDecoderByType(mime1);
@@ -156,7 +163,10 @@ public class CombineVideos {
         }else{
             frameRate2 = 30;
         }
-        outputSurface2 = new ExtractMpegFramesTest.CodecOutputSurface(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT));//check!
+        //retriever.setDataSource(videoAbsolutePath2);
+        //testbmp = retriever.getFrameAtTime(200,MediaMetadataRetriever.OPTION_CLOSEST);
+        //outputSurface2 = new ExtractMpegFramesTest.CodecOutputSurface(testbmp.getWidth(), testbmp.getHeight());//check!
+        outputSurface2 = new ExtractMpegFramesTest.CodecOutputSurface(format2.getInteger(MediaFormat.KEY_WIDTH),format2.getInteger(MediaFormat.KEY_HEIGHT));
         String mime2 = format2.getString(MediaFormat.KEY_MIME);
         try {
             decoder2 = MediaCodec.createDecoderByType(mime2);
