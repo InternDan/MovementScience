@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        android:theme="@style/MovSciTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -39,34 +39,31 @@
         </activity>
         <activity
             android:name=".recordVideo"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+             />
         <activity
             android:name=".offlineProcessing"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name=".pickPoints"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name=".trackPointsTest"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name=".displayTrackingResults"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name=".gaitStability"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name=".realTimeTracking"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name=".keyFrame"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name=".addAngle"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            />
         <activity
             android:name=".addScribble"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+             />
         <activity android:name=".manageFiles" />
         <activity android:name=".uploadImage" />
         <activity android:name=".uploadVideo" />
@@ -93,18 +90,16 @@
             android:label="@string/title_activity_talk_over_video_load_and_pass" />
         <activity android:name=".postProcessPreview" />
         <activity
-            android:name=".PlayMovie"
-            android:label="@string/title_activity_play_movie" />
-        <activity
             android:name=".playVideo"
-            android:label="@string/title_activity_play_video" />
+            android:label="@string/title_activity_play_movie" />
         <activity
             android:name=".addTextBox"
             android:label="@string/title_activity_add_text_box" />
         <activity
             android:name=".CombineImages"
             android:label="@string/title_activity_combine_images" />
-        <activity android:name=".CombineImagesExecute"></activity>
+        <activity android:name=".CombineImagesExecute" />
+
     </application>
 
 </manifest>

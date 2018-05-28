@@ -17,6 +17,8 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -25,6 +27,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.Manifest;
 import android.widget.Toast;
@@ -80,6 +83,33 @@ public class MainActivity extends Activity {
                 //        .bigText("Much longer text that cannot fit one line..."))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(notificationID, mBuilder.build());
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_recording:
+                                Intent intent = new Intent(getApplicationContext(), recordVideo.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_editing:
+                                intent = new Intent(getApplicationContext(), offlineProcessing.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_settings:
+                                intent = new Intent(getApplicationContext(), settingsActivity.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_help:
+                                break;
+                        }
+                        return false;
+                    }
+                });
 
     }
 
