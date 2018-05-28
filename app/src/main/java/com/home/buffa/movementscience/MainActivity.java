@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -84,7 +85,7 @@ public class MainActivity extends Activity {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(notificationID, mBuilder.build());
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+        BottomNavigationViewEx bottomNavigationView = (BottomNavigationViewEx)
                 findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -110,7 +111,9 @@ public class MainActivity extends Activity {
                         return false;
                     }
                 });
-
+        bottomNavigationView.enableAnimation(false);
+        bottomNavigationView.enableItemShiftingMode(false);
+        bottomNavigationView.enableShiftingMode(false);
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
