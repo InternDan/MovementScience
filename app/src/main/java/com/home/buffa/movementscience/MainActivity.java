@@ -17,20 +17,26 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.Manifest;
 import android.widget.Toast;
 
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -81,6 +87,69 @@ public class MainActivity extends Activity {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(notificationID, mBuilder.build());
 
+        NavigationView navigationView  = findViewById(R.id.nav_view);
+        final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_recording:
+                                Intent intent = new Intent(getApplicationContext(), recordVideo.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_editing:
+                                intent = new Intent(getApplicationContext(), offlineProcessing.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_settings:
+                                intent = new Intent(getApplicationContext(), settingsActivity.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_help:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+
+
+
+        //BottomNavigationViewEx bottomNavigationView = (BottomNavigationViewEx)
+        //        findViewById(R.id.bottom_navigation);
+
+        /*bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_recording:
+                                Intent intent = new Intent(getApplicationContext(), recordVideo.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_editing:
+                                intent = new Intent(getApplicationContext(), offlineProcessing.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_settings:
+                                intent = new Intent(getApplicationContext(), settingsActivity.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_help:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+        bottomNavigationView.enableAnimation(false);
+        bottomNavigationView.enableItemShiftingMode(false);
+        bottomNavigationView.enableShiftingMode(false);*/
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
