@@ -86,70 +86,6 @@ public class MainActivity extends Activity {
                 //        .bigText("Much longer text that cannot fit one line..."))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(notificationID, mBuilder.build());
-
-        NavigationView navigationView  = findViewById(R.id.nav_view);
-        final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-                        switch (menuItem.getItemId()) {
-                            case R.id.action_recording:
-                                Intent intent = new Intent(getApplicationContext(), recordVideo.class);
-                                startActivity(intent);
-                                break;
-                            case R.id.action_editing:
-                                intent = new Intent(getApplicationContext(), offlineProcessing.class);
-                                startActivity(intent);
-                                break;
-                            case R.id.action_settings:
-                                intent = new Intent(getApplicationContext(), settingsActivity.class);
-                                startActivity(intent);
-                                break;
-                            case R.id.action_help:
-                                break;
-                        }
-                        return false;
-                    }
-                });
-
-
-
-        //BottomNavigationViewEx bottomNavigationView = (BottomNavigationViewEx)
-        //        findViewById(R.id.bottom_navigation);
-
-        /*bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_recording:
-                                Intent intent = new Intent(getApplicationContext(), recordVideo.class);
-                                startActivity(intent);
-                                break;
-                            case R.id.action_editing:
-                                intent = new Intent(getApplicationContext(), offlineProcessing.class);
-                                startActivity(intent);
-                                break;
-                            case R.id.action_settings:
-                                intent = new Intent(getApplicationContext(), settingsActivity.class);
-                                startActivity(intent);
-                                break;
-                            case R.id.action_help:
-                                break;
-                        }
-                        return false;
-                    }
-                });
-        bottomNavigationView.enableAnimation(false);
-        bottomNavigationView.enableItemShiftingMode(false);
-        bottomNavigationView.enableShiftingMode(false);*/
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -193,8 +129,13 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void launchVideoRecorder(View view) {
-        Intent intent = new Intent(getApplicationContext(), recordVideo.class);
+    public void launchCaptureLauncher(View view) {
+        Intent intent = new Intent(getApplicationContext(), CaptureLauncher.class);
+        startActivity(intent);
+    }
+
+    public void launchEditLauncher(View view) {
+        Intent intent = new Intent(getApplicationContext(), EditLauncher.class);
         startActivity(intent);
     }
 
@@ -203,15 +144,7 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    public void launchOfflineTracking(View view) {
-        Intent intent = new Intent(this, offlineProcessing.class);
-        startActivity(intent);
-    }
 
-    public void launchRealTimeTracking(View view) {
-        Intent intent = new Intent(getApplicationContext(), realTimeChooser.class);
-        startActivity(intent);
-    }
 
     public void manageFiles(View view) {
 
@@ -219,32 +152,18 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    public void editSettings(View view){
-        Intent intent = new Intent(getApplicationContext(),settingsActivity.class);
-        startActivity(intent);
-    }
+
 
     public void postProcessing(View view){
         Intent intent = new Intent(getApplicationContext(),postProcessing.class);
         startActivity(intent);
     }
 
-    public void talkOverVideo(View view){
-        Intent intent = new Intent(getApplicationContext(),talkOverVideoLoadAndPass.class);
-        startActivity(intent);
-    }
 
-    public void combineImages(View view){
-        Intent intent = new Intent(getApplicationContext(),CombineImages.class);
-        startActivity(intent);
-    }
 
-    public void watchVideo(View view){
-        Intent intentGetVideo = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intentGetVideo.addCategory(Intent.CATEGORY_OPENABLE);
-        intentGetVideo.setType("video/*");
-        startActivityForResult(intentGetVideo, READ_REQUEST_CODE_VIDEO);
-    }
+
+
+
 
     private  boolean checkAndRequestPermissions() {
         int permissionCamera = ContextCompat.checkSelfPermission(this,
@@ -331,13 +250,7 @@ public class MainActivity extends Activity {
                 .show();
     }
 
-    public void launchGooglePhotos(View view){
-        Intent intent = new Intent("android.intent.action.MAIN");
-        intent.setComponent(ComponentName.unflattenFromString("com.google.android.apps.photos.home.HomeActivity"));
-        intent.addCategory("android.intent.category.LAUNCHER");
-        intent.setPackage("com.google.android.apps.photos");
-        startActivity(intent);
-    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -365,43 +278,16 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void updateThumbnails(View view){
 
-        String path = Environment.getExternalStorageDirectory().toString()+"/Pictures";
-        File directory = new File(path);
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                updateGallery(files[i]);
-            }
-        }
 
-        path = getApplicationContext().getFilesDir().toString()+"/Download";
-        directory = new File(path);
-        files = directory.listFiles();
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                updateGallery(files[i]);
-            }
-        }
-
-        path = Environment.getExternalStorageDirectory().toString()+"/Movies";
-        directory = new File(path);
-        files = directory.listFiles();
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                updateGallery(files[i]);
-            }
-        }
+    public void utilityLauncher(View view){
+        Intent intent = new Intent(getApplicationContext(),UtilityLauncher.class);
+        startActivity(intent);
     }
 
-    public void updateGallery(File file){
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri uri = Uri.fromFile(file);
-        mediaScanIntent.setData(uri);
-        this.sendBroadcast(mediaScanIntent);
+    public void getHelp(View view){
+        Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
     }
-
 
 
 

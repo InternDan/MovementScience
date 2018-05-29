@@ -32,10 +32,7 @@ public class recordVideo extends Activity {
 
     public void dispatchTakeVideoIntent(View v) {
 
-        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
-        }
+
     }
 
     @Override
