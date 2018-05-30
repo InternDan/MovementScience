@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -17,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
@@ -51,6 +53,8 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     private static final String TAG = "realTimeTracking";
     private CameraBridgeViewBase mOpenCvCameraView;
 
+    LinearLayout linearLayout;
+
     int screenHeight;
     int screenWidth;
     ArrayList<Point> points = new ArrayList<Point>();
@@ -77,7 +81,18 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     ArrayList<Double> angles = new ArrayList<Double>();
     ArrayList<Integer> pointTypes = new ArrayList<Integer>();
     String gText;
-    Spinner pointDropdown;
+
+    ImageButton buttonPoint;
+    ImageButton buttonLine;
+    ImageButton button2Angle;
+    ImageButton button3Angle;
+    ImageButton button4Angle;
+
+    boolean buttonPointPressed = false;
+    boolean buttonLinePressed = false;
+    boolean button2AnglePressed = false;
+    boolean button3AnglePressed = false;
+    boolean button4AnglePressed = false;
 
     private Handler mHandler = new Handler();
 
@@ -114,10 +129,12 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         decorView.setSystemUiVisibility(uiOptions);
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.texture);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        pointDropdown = (Spinner) findViewById(R.id.spinner);
         Display display = getWindowManager().getDefaultDisplay();
         android.graphics.Point size = new android.graphics.Point();
         display.getRealSize(size);
+
+        linearLayout = findViewById(R.id.linearLayoutRealTimeTracking);
+        setButtons();
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -250,6 +267,47 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         screenHeight = size.x;
         screenWidth = size.y;
 
+        NavigationView navigationView  = findViewById(R.id.nav_view);
+        final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_capture:
+                                Intent intent = new Intent(getApplicationContext(), CaptureLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_edit:
+                                intent = new Intent(getApplicationContext(), EditLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_utilities:
+                                intent = new Intent(getApplicationContext(), UtilityLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_help:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+        View headerview = navigationView.getHeaderView(0);
+        LinearLayout header = (LinearLayout) headerview.findViewById(R.id.navigation_header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        setLinearLayoutOnTouchListenerReset();
     }
 
     @Override
@@ -414,22 +472,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        // MotionEvent object holds X-Y values
-        if (event.getAction() == MotionEvent.ACTION_DOWN && selectionCounter < selectionCap) {
-            float x = event.getX();
-            float y = event.getY();
-            x = x * ((float) prevFrame.width() / (float) screenHeight);
-            y = y * ((float) prevFrame.height() / (float) screenWidth);
-            Point X = new Point((double) x, (double) y);
-            points.add(X);
-            pointTypes.add(ptType);
-            numPoints = points.size();
-            selectionCounter++;
-            if (selectionCounter == selectionCap){
-                selectionCap = 0;
-                selectionCounter = 0;
-            }
-        }
+        linearLayout.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
@@ -477,7 +520,8 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     }
 
     public void addFeature(View view) {
-        ptType = pointDropdown.getSelectedItemPosition();
+       // getPointType();
+        setLinearLayoutOnTouchListener();
         selectionCounter = 0;
         if (ptType == 0) {
             selectionCap = 1;
@@ -491,4 +535,157 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             selectionCap = 4;
         }
     }
+
+    /*private void getPointType(){
+        if (buttonPointPressed == true){
+            ptType = 0;
+        }else if(buttonLinePressed == true){
+            ptType = 1;
+        }else if(button2AnglePressed == true){
+            ptType = 2;
+        }else if(button3AnglePressed == true){
+            ptType = 3;
+        }else if(button4AnglePressed == true){
+            ptType = 4;
+        }
+    }*/
+
+    private void setButtons(){
+
+        buttonPoint = findViewById(R.id.buttonPointRealTime);
+        buttonLine = findViewById(R.id.buttonLineRealTime);
+        button2Angle = findViewById(R.id.button2AngleRealTime);
+        button3Angle = findViewById(R.id.button3AngleRealTime);
+        button4Angle = findViewById(R.id.button4AngleRealTime);
+
+        buttonPoint.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                ptType = 0;
+                buttonPoint.setBackgroundColor(Color.parseColor("#101010"));
+                buttonPointPressed = true;
+                setLinearLayoutOnTouchListener();
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonLinePressed = false;
+                button2AnglePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+            }
+        });
+        buttonLine.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ptType = 1;
+                // Code here executes on main thread after user presses button
+                buttonLine.setBackgroundColor(Color.parseColor("#101010"));
+                buttonLinePressed = true;
+                setLinearLayoutOnTouchListener();
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                button2AnglePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+            }
+        });
+        button2Angle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ptType = 2;
+                // Code here executes on main thread after user presses button
+                button2Angle.setBackgroundColor(Color.parseColor("#101010"));
+                button2AnglePressed = true;
+                setLinearLayoutOnTouchListener();
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+            }
+        });
+        button3Angle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ptType = 3;
+                // Code here executes on main thread after user presses button
+                button3Angle.setBackgroundColor(Color.parseColor("#101010"));
+                button3AnglePressed = true;
+                setLinearLayoutOnTouchListener();
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button2AnglePressed = false;
+                button4AnglePressed = false;
+
+            }
+        });
+        button4Angle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ptType = 4;
+                // Code here executes on main thread after user presses button
+                button4Angle.setBackgroundColor(Color.parseColor("#101010"));
+                button4AnglePressed = true;
+                setLinearLayoutOnTouchListener();
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button3AnglePressed = false;
+                button2AnglePressed = false;
+            }
+        });
+
+    }
+
+    private void setLinearLayoutOnTouchListener(){
+        linearLayout.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        // MotionEvent object holds X-Y values
+                        if (event.getAction() == MotionEvent.ACTION_DOWN && selectionCounter < selectionCap) {
+                            float x = event.getX();
+                            float y = event.getY();
+                            x = x * ((float) prevFrame.width() / (float) screenHeight);
+                            y = y * ((float) prevFrame.height() / (float) screenWidth);
+                            Point X = new Point((double) x, (double) y);
+                            points.add(X);
+                            pointTypes.add(ptType);
+                            numPoints = points.size();
+                            selectionCounter++;
+                            if (selectionCounter == selectionCap) {
+                                selectionCap = 0;
+                                selectionCounter = 0;
+                            }
+                        }
+                        return true;
+                    }
+                }
+        );}
+
+    private void setLinearLayoutOnTouchListenerReset(){
+        linearLayout.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                    }
+                });
+    }
+
 }
