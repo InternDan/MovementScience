@@ -360,13 +360,7 @@ public class trackPointsTest extends Activity {
 
         protected void onPostExecute(Void result) {
 
-            Intent intentPass = new Intent(getApplicationContext(), displayTrackingResults.class);
 
-            File file = new File(outPath);
-            intentPass.putExtra("videoPath", file.toString());
-            intentPass.putExtra("duration", duration);
-            intentPass.putExtra("frameRate", frameRate);
-            startActivity(intentPass);
         }
 
     }

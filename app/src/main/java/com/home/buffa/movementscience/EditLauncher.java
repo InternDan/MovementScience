@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 public class EditLauncher extends AppCompatActivity {
 
@@ -32,16 +33,16 @@ public class EditLauncher extends AppCompatActivity {
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
                         switch (menuItem.getItemId()) {
-                            case R.id.action_recording:
-                                Intent intent = new Intent(getApplicationContext(), recordVideo.class);
+                            case R.id.action_capture:
+                                Intent intent = new Intent(getApplicationContext(), CaptureLauncher.class);
                                 startActivity(intent);
                                 break;
-                            case R.id.action_editing:
-                                intent = new Intent(getApplicationContext(), offlineProcessing.class);
+                            case R.id.action_edit:
+                                intent = new Intent(getApplicationContext(), EditLauncher.class);
                                 startActivity(intent);
                                 break;
-                            case R.id.action_settings:
-                                intent = new Intent(getApplicationContext(), settingsActivity.class);
+                            case R.id.action_utilities:
+                                intent = new Intent(getApplicationContext(), UtilityLauncher.class);
                                 startActivity(intent);
                                 break;
                             case R.id.action_help:
@@ -50,6 +51,15 @@ public class EditLauncher extends AppCompatActivity {
                         return false;
                     }
                 });
+        View headerview = navigationView.getHeaderView(0);
+        LinearLayout header = (LinearLayout) headerview.findViewById(R.id.navigation_header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void watchVideo(View view){

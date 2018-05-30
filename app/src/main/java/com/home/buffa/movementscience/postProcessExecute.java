@@ -89,6 +89,8 @@ public class postProcessExecute extends Activity {
         cv.postRotate1 = rotateDegreesPostProcess;
         cv.postRotate2 = rotateDegreesPostProcess2;
         cv.context = getApplicationContext();
+        MainActivity.mBuilder.setContentText("Initializing software tools");
+        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
 
         AsyncTask.execute(new Runnable() {
             @Override

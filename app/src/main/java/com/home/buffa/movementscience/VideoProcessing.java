@@ -51,6 +51,7 @@ public class VideoProcessing {
         }
         bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
         return bmp;
+
     }
 
     public static Bitmap rotateImage(Bitmap bmp, Integer prefRotatePost){

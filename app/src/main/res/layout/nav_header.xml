@@ -6,7 +6,8 @@
     android:padding="16dp"
     android:theme="@style/MovSciTheme"
     android:orientation="vertical"
-    android:gravity="bottom">
+    android:gravity="bottom"
+    android:id="@+id/navigation_header">
 
     <TextView
         android:layout_width="match_parent"

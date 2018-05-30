@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_editing"
+        android:id="@+id/action_capture"
         android:enabled="true"
         android:icon="@drawable/ic_recorder"
-        android:title="Editing"
+        android:title="Capture"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_recording"
+        android:id="@+id/action_edit"
         android:enabled="true"
         android:icon="@drawable/ic_recorder"
-        android:title="Recording"
+        android:title="Edit"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_utilities"
         android:enabled="true"
         android:icon="@drawable/ic_recorder"
-        android:title="Settings"
+        android:title="Utilities"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_help"

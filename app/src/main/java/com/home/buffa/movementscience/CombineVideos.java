@@ -83,6 +83,8 @@ public class CombineVideos {
     VideoProcessing vp = new VideoProcessing();
 
     public void initialize(){
+        MainActivity.mBuilder.setContentText("Initializing softare tools");
+        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
         decoder1 = null;
         outputSurface1 = null;
         extractor1 = null;
