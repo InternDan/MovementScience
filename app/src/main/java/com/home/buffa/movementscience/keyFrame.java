@@ -231,7 +231,7 @@ public class keyFrame extends Activity {
                 startActivity(intent);
             }
         });
-
+        setLinearLayoutOnTouchListenerReset();
         setLinearLayoutOnTouchListener();
     }
 
@@ -262,6 +262,8 @@ public class keyFrame extends Activity {
 
     public void onResume() {
         super.onResume();
+        selectionCap = 0;
+        setLinearLayoutOnTouchListenerReset();
         if (!OpenCVLoader.initDebug()) {
             Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
@@ -288,6 +290,7 @@ public class keyFrame extends Activity {
 
 
     public void addScribble(){
+        setLinearLayoutOnTouchListenerReset();
         Intent intentPassAddScribble = new Intent(this,addScribble.class);
         pathKeyFrameOut = createImageFromBitmap(bmp);
         intentPassAddScribble.putExtra("keyFramePathString",pathKeyFrameOut);
@@ -295,6 +298,7 @@ public class keyFrame extends Activity {
     }
 
     public void rotate90Degrees(View view){
+        setLinearLayoutOnTouchListenerReset();
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bmp,bmp.getWidth(),bmp.getHeight(),true);
@@ -334,6 +338,7 @@ public class keyFrame extends Activity {
 
     public void addFeature(View view) {
         getPointType();
+        setLinearLayoutOnTouchListener();
         selectionCounter = 0;
         if (ptType == 0) {
             selectionCap = 1;
@@ -348,9 +353,11 @@ public class keyFrame extends Activity {
         }
         if (ptType == 5){
             addScribble();
+            setLinearLayoutOnTouchListenerReset();
         }
         if (ptType == 6){
             getTextAndAdd();
+            setLinearLayoutOnTouchListenerReset();
         }
     }
 
@@ -369,6 +376,7 @@ public class keyFrame extends Activity {
             return angles;
         }
         angles.add((double) 0);
+        setLinearLayoutOnTouchListenerReset();
         return angles;
     }
 
@@ -384,6 +392,7 @@ public class keyFrame extends Activity {
             Imgproc.line(m,pts.get(0),pts.get(1),angleLineColor,8 );
             Imgproc.line(m,pts.get(2),pts.get(3),angleLineColor,8 );
         }
+        setLinearLayoutOnTouchListenerReset();
         return m;
     }
 
@@ -415,6 +424,7 @@ public class keyFrame extends Activity {
     }
 
     public void shareImage(View view){
+        setLinearLayoutOnTouchListenerReset();
         File fShare = new File(pathKeyFrameOut);
         Uri imgUri = Uri.fromFile(fShare);
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
@@ -425,18 +435,25 @@ public class keyFrame extends Activity {
 
     private void getPointType(){
         if (buttonPointPressed == true){
+            points.clear();
             ptType = 0;
         }else if(buttonLinePressed == true){
+            points.clear();
             ptType = 1;
         }else if(button2AnglePressed == true){
+            points.clear();
             ptType = 2;
         }else if(button3AnglePressed == true){
+            points.clear();
             ptType = 3;
         }else if(button4AnglePressed == true){
+            points.clear();
             ptType = 4;
         }else if(buttonScribblePressed == true) {
+            points.clear();
             ptType = 5;
         }else if(buttonTextPressed == true) {
+            points.clear();
             ptType = 6;
         }
     }
@@ -456,7 +473,7 @@ public class keyFrame extends Activity {
                 // Code here executes on main thread after user presses button
                 buttonPoint.setBackgroundColor(Color.parseColor("#101010"));
                 buttonPointPressed = true;
-
+                setLinearLayoutOnTouchListener();
                 buttonLine.setBackgroundColor(Color.parseColor("#999999"));
                 button2Angle.setBackgroundColor(Color.parseColor("#999999"));
                 button3Angle.setBackgroundColor(Color.parseColor("#999999"));
@@ -477,7 +494,7 @@ public class keyFrame extends Activity {
                 // Code here executes on main thread after user presses button
                 buttonLine.setBackgroundColor(Color.parseColor("#101010"));
                 buttonLinePressed = true;
-
+                setLinearLayoutOnTouchListener();
                 buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
                 button2Angle.setBackgroundColor(Color.parseColor("#999999"));
                 button3Angle.setBackgroundColor(Color.parseColor("#999999"));
@@ -498,7 +515,7 @@ public class keyFrame extends Activity {
                 // Code here executes on main thread after user presses button
                 button2Angle.setBackgroundColor(Color.parseColor("#101010"));
                 button2AnglePressed = true;
-
+                setLinearLayoutOnTouchListener();
                 buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
                 buttonLine.setBackgroundColor(Color.parseColor("#999999"));
                 button3Angle.setBackgroundColor(Color.parseColor("#999999"));
@@ -519,7 +536,7 @@ public class keyFrame extends Activity {
                 // Code here executes on main thread after user presses button
                 button3Angle.setBackgroundColor(Color.parseColor("#101010"));
                 button3AnglePressed = true;
-
+                setLinearLayoutOnTouchListener();
                 buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
                 buttonLine.setBackgroundColor(Color.parseColor("#999999"));
                 button2Angle.setBackgroundColor(Color.parseColor("#999999"));
@@ -540,7 +557,7 @@ public class keyFrame extends Activity {
                 // Code here executes on main thread after user presses button
                 button4Angle.setBackgroundColor(Color.parseColor("#101010"));
                 button4AnglePressed = true;
-
+                setLinearLayoutOnTouchListener();
                 buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
                 buttonLine.setBackgroundColor(Color.parseColor("#999999"));
                 button3Angle.setBackgroundColor(Color.parseColor("#999999"));
@@ -561,7 +578,7 @@ public class keyFrame extends Activity {
                 // Code here executes on main thread after user presses button
                 buttonScribble.setBackgroundColor(Color.parseColor("#101010"));
                 buttonScribblePressed = true;
-
+                setLinearLayoutOnTouchListenerReset();
                 buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
                 buttonLine.setBackgroundColor(Color.parseColor("#999999"));
                 button3Angle.setBackgroundColor(Color.parseColor("#999999"));
@@ -582,7 +599,7 @@ public class keyFrame extends Activity {
                 // Code here executes on main thread after user presses button
                 buttonText.setBackgroundColor(Color.parseColor("#101010"));
                 buttonTextPressed = true;
-
+                setLinearLayoutOnTouchListenerReset();
                 buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
                 buttonLine.setBackgroundColor(Color.parseColor("#999999"));
                 button3Angle.setBackgroundColor(Color.parseColor("#999999"));
@@ -605,7 +622,6 @@ public class keyFrame extends Activity {
                 new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                coordType = coordType + "," + ptType + "," + ptType;
                 selectionCounter++;
 
                 int height = bmp.getHeight();
@@ -626,7 +642,6 @@ public class keyFrame extends Activity {
 
                 X = new Point((double) x, (double) y);
                 points.add(X);
-                ptTypes.add(ptType);
                 //convert imageUri to Mat and draw this
                 m = new Mat(height, width, CvType.CV_8UC3);
                 Utils.bitmapToMat(bmp, m);
@@ -635,9 +650,9 @@ public class keyFrame extends Activity {
                     selectionCounter = 0;
                 }
                 for (int i = 0; i < points.size(); i++) {
-                    if (ptTypes.get(i) == 0) {
+                    if (ptType == 0) {
                         Imgproc.circle(m, points.get(i), currentPointSize, currentPointColor, 8, 8, 0);
-                    } else if (ptTypes.get(i) == 1) {
+                    } else if (ptType == 1) {
                         ArrayList<Point> pts = new ArrayList<>();
                         for (int j = 0; j < 2; j++) {
                             if (points.size() > i + j) {
@@ -649,7 +664,7 @@ public class keyFrame extends Activity {
                             }
                         }
                         i++;
-                    } else if (ptTypes.get(i) == 2) {
+                    } else if (ptType == 2) {
                         ArrayList<Point> pts = new ArrayList<Point>();
                         for (int j = 0; j < 2; j++) {
                             if (points.size() > i + j) {
@@ -664,7 +679,7 @@ public class keyFrame extends Activity {
                             Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
                             i++;
                         }
-                    } else if (ptTypes.get(i) == 3) {
+                    } else if (ptType == 3) {
                         ArrayList<Point> pts = new ArrayList<Point>();
                         for (int j = 0; j < 3; j++) {
                             if (points.size() > i + j) {
@@ -680,7 +695,7 @@ public class keyFrame extends Activity {
                             i++;
                             i++;
                         }
-                    } else if (ptTypes.get(i) == 4) {
+                    } else if (ptType == 4) {
                         ArrayList<Point> pts = new ArrayList<Point>();
                         for (int j = 0; j < 4; j++) {
                             if (points.size() > i + j) {
@@ -706,9 +721,21 @@ public class keyFrame extends Activity {
                     keyFrameView.requestFocus();
                     return false;
                 }
-                return false;
+                return true;
             }
         });
     }
+
+    private void setLinearLayoutOnTouchListenerReset(){
+        linearLayout.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                    }
+                });
+    }
+
+
 
 }
