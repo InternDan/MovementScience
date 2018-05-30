@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -71,6 +72,19 @@ public class pickPoints extends Activity {
     int angleTextSize;
     String vidPathPass;
     int rotateDegreesPostProcess;
+    LinearLayout linearLayout;
+
+    ImageButton buttonPoint;
+    ImageButton buttonLine;
+    ImageButton button2Angle;
+    ImageButton button3Angle;
+    ImageButton button4Angle;
+
+    boolean buttonPointPressed = false;
+    boolean buttonLinePressed = false;
+    boolean button2AnglePressed = false;
+    boolean button3AnglePressed = false;
+    boolean button4AnglePressed = false;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
