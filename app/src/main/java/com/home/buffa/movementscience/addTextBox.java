@@ -45,10 +45,16 @@ public class addTextBox extends Activity {
     float scaleHeight;
     float scaleWidth;
 
+    LinearLayout linearLayout;
+
+    boolean justOpened;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_text_box);
+
+        justOpened = true;
 
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -130,24 +136,21 @@ public class addTextBox extends Activity {
                 startActivity(intent);
             }
         });
+
+        linearLayout = findViewById(R.id.linearLayoutTextBox);
+        setLinearLayoutOnTouchListener();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
-        Point pt = new Point( (int)Math.round(event.getX() * scaleWidth),(int)Math.round(event.getY() * scaleHeight));
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            bmpOut = writeTextOnDrawable(bmp,text,pt.x,pt.y);
-            imageViewTextBox.setImageBitmap(bmpOut);
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            pt = new Point( (int)Math.round(event.getX() * scaleWidth),(int)Math.round(event.getY() * scaleHeight));
-            bmpOut = writeTextOnDrawable(bmp,text,pt.x,pt.y);
-            imageViewTextBox.setImageBitmap(bmpOut);
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-
+        if (justOpened == true){
+            linearLayout.onTouchEvent(event);
         }
-        return true;
+        return super.onTouchEvent(event);
     }
+
+
 
 
     private Bitmap writeTextOnDrawable(Bitmap bmp, String text, int xPos, int yPos) {
@@ -233,6 +236,27 @@ public class addTextBox extends Activity {
         pathKeyFrame = createImageFromBitmap(bmpOut);
         intentPass.putExtra("keyFramePathString",pathKeyFrame);
         startActivity(intentPass);
+    }
+
+    private void setLinearLayoutOnTouchListener(){
+        linearLayout.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        Point pt = new Point((int) Math.round(event.getX() * scaleWidth), (int) Math.round(event.getY() * scaleHeight));
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            bmpOut = writeTextOnDrawable(bmp, text, pt.x, pt.y);
+                            imageViewTextBox.setImageBitmap(bmpOut);
+                        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                            pt = new Point((int) Math.round(event.getX() * scaleWidth), (int) Math.round(event.getY() * scaleHeight));
+                            bmpOut = writeTextOnDrawable(bmp, text, pt.x, pt.y);
+                            imageViewTextBox.setImageBitmap(bmpOut);
+                        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                        }
+                        return false;
+                    }
+                });
     }
 
 }
