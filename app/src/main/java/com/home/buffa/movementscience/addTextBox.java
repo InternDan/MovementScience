@@ -134,6 +134,7 @@ public class addTextBox extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
+
         Point pt = new Point( (int)Math.round(event.getX() * scaleWidth),(int)Math.round(event.getY() * scaleHeight));
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             bmpOut = writeTextOnDrawable(bmp,text,pt.x,pt.y);

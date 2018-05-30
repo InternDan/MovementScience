@@ -3,6 +3,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/MovSciTheme"
     >
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,7 +11,8 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:weightSum="5">
+    android:weightSum="5"
+    style="@style/MovSciTheme">
 
     <!--first section contains logo, maybe link to website -->
     <LinearLayout

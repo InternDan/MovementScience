@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,7 +23,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -49,7 +53,23 @@ public class keyFrame extends Activity {
     ImageView keyFrameView;
     String pathKeyFrame;
 
-    Spinner pointDropdown;
+    ImageButton buttonPoint;
+    ImageButton buttonLine;
+    ImageButton button2Angle;
+    ImageButton button3Angle;
+    ImageButton button4Angle;
+    ImageButton buttonScribble;
+    ImageButton buttonText;
+    LinearLayout linearLayout;
+
+    boolean buttonPointPressed = false;
+    boolean buttonLinePressed = false;
+    boolean button2AnglePressed = false;
+    boolean button3AnglePressed = false;
+    boolean button4AnglePressed = false;
+    boolean buttonScribblePressed = false;
+    boolean buttonTextPressed = false;
+
     ArrayList<Point> points = new ArrayList<>();
     ArrayList<Integer> ptTypes = new ArrayList<>();
     ArrayList<Double> angles = new ArrayList<Double>();
@@ -89,6 +109,9 @@ public class keyFrame extends Activity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
+        setButtons();
+
+        linearLayout = findViewById(R.id.linearLayoutKeyFrame);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         String curPtSize = sharedPref.getString("pref_currentPointSize","5");
@@ -168,8 +191,6 @@ public class keyFrame extends Activity {
         String rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess","90");
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
 
-        pointDropdown = findViewById(R.id.spinnerOfflineKeyFrame);
-
         NavigationView navigationView  = findViewById(R.id.nav_view);
         final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(
@@ -210,6 +231,8 @@ public class keyFrame extends Activity {
                 startActivity(intent);
             }
         });
+
+        setLinearLayoutOnTouchListener();
     }
 
 
@@ -304,111 +327,13 @@ public class keyFrame extends Activity {
     public boolean onTouchEvent(MotionEvent event) {
         // MotionEvent object holds X-Y values
         if(event.getAction() == MotionEvent.ACTION_DOWN && selectionCounter < selectionCap) {
-            coordType = coordType + "," + ptType + "," + ptType;
-            selectionCounter++;
-
-            int height = bmp.getHeight();
-            int width = bmp.getWidth();
-            Display display = getWindowManager().getDefaultDisplay();
-            DisplayMetrics metrics = new DisplayMetrics();
-            display.getRealMetrics(metrics);
-            int heightScreen = metrics.heightPixels;
-            int widthScreen = metrics.widthPixels;
-
-            float scaleHeight = (float) height / (float) heightScreen;
-            float scaleWidth = (float) width / (float) widthScreen;
-
-            float x = event.getX() * scaleWidth;
-            float y = event.getY() * scaleHeight;
-
-            coords = coords + "," + x + "," + y;
-
-            X = new Point((double) x, (double) y);
-            points.add(X);
-            ptTypes.add(ptType);
-            //convert imageUri to Mat and draw this
-            m = new Mat(height, width, CvType.CV_8UC3);
-            Utils.bitmapToMat(bmp, m);
-            if (selectionCounter == selectionCap){
-                selectionCap = 0;
-                selectionCounter = 0;
-            }
-            for (int i = 0; i<points.size(); i++) {
-                if (ptTypes.get(i) == 0) {
-                    Imgproc.circle(m, points.get(i), currentPointSize, currentPointColor, 8, 8, 0);
-                } else if (ptTypes.get(i) == 1) {
-                    ArrayList<Point> pts = new ArrayList<>();
-                    for (int j = 0; j < 2; j++) {
-                        if (points.size() > i + j) {
-                            pts.add(points.get(i + j));
-                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
-                        }
-                        if (pts.size() == 2) {
-                            m = addLinesBetweenAngles(m, pts);
-                        }
-                    }
-                    i++;
-                } else if (ptTypes.get(i) == 2) {
-                    ArrayList<Point> pts = new ArrayList<Point>();
-                    for (int j = 0; j < 2; j++) {
-                        if (points.size() > i + j) {
-                            pts.add(points.get(i + j));
-                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
-                        }
-                    }
-                    if (pts.size() == 2) {
-                        m = addLinesBetweenAngles(m, pts);
-                        angles = calculateAngles(pts);
-                        gText = String.format("%.2f", (angles.get(angles.size() - 1)));
-                        Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
-                        i++;
-                    }
-                } else if (ptTypes.get(i) == 3) {
-                    ArrayList<Point> pts = new ArrayList<Point>();
-                    for (int j = 0; j < 3; j++) {
-                        if (points.size() > i + j) {
-                            pts.add(points.get(i + j));
-                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
-                        }
-                    }
-                    if (pts.size() == 3) {
-                        m = addLinesBetweenAngles(m, pts);
-                        angles = calculateAngles(pts);
-                        gText = String.format("%.2f", (angles.get(angles.size() - 1)));
-                        Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
-                        i++;
-                        i++;
-                    }
-                } else if (ptTypes.get(i) == 4) {
-                    ArrayList<Point> pts = new ArrayList<Point>();
-                    for (int j = 0; j < 4; j++) {
-                        if (points.size() > i + j) {
-                            pts.add(points.get(i + j));
-                            Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
-                        }
-                    }
-                    if (pts.size() == 4) {
-                        m = addLinesBetweenAngles(m, pts);
-                        angles = calculateAngles(pts);
-                        gText = String.format("%.2f", (angles.get(angles.size() - 1)));
-                        Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
-                        i++;
-                        i++;
-                        i++;
-                    }
-                }
-            }
-            Imgproc.cvtColor(m,m, Imgproc.COLOR_RGBA2RGB);
-            Utils.matToBitmap(m,bmp);
-            pathKeyFrameOut = createImageFromBitmap(bmp);
-            keyFrameView.setImageBitmap(bmp);
-            keyFrameView.requestFocus();
+            linearLayout.onTouchEvent(event);
         }
         return super.onTouchEvent(event);
     }
 
     public void addFeature(View view) {
-        ptType = pointDropdown.getSelectedItemPosition();
+        getPointType();
         selectionCounter = 0;
         if (ptType == 0) {
             selectionCap = 1;
@@ -463,17 +388,12 @@ public class keyFrame extends Activity {
     }
 
     private void getTextAndAdd(){
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Title");
-
-// Set up the input
+        builder.setTitle("Textbox");
         final EditText input = new EditText(this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
         builder.setView(input);
 
-// Set up the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -503,9 +423,292 @@ public class keyFrame extends Activity {
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
-    public void goHome(View view){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+    private void getPointType(){
+        if (buttonPointPressed == true){
+            ptType = 0;
+        }else if(buttonLinePressed == true){
+            ptType = 1;
+        }else if(button2AnglePressed == true){
+            ptType = 2;
+        }else if(button3AnglePressed == true){
+            ptType = 3;
+        }else if(button4AnglePressed == true){
+            ptType = 4;
+        }else if(buttonScribblePressed == true) {
+            ptType = 5;
+        }else if(buttonTextPressed == true) {
+            ptType = 6;
+        }
+    }
+
+    private void setButtons(){
+
+        buttonPoint = findViewById(R.id.buttonPoint);
+        buttonLine = findViewById(R.id.buttonLine);
+        button2Angle = findViewById(R.id.button2Angle);
+        button3Angle = findViewById(R.id.button3Angle);
+        button4Angle = findViewById(R.id.button4Angle);
+        buttonScribble = findViewById(R.id.buttonScribble);
+        buttonText = findViewById(R.id.buttonText);
+
+        buttonPoint.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                buttonPoint.setBackgroundColor(Color.parseColor("#101010"));
+                buttonPointPressed = true;
+
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+                buttonScribble.setBackgroundColor(Color.parseColor("#999999"));
+                buttonText.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonLinePressed = false;
+                button2AnglePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+                buttonScribblePressed = false;
+                buttonTextPressed = false;
+            }
+        });
+        buttonLine.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                buttonLine.setBackgroundColor(Color.parseColor("#101010"));
+                buttonLinePressed = true;
+
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+                buttonScribble.setBackgroundColor(Color.parseColor("#999999"));
+                buttonText.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                button2AnglePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+                buttonScribblePressed = false;
+                buttonTextPressed = false;
+            }
+        });
+        button2Angle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                button2Angle.setBackgroundColor(Color.parseColor("#101010"));
+                button2AnglePressed = true;
+
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+                buttonScribble.setBackgroundColor(Color.parseColor("#999999"));
+                buttonText.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+                buttonScribblePressed = false;
+                buttonTextPressed = false;
+            }
+        });
+        button3Angle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                button3Angle.setBackgroundColor(Color.parseColor("#101010"));
+                button3AnglePressed = true;
+
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+                buttonScribble.setBackgroundColor(Color.parseColor("#999999"));
+                buttonText.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button2AnglePressed = false;
+                button4AnglePressed = false;
+                buttonScribblePressed = false;
+                buttonTextPressed = false;
+            }
+        });
+        button4Angle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                button4Angle.setBackgroundColor(Color.parseColor("#101010"));
+                button4AnglePressed = true;
+
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                buttonScribble.setBackgroundColor(Color.parseColor("#999999"));
+                buttonText.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button3AnglePressed = false;
+                button2AnglePressed = false;
+                buttonScribblePressed = false;
+                buttonTextPressed = false;
+            }
+        });
+        buttonScribble.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                buttonScribble.setBackgroundColor(Color.parseColor("#101010"));
+                buttonScribblePressed = true;
+
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                buttonText.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+                button2AnglePressed = false;
+                buttonTextPressed = false;
+            }
+        });
+        buttonText.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                buttonText.setBackgroundColor(Color.parseColor("#101010"));
+                buttonTextPressed = true;
+
+                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
+                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
+                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
+                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
+                buttonScribble.setBackgroundColor(Color.parseColor("#999999"));
+
+                buttonPointPressed = false;
+                buttonLinePressed = false;
+                button3AnglePressed = false;
+                button4AnglePressed = false;
+                button2AnglePressed = false;
+                buttonScribblePressed = false;
+            }
+        });
+    }
+
+    private void setLinearLayoutOnTouchListener(){
+        linearLayout.setOnTouchListener(
+                new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                coordType = coordType + "," + ptType + "," + ptType;
+                selectionCounter++;
+
+                int height = bmp.getHeight();
+                int width = bmp.getWidth();
+                Display display = getWindowManager().getDefaultDisplay();
+                DisplayMetrics metrics = new DisplayMetrics();
+                display.getRealMetrics(metrics);
+                int heightScreen = metrics.heightPixels;
+                int widthScreen = metrics.widthPixels;
+
+                float scaleHeight = (float) height / (float) heightScreen;
+                float scaleWidth = (float) width / (float) widthScreen;
+
+                float x = event.getX() * scaleWidth;
+                float y = event.getY() * scaleHeight;
+
+                coords = coords + "," + x + "," + y;
+
+                X = new Point((double) x, (double) y);
+                points.add(X);
+                ptTypes.add(ptType);
+                //convert imageUri to Mat and draw this
+                m = new Mat(height, width, CvType.CV_8UC3);
+                Utils.bitmapToMat(bmp, m);
+                if (selectionCounter == selectionCap) {
+                    selectionCap = 0;
+                    selectionCounter = 0;
+                }
+                for (int i = 0; i < points.size(); i++) {
+                    if (ptTypes.get(i) == 0) {
+                        Imgproc.circle(m, points.get(i), currentPointSize, currentPointColor, 8, 8, 0);
+                    } else if (ptTypes.get(i) == 1) {
+                        ArrayList<Point> pts = new ArrayList<>();
+                        for (int j = 0; j < 2; j++) {
+                            if (points.size() > i + j) {
+                                pts.add(points.get(i + j));
+                                Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                            }
+                            if (pts.size() == 2) {
+                                m = addLinesBetweenAngles(m, pts);
+                            }
+                        }
+                        i++;
+                    } else if (ptTypes.get(i) == 2) {
+                        ArrayList<Point> pts = new ArrayList<Point>();
+                        for (int j = 0; j < 2; j++) {
+                            if (points.size() > i + j) {
+                                pts.add(points.get(i + j));
+                                Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                            }
+                        }
+                        if (pts.size() == 2) {
+                            m = addLinesBetweenAngles(m, pts);
+                            angles = calculateAngles(pts);
+                            gText = String.format("%.2f", (angles.get(angles.size() - 1)));
+                            Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
+                            i++;
+                        }
+                    } else if (ptTypes.get(i) == 3) {
+                        ArrayList<Point> pts = new ArrayList<Point>();
+                        for (int j = 0; j < 3; j++) {
+                            if (points.size() > i + j) {
+                                pts.add(points.get(i + j));
+                                Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                            }
+                        }
+                        if (pts.size() == 3) {
+                            m = addLinesBetweenAngles(m, pts);
+                            angles = calculateAngles(pts);
+                            gText = String.format("%.2f", (angles.get(angles.size() - 1)));
+                            Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
+                            i++;
+                            i++;
+                        }
+                    } else if (ptTypes.get(i) == 4) {
+                        ArrayList<Point> pts = new ArrayList<Point>();
+                        for (int j = 0; j < 4; j++) {
+                            if (points.size() > i + j) {
+                                pts.add(points.get(i + j));
+                                Imgproc.circle(m, pts.get(j), currentPointSize, anglePointColor, 8, 8, 0);
+                            }
+                        }
+                        if (pts.size() == 4) {
+                            m = addLinesBetweenAngles(m, pts);
+                            angles = calculateAngles(pts);
+                            gText = String.format("%.2f", (angles.get(angles.size() - 1)));
+                            Imgproc.putText(m, gText, pts.get(0), 3, angleTextSize, angleTextColor, 2, 1, false);
+                            i++;
+                            i++;
+                            i++;
+                        }
+                    }
+
+                    Imgproc.cvtColor(m, m, Imgproc.COLOR_RGBA2RGB);
+                    Utils.matToBitmap(m, bmp);
+                    pathKeyFrameOut = createImageFromBitmap(bmp);
+                    keyFrameView.setImageBitmap(bmp);
+                    keyFrameView.requestFocus();
+                    return false;
+                }
+                return false;
+            }
+        });
     }
 
 }
