@@ -172,7 +172,7 @@
 
     <PreferenceScreen
     android:key="button_post_processing_options_key"
-    android:title="Video Post-Processing"
+    android:title="Post-Processing"
     android:persistent="false">
 
         <ListPreference
@@ -201,16 +201,16 @@
 
         <ListPreference
             android:key="pref_rotateDegreesPostProcess"
-            android:title="Rotation Vid 1"
-            android:dialogTitle="Rotation Vid 1"
+            android:title="Rotation 1"
+            android:dialogTitle="Rotation 1"
             android:entries="@array/pref_rotateDegreesPostProcess_entries"
             android:entryValues="@array/pref_rotateDegreesPostProcess_values"
             android:defaultValue="0" />
 
         <ListPreference
             android:key="pref_rotateDegreesPostProcess2"
-            android:title="Rotation Vid 2"
-            android:dialogTitle="Rotation Vid 2"
+            android:title="Rotation 2"
+            android:dialogTitle="Rotation 2"
             android:entries="@array/pref_rotateDegreesPostProcess_entries"
             android:entryValues="@array/pref_rotateDegreesPostProcess_values"
             android:defaultValue="0" />

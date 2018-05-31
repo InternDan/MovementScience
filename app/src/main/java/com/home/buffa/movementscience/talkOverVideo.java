@@ -259,7 +259,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     vH = mMediaPlayer.getVideoHeight();
                     vW = mMediaPlayer.getVideoWidth();
-                    updateTextureViewSize(mPreview.getWidth(),mPreview.getHeight());
+                    //updateTextureViewSize(mPreview.getWidth(),mPreview.getHeight());
                     //textureView.setLayoutParams(new FrameLayout.LayoutParams(vW,vH));
                     mMediaPlayer.seekTo(200);
                     h1 = mPreview.getHeight();
