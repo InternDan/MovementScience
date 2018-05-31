@@ -12,8 +12,11 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -93,6 +96,47 @@ public class postProcessing extends Activity {
             }
         });
 
+        NavigationView navigationView  = findViewById(R.id.nav_view);
+        final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_capture:
+                                Intent intent = new Intent(getApplicationContext(), CaptureLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_edit:
+                                intent = new Intent(getApplicationContext(), EditLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_utilities:
+                                intent = new Intent(getApplicationContext(), UtilityLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_help:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+        View headerview = navigationView.getHeaderView(0);
+        LinearLayout header = (LinearLayout) headerview.findViewById(R.id.navigation_header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 
@@ -122,7 +166,7 @@ public class postProcessing extends Activity {
                 return;
             }
             mediaMetadataRetriever1.setDataSource(this, videoUri1);
-            bmp = mediaMetadataRetriever1.getFrameAtTime(1000);
+            bmp = mediaMetadataRetriever1.getFrameAtTime(200);
             vid1Height = bmp.getHeight();
             vid1Width = bmp.getWidth();
             //BitmapDrawable bitmapDrawable = new BitmapDrawable(bmp);
@@ -157,7 +201,7 @@ public class postProcessing extends Activity {
                 return;
             }
             mediaMetadataRetriever2.setDataSource(this, videoUri2);
-            bmp = mediaMetadataRetriever2.getFrameAtTime(1000);
+            bmp = mediaMetadataRetriever2.getFrameAtTime(200);
             vid2Height = bmp.getHeight();
             vid2Width = bmp.getWidth();
             BitmapDrawable bitmapDrawable = new BitmapDrawable(bmp);
@@ -192,11 +236,6 @@ public class postProcessing extends Activity {
 
     public void onResume() {
         super.onResume();
-    }
-
-    public void goHome(View view){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
     }
 
     protected void onPause() {

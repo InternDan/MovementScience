@@ -1,45 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rootView">
+    >
 
-    <ImageView
-        android:id="@+id/imageView"
+
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rootView">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/cast_abc_scrubber_control_off_mtrl_alpha" />
+
+        <TextureView
+            android:id="@+id/textureView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <SeekBar
+            android:id="@+id/seekbar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:max="10"
+            android:progress="3" />
+
+        <Button
+            android:id="@+id/buttonStartVoiceRecording"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:onClick="beginRecording"
+            android:text="Start Recording" />
+
+        <Button
+            android:id="@+id/buttonStopVoiceRecording"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="135dp"
+            android:onClick="endRecording"
+            android:text="Stop Recording" />
+
+    </FrameLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:srcCompat="@drawable/cast_abc_scrubber_control_off_mtrl_alpha" />
-
-    <TextureView
-        android:id="@+id/textureView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <SeekBar
-        android:id="@+id/seekbar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:max="10"
-        android:progress="3" />
-
-    <Button
-        android:id="@+id/buttonStartVoiceRecording"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:onClick="beginRecording"
-        android:text="Start Recording" />
-
-    <Button
-        android:id="@+id/buttonStopVoiceRecording"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="135dp"
-        android:onClick="endRecording"
-        android:text="Stop Recording" />
-
-</FrameLayout>
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/bottom_navigation_main"
+        app:headerLayout="@layout/nav_header"
+        />
+</android.support.v4.widget.DrawerLayout>

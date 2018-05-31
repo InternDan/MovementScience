@@ -3,262 +3,150 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/MovSciTheme"
     >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:weightSum="5"
+    style="@style/MovSciTheme">
+
+    <!--first section contains logo, maybe link to website -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:gravity="center"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/border">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal" >
-                    <Button
-                        android:id="@+id/buttonRecordVideo"
-                        android:layout_width="69dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/ic_recorder"
-                        android:onClick="launchVideoRecorder"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="20sp"
-                        android:textStyle="bold|normal"
-                        android:layout_gravity="center"
-                        android:visibility="visible"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal" >
-                    <Button
-                        android:id="@+id/buttonRealTimeTracking"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#00999999"
-                        android:onClick="launchRealTimeTracking"
-                        android:text="@string/track_real_time"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="20sp"
-                        android:layout_gravity="center"
-                        android:textStyle="bold|normal"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center">
-                    <Button
-                        android:id="@+id/buttonWatchVideo"
-                        android:layout_width="68dp"
-                        android:layout_height="57dp"
-                        android:background="@drawable/ic_video_play"
-                        android:onClick="watchVideo"
-                        android:layout_gravity="center"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/border">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    >
-                    <Button
-                        android:id="@+id/buttonCropVideo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:onClick="launchGooglePhotos"
-                        android:text="Crop Video"
-                        android:layout_weight="1"
-                        android:layout_gravity="center|left"
-                        />
-                    <Button
-                        android:id="@+id/buttonStabilizeVideo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:onClick="launchGooglePhotos"
-                        android:text="Stabilize Video"
-                        android:layout_weight="1"
-                        android:layout_gravity="center|right"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    >
-                    <Button
-                        android:id="@+id/buttonPostProcessing"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="postProcessing"
-                        android:text="Merge Videos"
-                        android:layout_weight="1"
-                        android:layout_gravity="center|left"
-                        />
-                    <Button
-                        android:id="@+id/buttonMergeImages"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="combineImages"
-                        android:text="Merge Images"
-                        android:layout_weight="1"
-                        android:layout_gravity="center|right"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            >
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/border">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal" >
-                    <Button
-                        android:id="@+id/buttonOfflineProcessing"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#00999999"
-                        android:onClick="launchOfflineTracking"
-                        android:text="@string/offline_processing"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="20sp"
-                        android:textStyle="bold|normal"
-                        android:layout_gravity="center" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal" >
-                    <Button
-                        android:id="@+id/buttonVoiceover"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="talkOverVideo"
-                        android:text="Voiceover"
-                        android:layout_gravity="center"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/border"
-                >
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal" >
-                    <Button
-                        android:id="@+id/buttonSettings"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#00999999"
-                        android:onClick="editSettings"
-                        android:text="@string/settings"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="20sp"
-                        android:textStyle="bold|normal"
-                        android:layout_gravity="center"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal" >
-                    <Button
-                        android:id="@+id/buttonHelp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#00999999"
-                        android:onClick="launchHelp"
-                        android:text="Online Help"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="20sp"
-                        android:textStyle="bold|normal"
-                        android:layout_gravity="center"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal" >
-                    <Button
-                        android:id="@+id/buttonUpdateThumbnails"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#00999999"
-                        android:onClick="updateThumbnails"
-                        android:text="Update Thumbnails"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="20sp"
-                        android:textStyle="bold|normal"
-                        android:layout_gravity="center"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
+        android:layout_height="0dip"
+        android:layout_weight="3"
+        android:orientation="horizontal"
+        android:background="@drawable/border"
+        >
+
+
     </LinearLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:menu="@menu/bottom_navigation_main"
-        app:headerLayout="@layout/nav_header"
-        />
+    <!-- contains 4 rows of view types -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/launchCaptureImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="81dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_recorder"
+                    android:onClick="launchCaptureLauncher"
+                    android:text="Capture" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/launchEditing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="81dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_recorder"
+                    android:onClick="launchEditLauncher"
+                    android:text="Edit" />
+            </RelativeLayout>
 
 
-</android.support.v4.widget.DrawerLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/launchUtilities"
+                    android:layout_width="wrap_content"
+                    android:layout_height="81dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_recorder"
+                    android:onClick="utilityLauncher"
+                    android:text="Utilities"/>
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/launchHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="81dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_recorder"
+                    android:onClick="getHelp"
+                    android:text="Help"/>
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
+
+<android.support.design.widget.NavigationView
+android:id="@+id/nav_view"
+android:layout_width="wrap_content"
+android:layout_height="match_parent"
+android:layout_gravity="start"
+app:menu="@menu/bottom_navigation_main"
+app:headerLayout="@layout/nav_header"
+    />
+    </android.support.v4.widget.DrawerLayout>
 

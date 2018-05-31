@@ -37,33 +37,15 @@
                 <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".recordVideo"
-             />
-        <activity
-            android:name=".offlineProcessing"
-            />
-        <activity
-            android:name=".pickPoints"
-            />
-        <activity
-            android:name=".trackPointsTest"
-            />
-        <activity
-            android:name=".displayTrackingResults"
-            />
-        <activity
-            android:name=".gaitStability"
-            />
-        <activity
-            android:name=".realTimeTracking"
-            />
-        <activity
-            android:name=".keyFrame"
-            />
-        <activity
-            android:name=".addScribble"
-             />
+        <activity android:name=".recordVideo" />
+        <activity android:name=".offlineProcessing" />
+        <activity android:name=".pickPoints" />
+        <activity android:name=".trackPointsTest" />
+        <activity android:name=".displayTrackingResults" />
+        <activity android:name=".gaitStability" />
+        <activity android:name=".realTimeTracking" />
+        <activity android:name=".keyFrame" />
+        <activity android:name=".addScribble" />
         <activity android:name=".manageFiles" />
         <activity android:name=".uploadImage" />
         <activity android:name=".uploadVideo" />
@@ -99,7 +81,11 @@
             android:name=".CombineImages"
             android:label="@string/title_activity_combine_images" />
         <activity android:name=".CombineImagesExecute" />
-
+        <activity
+            android:name=".CaptureLauncher"
+            android:label="@string/title_activity_capture_launcher" />
+        <activity android:name=".EditLauncher" />
+        <activity android:name=".UtilityLauncher"></activity>
     </application>
 
 </manifest>

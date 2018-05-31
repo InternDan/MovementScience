@@ -19,14 +19,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -35,6 +39,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveFile;
 import com.ipaulpro.afilechooser.utils.FileUtils;
+
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -65,7 +72,6 @@ public class offlineProcessing extends Activity {
     Bitmap bitmap;
     String bmpPath;
     private static final int  MY_PERMISSIONS_REQUEST_INTERNET = 131728;
-    GoogleApiClient mGoogleApiClient;
     boolean VERBOSE = true;
 
     int rotateDegreesPostProcess;
@@ -121,6 +127,47 @@ public class offlineProcessing extends Activity {
                 // result of the request.
             }
         }
+
+        NavigationView navigationView  = findViewById(R.id.nav_view);
+        final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_capture:
+                                Intent intent = new Intent(getApplicationContext(), CaptureLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_edit:
+                                intent = new Intent(getApplicationContext(), EditLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_utilities:
+                                intent = new Intent(getApplicationContext(), UtilityLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_help:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+        View headerview = navigationView.getHeaderView(0);
+        LinearLayout header = (LinearLayout) headerview.findViewById(R.id.navigation_header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void loadVideo(View v) {
@@ -539,9 +586,17 @@ public class offlineProcessing extends Activity {
 
     @Override
     protected void onPause() {
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
         super.onPause();
+    }
+
+    public void onResume() {
+        super.onResume();
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 }

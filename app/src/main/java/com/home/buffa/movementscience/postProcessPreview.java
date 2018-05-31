@@ -11,12 +11,16 @@ import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -117,11 +121,54 @@ public class postProcessPreview extends Activity {
         rotateDegreesPostProcess = Integer.valueOf(rotDeg);
         rotDeg = sharedPref.getString("pref_rotateDegreesPostProcess2","0");
         rotateDegreesPostProcess2 = Integer.valueOf(rotDeg);
+
+        NavigationView navigationView  = findViewById(R.id.nav_view);
+        final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_capture:
+                                Intent intent = new Intent(getApplicationContext(), CaptureLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_edit:
+                                intent = new Intent(getApplicationContext(), EditLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_utilities:
+                                intent = new Intent(getApplicationContext(), UtilityLauncher.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_help:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+        View headerview = navigationView.getHeaderView(0);
+        LinearLayout header = (LinearLayout) headerview.findViewById(R.id.navigation_header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private class beginCombiningProcedure extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
+            MainActivity.mBuilder.setContentText("Initializing software tools");
+            MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
             CombineVideos cv = new CombineVideos();
             cv.videoAbsolutePath1 = videoAbsolutePath1;
             cv.videoAbsolutePath2 = videoAbsolutePath2;
