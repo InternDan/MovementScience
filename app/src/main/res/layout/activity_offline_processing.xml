@@ -53,17 +53,17 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:background="#33999999"
-            android:textStyle="bold|normal"
-            android:textSize="20sp"
             android:onClick="keyFrame"
             android:text="@string/select_key_frame"
             android:textColor="@android:color/holo_red_dark"
+            android:textSize="20sp"
+            android:textStyle="bold|normal"
             app:layout_constraintBottom_toBottomOf="@+id/videoView"
-            app:layout_constraintHorizontal_bias="0.921"
+            app:layout_constraintHorizontal_bias="0.886"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.969" />
+            app:layout_constraintVertical_bias="0.116" />
 
         <Button
             android:id="@+id/buttonLoadImage"
@@ -89,27 +89,6 @@
             app:layout_constraintVertical_bias="0.097" />
 
         <Button
-            android:id="@+id/buttonGoHome"
-            android:layout_width="110dp"
-            android:layout_height="36dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="#33999999"
-            android:onClick="goHome"
-            android:text="@string/go_home"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="20sp"
-            android:textStyle="bold|normal"
-            app:layout_constraintBottom_toBottomOf="@+id/videoView"
-            app:layout_constraintHorizontal_bias="0.031"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="@+id/videoView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.984" />
-
-        <Button
             android:id="@+id/buttonPickPoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -124,32 +103,11 @@
             android:textSize="20sp"
             android:textStyle="bold|normal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.936"
+            app:layout_constraintHorizontal_bias="0.906"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.881" />
-
-        <Button
-            android:id="@+id/buttonLaunchGooglePhotos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="#33999999"
-            android:onClick="launchGooglePhotos"
-            android:text="Open Google Photos"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="20sp"
-            android:textStyle="bold|normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.956"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.015" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <!--<Button-->
             <!--android:id="@+id/buttonLoadVideoFromInternet"-->

@@ -509,11 +509,6 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         return m;
     }
 
-    public void goHome(View view){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }
-
     public void clearPoints(View view){
         Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
         startActivity(intent);

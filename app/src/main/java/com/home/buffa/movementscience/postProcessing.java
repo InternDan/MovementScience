@@ -238,11 +238,6 @@ public class postProcessing extends Activity {
         super.onResume();
     }
 
-    public void goHome(View view){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }
-
     protected void onPause() {
         super.onPause();
     }

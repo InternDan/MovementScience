@@ -6,38 +6,45 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.home.buffa.movementscience.postProcessing">
+    tools:context="com.home.buffa.movementscience.postProcessing"
+    style="@style/MovSciTheme">
+
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        >
-
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/MovSciTheme">
         <LinearLayout
-            android:layout_width="1440px"
-            android:layout_height="1280px"
-            android:id="@+id/linearLayoutVid">
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="1440px"
+                android:layout_height="1280px"
+                android:id="@+id/linearLayoutVid">
 
 
-            <VideoView
-                android:id="@+id/videoView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="top" />
-        </LinearLayout>
+                <VideoView
+                    android:id="@+id/videoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top" />
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/buttonShare"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|bottom"
-                android:onClick="shareVideo"
-                android:text="Share!" />
+                android:layout_height="wrap_content">
 
+                <Button
+                    android:id="@+id/buttonShare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|bottom"
+                    android:onClick="shareVideo"
+                    android:text="Share!" />
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
