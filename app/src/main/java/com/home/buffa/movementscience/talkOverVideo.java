@@ -1,5 +1,6 @@
 package com.home.buffa.movementscience;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -124,6 +125,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     String eMagTime;
 
     String outPath;
+    String outPathFinal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -407,6 +409,9 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 //build initial image based video
                 if (enc != null) {
                     for (int i = 0; i < voiceOverBmpPaths.size(); i++) {
+                        String msg = String.valueOf(i/voiceOverBmpPaths.size()) + "% completed merging voice and video frames";
+                        MainActivity.mBuilder.setContentText(msg);
+                        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
                         Bitmap writeBmp = BitmapFactory.decodeFile(voiceOverBmpPaths.get(i));
                         try {
                             enc.encodeImage(writeBmp);
@@ -426,6 +431,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 //add audio
                 MediaMultiplexer mm = new MediaMultiplexer();
                 mm.startMuxing(getApplicationContext());
+                updateTapToPlay();
             }
         });
     }
@@ -433,6 +439,18 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
     private void initView() {
         textureView = findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
+    }
+
+    private void updateTapToPlay(){
+        Intent intent = new Intent(getApplicationContext(), playVideo.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        File file = new File(outPathFinal);
+        Uri vidUriActual = Uri.fromFile(file);
+        intent.putExtra("vidUri",vidUriActual.toString());
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        MainActivity.mBuilder.setContentIntent(pendingIntent);
+        MainActivity.mBuilder.setContentText("Processing completed! Click to play.");
+        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
     }
 
     public Bitmap getBitmap(){
@@ -508,6 +526,7 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
         eMagTime = df2.format(Calendar.getInstance().getTime());
         File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
         outPath = directory.getAbsolutePath() + "/Voiceover-" + eMagTime + ".mp4";
+        outPathFinal = outPath;
         SeekableByteChannel out = null;
         //determine total time images were being recorded
         Long lastmodified1;

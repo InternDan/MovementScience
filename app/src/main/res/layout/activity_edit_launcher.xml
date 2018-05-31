@@ -57,7 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:onClick="combineVideos"
-                        android:text="Compare Videos" />
+                        android:text="Compare/Merge Videos" />
 
                 </RelativeLayout>
 
@@ -78,7 +78,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:onClick="combineImages"
-                        android:text="Compare Images" />
+                        android:text="Compare/Merge Images" />
 
                 </RelativeLayout>
 
@@ -157,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:onClick="launchOfflineTracking"
-                        android:text="Track Offline" />
+                        android:text="Offline Markup" />
 
                 </RelativeLayout>
 

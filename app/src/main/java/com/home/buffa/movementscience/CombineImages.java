@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.provider.MediaStore;
@@ -120,6 +121,9 @@ public class CombineImages extends Activity {
     }
     public void previewImage(View view){
         if (uri1 != null && uri2 != null) {
+            Toast.makeText(getApplicationContext(), "Combining images - may take a moment depending on their size!", Toast.LENGTH_LONG).show();
+            bmp1.recycle();
+            bmp2.recycle();
             Intent intentPassPostProcessing = new Intent(getApplicationContext(), CombineImagesExecute.class);
             intentPassPostProcessing.putExtra("imgPath1", uri1.toString());
             intentPassPostProcessing.putExtra("imgPath2", uri2.toString());

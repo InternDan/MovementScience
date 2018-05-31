@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
@@ -24,6 +26,8 @@ import android.widget.MediaController;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
+
+import org.opencv.android.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -88,9 +92,6 @@ public class CombineImagesExecute extends Activity {
         bmp2Path = intentReceive.getExtras().getString("imgPath2");
         redoFlag = intentReceive.getExtras().getString("redo");
 
-        showToasts();
-        makeCombinedImage();
-
         NavigationView navigationView  = findViewById(R.id.nav_view);
         final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(
@@ -131,6 +132,17 @@ public class CombineImagesExecute extends Activity {
                 startActivity(intent);
             }
         });
+        showToasts();
+        //AsyncTask.execute(new Runnable() {
+          //  @Override
+           // public void run() {
+                //TODO your background code
+                makeCombinedImage();
+            //}
+        //});
+
+
+
     }
 
     public void showToasts(){
@@ -152,16 +164,18 @@ public class CombineImagesExecute extends Activity {
 
         Bitmap bmp1 = null;
         Bitmap bmp2 = null;
-        try {
-            bmp1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(bmp1Path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            bmp2 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(bmp2Path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+            bmp1 = loadLargeBitmap(bmp1Path);
+            //bmp1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(bmp1Path));
+  //      } catch (IOException e) {
+    //        e.printStackTrace();
+     //   }
+       // try {
+         //   bmp2 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(bmp2Path));
+        bmp2 = loadLargeBitmap(bmp2Path);
+        //} catch (IOException e) {
+          //  e.printStackTrace();
+        //}
         Bitmap bmp = cv.combineImagePair(bmp1,bmp2);
         if (bmp != null) {
             scaleImage(bmp);
@@ -270,5 +284,52 @@ public class CombineImagesExecute extends Activity {
         }
 
 
+    }
+
+
+    private Bitmap loadLargeBitmap(String path){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(FileUtils.getPath(getApplicationContext(),Uri.parse(path)), options);
+        //define default max allowed sizes
+        int maxHeight = 860;
+        int maxWidth = 540;
+        options.inSampleSize = calculateInSampleSize(options,maxWidth,maxHeight);
+        options.inJustDecodeBounds = false;
+        Bitmap bmp = BitmapFactory.decodeFile(FileUtils.getPath(getApplicationContext(),Uri.parse(path)), options);
+        return bmp;
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public void onResume() {
+        super.onResume();
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 }
