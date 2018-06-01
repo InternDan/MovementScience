@@ -65,13 +65,17 @@ public class realTimeChooser extends Activity {
 
     public void realTimeTracking(View view) {
         Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
+        intent.putExtra("Record",false);
         startActivity(intent);
     }
 
     public void realTimeTrackingWithRecording(View view) {
         /*Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
         startActivity(intent);*/
-        Toast.makeText(this, "Feature not yet implemented", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
+        intent.putExtra("Record",true);
+        startActivity(intent);
+        //Toast.makeText(this, "Feature not yet implemented", Toast.LENGTH_SHORT).show();
     }
 
 
