@@ -547,18 +547,6 @@ public class offlineProcessing extends Activity {
         return -1;
     }
 
-    public void goHome(View view){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }
-
-    public void launchGooglePhotos(View view){
-        Intent intent = new Intent("android.intent.action.MAIN");
-        intent.setComponent(ComponentName.unflattenFromString("com.google.android.apps.photos.home.HomeActivity"));
-        intent.addCategory("android.intent.category.LAUNCHER");
-        intent.setPackage("com.google.android.apps.photos");
-        startActivity(intent);
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {

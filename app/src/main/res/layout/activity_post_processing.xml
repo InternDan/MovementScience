@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum ="2"
-        tools:context="com.home.buffa.movementscience.postProcessing">
+        >
 
         <LinearLayout
             android:id="@+id/linearLayoutVid1"
