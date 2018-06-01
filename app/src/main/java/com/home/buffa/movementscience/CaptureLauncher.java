@@ -94,7 +94,8 @@ public class CaptureLauncher extends Activity{
     }
 
     public void launchRealTimeTracking(View view) {
-        Intent intent = new Intent(getApplicationContext(), realTimeChooser.class);
+        Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
         startActivity(intent);
     }
+
 }

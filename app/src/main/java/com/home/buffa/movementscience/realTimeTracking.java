@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -22,6 +24,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import org.jcodec.api.android.AndroidSequenceEncoder;
+import org.jcodec.common.io.NIOUtils;
+import org.jcodec.common.io.SeekableByteChannel;
+import org.jcodec.common.model.Rational;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
@@ -40,7 +46,13 @@ import org.opencv.core.TermCriteria;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.video.Video;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 
 import static org.opencv.core.TermCriteria.COUNT;
@@ -70,6 +82,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     int ptType;
     int maxLevel;
     int winSearchSize;
+    int rotateRealTime;
     double epsilon;
     double eigenThreshold;
     Scalar currentPointColor;
@@ -87,12 +100,19 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     ImageButton button2Angle;
     ImageButton button3Angle;
     ImageButton button4Angle;
+    ImageButton buttonRecord;
 
     boolean buttonPointPressed = false;
     boolean buttonLinePressed = false;
     boolean button2AnglePressed = false;
     boolean button3AnglePressed = false;
     boolean button4AnglePressed = false;
+
+    boolean record = false;
+
+    AndroidSequenceEncoder enc;
+    SeekableByteChannel out;
+    File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 
     private Handler mHandler = new Handler();
 
@@ -137,30 +157,25 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         setButtons();
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
         String numTrPts = sharedPref.getString("pref_trailingPointNumber","20");
         numTrailPoints = Integer.valueOf(numTrPts);
-
         String trPtSize = sharedPref.getString("pref_trailingPointSize","5");
         trailPointSize = Integer.valueOf(trPtSize);
-
         String curPtSize = sharedPref.getString("pref_currentPointSize","5");
         currentPointSize = Integer.valueOf(curPtSize);
-
         String txtBoxTxtSize = sharedPref.getString("pref_angleTextSize","5");
         angleTextSize = Integer.valueOf(txtBoxTxtSize);
-
         String txtWinSearchSize = sharedPref.getString("pref_trackingSearchWindowSize","20");
         winSearchSize = Integer.valueOf(txtWinSearchSize);
-
         String txtSearchEpsilon = sharedPref.getString("pref_trackingSearchEpsilon","0.1");
         epsilon = Double.valueOf(txtSearchEpsilon);
-
         String txtMaxLevel = sharedPref.getString("pref_trackingSearchMaxLevel","3");
         maxLevel = Integer.valueOf(txtMaxLevel);
-
         String txtEigenThreshold = sharedPref.getString("pref_trackingSearchMinEigenThreshold","0.001");
         eigenThreshold = Double.valueOf(txtEigenThreshold);
+        String rotate = sharedPref.getString("pref_rotateDegreesRealTime","0");
+        rotateRealTime = Integer.valueOf(rotate);
+
 
         String curPtClr = sharedPref.getString("pref_currentPointColor","r");
         if (Objects.equals(curPtClr,new String("r")) == true){
@@ -308,6 +323,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             }
         });
         setLinearLayoutOnTouchListenerReset();
+
     }
 
     @Override
@@ -359,13 +375,10 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
-
-
         Mat mRgbaT = inputFrame.rgba().t().clone();
         Core.flip(mRgbaT, mRgbaT, 1);
         Imgproc.resize(mRgbaT, mRgbaT, mRgbaT.size());
 
-//        numPoints = points.size();
         if (points.size() > 0) {
             frameGray = inputFrame.gray().t().clone();
             Core.flip(frameGray, frameGray, 1);
@@ -456,15 +469,66 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             }
 
             prevFrame = frameGray.clone();
+            if(record && enc != null){
+                Bitmap bmpOut = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(mRgbaT,bmpOut);
+                try {
+                    enc.encodeImage(bmpOut);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else if(!record && enc != null){
+                try {
+                    enc.finish();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
+                startActivity(intent);
+            }
             return mRgbaT;
         } else if (points.size() == 0) {
             prevFrame = inputFrame.gray().t().clone();
             Core.flip(prevFrame, prevFrame, 1);
             Imgproc.resize(prevFrame, prevFrame, prevFrame.size());
             Log.v("myTag", "no points");
+            if(record && enc != null){
+                Bitmap bmpOut = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(mRgbaT,bmpOut);
+                try {
+                    enc.encodeImage(bmpOut);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else if(!record && enc != null){
+                try {
+                    enc.finish();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
+                startActivity(intent);
+            }
             return mRgbaT;
         } else {
             Log.v("myTag", "somehow missed both");
+            if(record && enc != null){
+                Bitmap bmpOut = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(mRgbaT,bmpOut);
+                try {
+                    enc.encodeImage(bmpOut);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else if(!record && enc != null){
+                try {
+                    enc.finish();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
+                startActivity(intent);
+            }
             return mRgbaT;
         }
     }
@@ -547,6 +611,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
 
     private void setButtons(){
 
+        buttonRecord = findViewById(R.id.buttonRealTimeRecord);
         buttonPoint = findViewById(R.id.buttonPointRealTime);
         buttonLine = findViewById(R.id.buttonLineRealTime);
         button2Angle = findViewById(R.id.button2AngleRealTime);
@@ -681,6 +746,29 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
                         return false;
                     }
                 });
+    }
+
+    public void setRecordFlag(View view){
+        //TODO set icon to change when pressed as a toggle
+        if(record){
+            record = false;
+        }else if(!record){
+            record = true;
+            int frOut = 10;//TODO need to calculate
+            DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+            String eMagTime = df2.format(Calendar.getInstance().getTime());
+            String outPath = directory.getAbsolutePath() + "/RealTime-" + eMagTime + ".mp4";
+            try {
+                out = NIOUtils.writableFileChannel(outPath);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                enc = new AndroidSequenceEncoder(out, Rational.R((int) frOut,1));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
