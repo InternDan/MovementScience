@@ -753,21 +753,28 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         if(record){
             record = false;
         }else if(!record){
-            record = true;
-            int frOut = 10;//TODO need to calculate
-            DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
-            String eMagTime = df2.format(Calendar.getInstance().getTime());
-            String outPath = directory.getAbsolutePath() + "/RealTime-" + eMagTime + ".mp4";
-            try {
-                out = NIOUtils.writableFileChannel(outPath);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            try {
-                enc = new AndroidSequenceEncoder(out, Rational.R((int) frOut,1));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    //TODO your background code
+                    record = true;
+                    int frOut = 10;//TODO need to calculate
+                    DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+                    String eMagTime = df2.format(Calendar.getInstance().getTime());
+                    String outPath = directory.getAbsolutePath() + "/RealTime-" + eMagTime + ".mp4";
+                    try {
+                        out = NIOUtils.writableFileChannel(outPath);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        enc = new AndroidSequenceEncoder(out, Rational.R((int) frOut,1));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
         }
     }
 
