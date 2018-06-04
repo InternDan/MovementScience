@@ -2,11 +2,21 @@ package com.home.buffa.movementscience;
 
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaCodec;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
+import android.media.MediaMuxer;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -23,6 +33,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.jcodec.api.android.AndroidSequenceEncoder;
 import org.jcodec.common.io.NIOUtils;
@@ -48,13 +60,16 @@ import org.opencv.video.Video;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 
+import static android.media.MediaRecorder.AudioSource.MIC;
 import static org.opencv.core.TermCriteria.COUNT;
 
 //import static org.opencv.android.CameraBridgeViewBase.cHeight;
@@ -65,7 +80,15 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     private static final String TAG = "realTimeTracking";
     private CameraBridgeViewBase mOpenCvCameraView;
 
+    int frameCountForOpenCVMemoryShit = 0;
+
+    MediaRecorder mediaRecorder;
     LinearLayout linearLayout;
+    String eMagTimeVideo;
+    File tmpVid;
+    String outputVideoFileName;
+
+    String audioFileName;
 
     int screenHeight;
     int screenWidth;
@@ -95,6 +118,8 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     ArrayList<Integer> pointTypes = new ArrayList<Integer>();
     String gText;
 
+    ArrayList<String> realtimeBmpPaths = new ArrayList<String>();
+
     ImageButton buttonPoint;
     ImageButton buttonLine;
     ImageButton button2Angle;
@@ -112,7 +137,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
 
     AndroidSequenceEncoder enc;
     SeekableByteChannel out;
-    File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+    File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
     private Handler mHandler = new Handler();
 
@@ -375,6 +400,12 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
+        frameCountForOpenCVMemoryShit++;
+        if (frameCountForOpenCVMemoryShit == 5) {
+            System.gc();
+            System.runFinalization();
+            frameCountForOpenCVMemoryShit = 0;
+        }
         Mat mRgbaT = inputFrame.rgba().t().clone();
         Core.flip(mRgbaT, mRgbaT, 1);
         Imgproc.resize(mRgbaT, mRgbaT, mRgbaT.size());
@@ -469,22 +500,31 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             }
 
             prevFrame = frameGray.clone();
-            if(record && enc != null){
+            if(record){
+                Imgproc.cvtColor(mRgbaT,mRgbaT, Imgproc.COLOR_RGBA2RGB);
                 Bitmap bmpOut = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(mRgbaT,bmpOut);
+                DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+                String eMagTime = df2.format(Calendar.getInstance().getTime());
+                String outPath = directory.getAbsolutePath() + "/RealTime-" + eMagTime + ".png";
+                FileOutputStream out = null;
                 try {
-                    enc.encodeImage(bmpOut);
-                } catch (IOException e) {
+                    out = new FileOutputStream(outPath);
+                    bmpOut.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                    realtimeBmpPaths.add(outPath);
+                    // PNG is a lossless format, the compression factor (100) is ignored
+                } catch (Exception e) {
                     e.printStackTrace();
+                } finally {
+                    try {
+                        if (out != null) {
+                            out.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }else if(!record && enc != null){
-                try {
-                    enc.finish();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
-                startActivity(intent);
+                bmpOut.recycle();
             }
             return mRgbaT;
         } else if (points.size() == 0) {
@@ -492,45 +532,35 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             Core.flip(prevFrame, prevFrame, 1);
             Imgproc.resize(prevFrame, prevFrame, prevFrame.size());
             Log.v("myTag", "no points");
-            if(record && enc != null){
+            if(record){
+                Imgproc.cvtColor(mRgbaT,mRgbaT, Imgproc.COLOR_RGBA2RGB);
                 Bitmap bmpOut = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(mRgbaT,bmpOut);
+                DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+                String eMagTime = df2.format(Calendar.getInstance().getTime());
+                String outPath = directory.getAbsolutePath() + "/RealTime-" + eMagTime + ".png";
+                FileOutputStream out = null;
                 try {
-                    enc.encodeImage(bmpOut);
-                } catch (IOException e) {
+                    out = new FileOutputStream(outPath);
+                    bmpOut.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                    realtimeBmpPaths.add(outPath);
+                    // PNG is a lossless format, the compression factor (100) is ignored
+                } catch (Exception e) {
                     e.printStackTrace();
+                } finally {
+                    try {
+                        if (out != null) {
+                            out.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }else if(!record && enc != null){
-                try {
-                    enc.finish();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
-                startActivity(intent);
-            }
-            return mRgbaT;
-        } else {
-            Log.v("myTag", "somehow missed both");
-            if(record && enc != null){
-                Bitmap bmpOut = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(mRgbaT,bmpOut);
-                try {
-                    enc.encodeImage(bmpOut);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }else if(!record && enc != null){
-                try {
-                    enc.finish();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent(getApplicationContext(), realTimeTracking.class);
-                startActivity(intent);
+                bmpOut.recycle();
             }
             return mRgbaT;
         }
+        return mRgbaT;
     }
 
     @Override
@@ -594,20 +624,6 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             selectionCap = 4;
         }
     }
-
-    /*private void getPointType(){
-        if (buttonPointPressed == true){
-            ptType = 0;
-        }else if(buttonLinePressed == true){
-            ptType = 1;
-        }else if(button2AnglePressed == true){
-            ptType = 2;
-        }else if(button3AnglePressed == true){
-            ptType = 3;
-        }else if(button4AnglePressed == true){
-            ptType = 4;
-        }
-    }*/
 
     private void setButtons(){
 
@@ -752,30 +768,215 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         //TODO set icon to change when pressed as a toggle
         if(record){
             record = false;
-        }else if(!record){
+            mediaRecorder.stop();
+            mediaRecorder.release();
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    //TODO your background code
-                    record = true;
-                    int frOut = 10;//TODO need to calculate
-                    DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
-                    String eMagTime = df2.format(Calendar.getInstance().getTime());
-                    String outPath = directory.getAbsolutePath() + "/RealTime-" + eMagTime + ".mp4";
-                    try {
-                        out = NIOUtils.writableFileChannel(outPath);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                    //TODO encode video
+                    mergeVideoAudio();
+                }
+            });
+        }else if(!record){
+            record = true;
+            DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+            eMagTimeVideo = df2.format(Calendar.getInstance().getTime());
+            beginRecordingAudio();
+        }
+    }
+
+    private void beginRecordingAudio(){
+        AsyncTask.execute(new Runnable(){
+            @Override
+            public void run() {
+                //Your recording portion of the code goes here.
+                mediaRecorder = new MediaRecorder();
+                mediaRecorder.setAudioSource(MIC);
+                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+                    mediaRecorder.setAudioEncodingBitRate(48000);
+                } else {
+                    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                    mediaRecorder.setAudioEncodingBitRate(64000);
+                }
+                mediaRecorder.setAudioSamplingRate(16000);
+                File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                File mypath = new File(directory,"TalkFrame.mp4");
+                audioFileName = mypath.getAbsolutePath();
+                mediaRecorder.setOutputFile(mypath.getAbsolutePath());
+                try{
+                    mediaRecorder.prepare();
+                    mediaRecorder.start();
+                }catch (IOException e) {
+                    Log.e("Voice Recorder", "prepare() failed "+e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void mergeVideoAudio(){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                AndroidSequenceEncoder enc = null;
+                //Your recording portion of the code goes here.
+                DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
+                String eMagTime = df2.format(Calendar.getInstance().getTime());
+                File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+                String outPath = directory.getAbsolutePath() + "/RealtimeTmp-" + eMagTime + ".mp4";
+                tmpVid = new File(outPath);
+                SeekableByteChannel out = null;
+                //determine total time images were being recorded
+
+                try {
+                    out = NIOUtils.writableFileChannel(outPath);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    Long lastmodified1;
+                    Long lastmodifiedEnd;
+                    File f = new File(realtimeBmpPaths.get(0));
+                    lastmodified1 = f.lastModified();
+                    f = new File(realtimeBmpPaths.get(realtimeBmpPaths.size()-1));
+                    lastmodifiedEnd = f.lastModified();
+                    long recordTime = lastmodifiedEnd - lastmodified1;
+                    double fps = (double)realtimeBmpPaths.size() / (double)(recordTime / 1000);
+                    enc = new AndroidSequenceEncoder(out, Rational.R((int)(Math.round(fps)),1));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //build initial image based video
+                if (enc != null) {
+                    for (int i = 0; i < realtimeBmpPaths.size(); i++) {
+                        //Bitmap writeBmp;
+                        try {
+                            Bitmap writeBmp = BitmapFactory.decodeFile(Uri.parse(realtimeBmpPaths.get(i)).toString());
+                            if(writeBmp != null) {
+                                enc.encodeImage(writeBmp);
+                            }
+                            File f = new File(realtimeBmpPaths.get(i));
+                            f.delete();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     try {
-                        enc = new AndroidSequenceEncoder(out, Rational.R((int) frOut,1));
+                        enc.finish();
+                        NIOUtils.closeQuietly(out);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-            });
-
-        }
+                //add audio
+                realTimeTracking.MediaMultiplexer mm = new realTimeTracking.MediaMultiplexer();
+                mm.startMuxing(getApplicationContext());
+            }
+        });
     }
 
+    public class MediaMultiplexer {
+        private static final int MAX_SAMPLE_SIZE = 8 * 2880 * 2880;
+
+        public void startMuxing(Context context) {
+            MediaMuxer muxer = null;
+            MediaFormat VideoFormat = null;
+            File d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+            String Path = d.getAbsolutePath() + "/Realtime-" + eMagTimeVideo + ".mp4";
+            outputVideoFileName = Path;
+            try {
+                muxer = new MediaMuxer(outputVideoFileName, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            MediaExtractor extractorVideo = new MediaExtractor();
+            try {
+                extractorVideo.setDataSource(tmpVid.toString());
+                int tracks = extractorVideo.getTrackCount();
+                for (int i = 0; i < tracks; i++) {
+                    MediaFormat mf = extractorVideo.getTrackFormat(i);
+                    String mime = mf.getString(MediaFormat.KEY_MIME);
+                    if (mime.startsWith("video/")) {
+                        extractorVideo.selectTrack(i);
+                        VideoFormat = extractorVideo.getTrackFormat(i);
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            MediaExtractor extractorAudio = new MediaExtractor();
+            try {
+                extractorAudio.setDataSource(audioFileName);
+                int tracks = extractorAudio.getTrackCount();
+                extractorAudio.selectTrack(0);
+
+                MediaFormat AudioFormat = extractorAudio.getTrackFormat(0);
+                int audioTrackIndex = muxer.addTrack(AudioFormat);
+                int videoTrackIndex = muxer.addTrack(VideoFormat);
+
+                boolean sawEOS = false;
+                boolean sawAudioEOS = false;
+                int bufferSize = MAX_SAMPLE_SIZE;
+                ByteBuffer dstBuf = ByteBuffer.allocate(bufferSize);
+                int offset = 100;
+                MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+                muxer.start();
+
+                while (!sawEOS) {
+                    bufferInfo.offset = offset;
+                    bufferInfo.size = extractorVideo.readSampleData(dstBuf, offset);
+                    if (bufferInfo.size < 0) {
+                        sawEOS = true;
+                        bufferInfo.size = 0;
+                    } else {
+                        bufferInfo.presentationTimeUs = extractorVideo.getSampleTime();
+                        bufferInfo.flags = extractorVideo.getSampleFlags();
+                        int trackIndex = extractorVideo.getSampleTrackIndex();
+                        muxer.writeSampleData(videoTrackIndex, dstBuf, bufferInfo);
+                        extractorVideo.advance();
+                    }
+                }
+                ByteBuffer audioBuf = ByteBuffer.allocate(bufferSize);
+                while (!sawAudioEOS) {
+                    bufferInfo.offset = offset;
+                    bufferInfo.size = extractorAudio.readSampleData(audioBuf, offset);
+                    if (bufferInfo.size < 0) {
+                        sawAudioEOS = true;
+                        bufferInfo.size = 0;
+                    } else {
+                        bufferInfo.presentationTimeUs = extractorAudio.getSampleTime();
+                        bufferInfo.flags = extractorAudio.getSampleFlags();
+                        int trackIndex = extractorAudio.getSampleTrackIndex();
+                        muxer.writeSampleData(audioTrackIndex, audioBuf, bufferInfo);
+                        extractorAudio.advance();
+                    }
+                }
+                muxer.stop();
+                muxer.release();
+                tmpVid.delete();
+                updateTapToPlay();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+
+    }
+
+    private void updateTapToPlay(){
+        Intent intent = new Intent(getApplicationContext(), playVideo.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        File file = new File(outputVideoFileName);
+        Uri vidUriActual = Uri.fromFile(file);
+        intent.putExtra("vidUri",vidUriActual.toString());
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        MainActivity.mBuilder.setContentIntent(pendingIntent);
+        MainActivity.mBuilder.setContentText("Processing completed! Click to play.");
+        MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
+    }
 }
