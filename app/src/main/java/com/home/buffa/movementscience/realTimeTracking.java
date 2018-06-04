@@ -133,6 +133,8 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     boolean button3AnglePressed = false;
     boolean button4AnglePressed = false;
 
+    int frameCounter;
+
     boolean record = false;
 
     AndroidSequenceEncoder enc;
@@ -306,6 +308,8 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
 
         screenHeight = size.x;
         screenWidth = size.y;
+
+        frameCounter = 0;
 
         NavigationView navigationView  = findViewById(R.id.nav_view);
         final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
@@ -504,9 +508,10 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
                 Imgproc.cvtColor(mRgbaT,mRgbaT, Imgproc.COLOR_RGBA2RGB);
                 Bitmap bmpOut = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(mRgbaT,bmpOut);
-                DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'at'HH-mm-ss");
-                String eMagTime = df2.format(Calendar.getInstance().getTime());
-                String outPath = directory.getAbsolutePath() + "/RealTime-" + eMagTime + ".png";
+                frameCounter++;
+                String format = String.format("%%0%dd", 6);
+                String result = String.format(format, frameCounter);
+                String outPath = directory.getAbsolutePath() + "/RealTime-" + result + ".png";
                 FileOutputStream out = null;
                 try {
                     out = new FileOutputStream(outPath);

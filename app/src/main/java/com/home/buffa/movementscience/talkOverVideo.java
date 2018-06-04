@@ -310,9 +310,11 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
 
     private void saveBitmap(Bitmap bmp1){
         frameCounter++;
+        String format = String.format("%%0%dd", 6);
+        String result = String.format(format, frameCounter);
         File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         // Create imageDir
-        File mypath=new File(directory,"TalkFrame" + Integer.toString(frameCounter) + ".png");
+        File mypath=new File(directory,"TalkFrame-" + result + ".png");
 
         FileOutputStream fos = null;
         try {
