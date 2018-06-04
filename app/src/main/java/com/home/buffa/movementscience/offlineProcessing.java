@@ -272,7 +272,7 @@ public class offlineProcessing extends Activity {
         String eMagTime = df2.format(Calendar.getInstance().getTime());
         File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         // Create imageDir
-        File mypath=new File(directory,eMagTime + "-firstFrame.png");
+        File mypath=new File(directory,"FirstFrame-" + eMagTime + ".png");
 
 
         FileOutputStream fos = null;
@@ -289,7 +289,7 @@ public class offlineProcessing extends Activity {
                 e.printStackTrace();
             }
         }
-        return directory.getAbsolutePath() + "/" + eMagTime + "-firstFrame.png";
+        return directory.getAbsolutePath() + "/KeyFrame-" + eMagTime + ".png";
 
     }
 
@@ -300,7 +300,7 @@ public class offlineProcessing extends Activity {
         File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
         // Create imageDir
-        File mypath = new File(directory,eMagTime +  "-keyFrame.png");
+        File mypath = new File(directory,"KeyFrame-" +eMagTime +  ".png");
 
 
         FileOutputStream fos = null;
@@ -317,7 +317,7 @@ public class offlineProcessing extends Activity {
                 e.printStackTrace();
             }
         }
-        return directory.getAbsolutePath() + "/" + eMagTime + "-keyFrame.png";
+        return directory.getAbsolutePath() + "/KeyFrame-" + eMagTime + ".png";
 
     }
 
