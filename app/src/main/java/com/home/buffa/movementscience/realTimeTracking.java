@@ -892,7 +892,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             }
             MediaExtractor extractorVideo = new MediaExtractor();
             try {
-                extractorVideo.setDataSource(Path);
+                extractorVideo.setDataSource(tmpVid.toString());
                 int tracks = extractorVideo.getTrackCount();
                 for (int i = 0; i < tracks; i++) {
                     MediaFormat mf = extractorVideo.getTrackFormat(i);
