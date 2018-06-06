@@ -259,8 +259,8 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     vH = mMediaPlayer.getVideoHeight();
                     vW = mMediaPlayer.getVideoWidth();
-                    //updateTextureViewSize(mPreview.getWidth(),mPreview.getHeight());
-                    //textureView.setLayoutParams(new FrameLayout.LayoutParams(vW,vH));
+                    //updateTextureViewSize((int)vW,(int)vH);
+                    //textureView.setLayoutParams(new FrameLayout.LayoutParams((int)vW,(int)vH));
                     mMediaPlayer.seekTo(200);
                     h1 = mPreview.getHeight();
                     w1 = mPreview.getWidth();
@@ -268,6 +268,16 @@ public class talkOverVideo extends Activity implements TextureView.SurfaceTextur
                     int frames = (int) Math.round( (duration/mspf));
                     //set max frames for seekbar
                     seekbar.setMax(frames);
+                    textureView.setVisibility(TextureView.INVISIBLE);
+                    imageView.setVisibility(ImageView.VISIBLE);
+                    Bitmap bmp = mmr.getFrameAtTime(200,FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+                    if (bmp != null) {
+                        //Matrix matrix = new Matrix();
+                        //matrix.preRotate(rotateDegreesPostProcess);
+                        //bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+                        //bmp = Bitmap.createScaledBitmap(bmp, w1, h1, false);
+                        imageView.setImageBitmap(bmp);
+                    }
                 }
             });
 
