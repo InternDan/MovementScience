@@ -289,7 +289,8 @@ public class offlineProcessing extends Activity {
                 e.printStackTrace();
             }
         }
-        return directory.getAbsolutePath() + "/KeyFrame-" + eMagTime + ".png";
+        String thingOut = directory.getAbsolutePath() + "/FirstFrame-" + eMagTime + ".png";
+        return thingOut;
 
     }
 

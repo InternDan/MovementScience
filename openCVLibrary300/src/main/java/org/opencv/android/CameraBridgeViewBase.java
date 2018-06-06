@@ -423,9 +423,9 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
 //                modified = frame.rgba();
 //                Core.flip(modified.t(), modified, 0);
             }else {
-//                modified = frame.rgba();
+                modified = frame.rgba();
 //            }
-            modified = null;
+//            modified = null;
         }
 
 

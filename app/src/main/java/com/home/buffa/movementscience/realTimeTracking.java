@@ -404,15 +404,20 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
-        frameCountForOpenCVMemoryShit++;
-        if (frameCountForOpenCVMemoryShit == 5) {
-            System.gc();
-            System.runFinalization();
-            frameCountForOpenCVMemoryShit = 0;
-        }
+        //frameCountForOpenCVMemoryShit++;
+        //if (frameCountForOpenCVMemoryShit == 2) {
+        //    System.gc();
+       //     System.runFinalization();
+       //     frameCountForOpenCVMemoryShit = 0;
+        //}
+        Imgproc.cvtColor(inputFrame.rgba().t(),inputFrame.rgba().t(), Imgproc.COLOR_RGBA2RGB);
+        Bitmap bmpOutt = Bitmap.createBitmap(inputFrame.rgba().t().width(), inputFrame.rgba().t().height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(inputFrame.rgba().t(),bmpOutt);
         Mat mRgbaT = inputFrame.rgba().t().clone();
         Core.flip(mRgbaT, mRgbaT, 1);
         Imgproc.resize(mRgbaT, mRgbaT, mRgbaT.size());
+
+
 
         if (points.size() > 0) {
             frameGray = inputFrame.gray().t().clone();
@@ -563,6 +568,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
                 }
                 bmpOut.recycle();
             }
+
             return mRgbaT;
         }
         return mRgbaT;

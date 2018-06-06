@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
@@ -23,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.ipaulpro.afilechooser.utils.FileUtils;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -34,6 +37,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -200,7 +204,11 @@ public class pickPoints extends Activity {
         path = intentReceive.getExtras().getString("firstFramePathString");
         File image2 = new File(path);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmp = BitmapFactory.decodeFile(image2.getAbsolutePath(),bmOptions);
+        try {
+            bmp = MediaStore.Images.Media.getBitmap(this.getContentResolver(),Uri.fromFile(image2));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         frameRows = bmp.getHeight();
         frameCols = bmp.getWidth();
         m = new Mat(frameRows, frameCols, CvType.CV_8UC1);

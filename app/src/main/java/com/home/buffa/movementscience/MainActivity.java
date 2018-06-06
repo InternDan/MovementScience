@@ -37,9 +37,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
-import com.ipaulpro.afilechooser.utils.FileUtils;
-import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
