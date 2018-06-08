@@ -410,18 +410,16 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             System.runFinalization();
             frameCountForOpenCVMemoryShit = 0;
         }
-        Imgproc.cvtColor(inputFrame.rgba().t(),inputFrame.rgba().t(), Imgproc.COLOR_RGBA2RGB);
+        /*Imgproc.cvtColor(inputFrame.rgba().t(),inputFrame.rgba().t(), Imgproc.COLOR_RGBA2RGB);
         Bitmap bmpOutt = Bitmap.createBitmap(inputFrame.rgba().t().width(), inputFrame.rgba().t().height(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(inputFrame.rgba().t(),bmpOutt);
-        Mat mRgbaT = inputFrame.rgba().t().clone();
-        Core.flip(mRgbaT, mRgbaT, 1);
+        Utils.matToBitmap(inputFrame.rgba().t(),bmpOutt);*/
+        Mat mRgbaT = inputFrame.rgba().clone();
+        //Core.flip(mRgbaT, mRgbaT, 1);
         Imgproc.resize(mRgbaT, mRgbaT, mRgbaT.size());
-
-
 
         if (points.size() > 0) {
             frameGray = inputFrame.gray().t().clone();
-            Core.flip(frameGray, frameGray, 1);
+            //Core.flip(frameGray, frameGray, 1);
             Imgproc.resize(frameGray, frameGray, frameGray.size());
 
             Bitmap tmpBmp = Bitmap.createBitmap(frameGray.width(), frameGray.height(), Bitmap.Config.ARGB_8888);
@@ -538,8 +536,8 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             }
             return mRgbaT;
         } else if (points.size() == 0) {
-            prevFrame = inputFrame.gray().t().clone();
-            Core.flip(prevFrame, prevFrame, 1);
+            prevFrame = inputFrame.gray().clone();
+            //Core.flip(prevFrame, prevFrame, 1);
             Imgproc.resize(prevFrame, prevFrame, prevFrame.size());
             Log.v("myTag", "no points");
             if(record){
