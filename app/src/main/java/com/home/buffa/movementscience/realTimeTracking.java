@@ -141,7 +141,7 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
     SeekableByteChannel out;
     File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-    private Handler mHandler = new Handler();
+    //private Handler mHandler = new Handler();
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -165,7 +165,19 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        android.graphics.Point size = new android.graphics.Point();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getRealSize(size);
+        // Changes the height and width to the specified *pixels*
         setContentView(R.layout.activity_real_time_tracking);
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayoutRealTimeTracking);
+        screenHeight = size.x;
+        screenWidth = size.y;
+        /*LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) linearLayout.getLayoutParams();
+        params.height = screenHeight;
+        params.width = screenWidth;
+        linearLayout.setLayoutParams(params);*/
         View decorView = getWindow().getDecorView();
         // Hide both the navigation bar and the status bar.
         // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
@@ -174,13 +186,9 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.texture);
+        mOpenCvCameraView = findViewById(R.id.texture);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        Display display = getWindowManager().getDefaultDisplay();
-        android.graphics.Point size = new android.graphics.Point();
-        display.getRealSize(size);
 
-        linearLayout = findViewById(R.id.linearLayoutRealTimeTracking);
         setButtons();
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -306,12 +314,11 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             angleTextColor = new Scalar(255, 255, 255);
         }
 
-        screenHeight = size.x;
-        screenWidth = size.y;
+
 
         frameCounter = 0;
 
-        NavigationView navigationView  = findViewById(R.id.nav_view);
+       NavigationView navigationView  = findViewById(R.id.nav_view);
         final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -410,16 +417,17 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             System.runFinalization();
             frameCountForOpenCVMemoryShit = 0;
         }
-        /*Imgproc.cvtColor(inputFrame.rgba().t(),inputFrame.rgba().t(), Imgproc.COLOR_RGBA2RGB);
-        Bitmap bmpOutt = Bitmap.createBitmap(inputFrame.rgba().t().width(), inputFrame.rgba().t().height(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(inputFrame.rgba().t(),bmpOutt);*/
-        Mat mRgbaT = inputFrame.rgba().clone();
-        //Core.flip(mRgbaT, mRgbaT, 1);
+
+        Mat mRgbaT = inputFrame.rgba().t().clone();
+        Core.flip(mRgbaT, mRgbaT, 1);
         Imgproc.resize(mRgbaT, mRgbaT, mRgbaT.size());
+        Imgproc.cvtColor(mRgbaT,mRgbaT, Imgproc.COLOR_RGBA2RGB);
+        Bitmap bmpOutt = Bitmap.createBitmap(mRgbaT.width(), mRgbaT.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mRgbaT,bmpOutt);
 
         if (points.size() > 0) {
             frameGray = inputFrame.gray().t().clone();
-            //Core.flip(frameGray, frameGray, 1);
+            Core.flip(frameGray, frameGray, 1);
             Imgproc.resize(frameGray, frameGray, frameGray.size());
 
             Bitmap tmpBmp = Bitmap.createBitmap(frameGray.width(), frameGray.height(), Bitmap.Config.ARGB_8888);
@@ -536,8 +544,8 @@ public class realTimeTracking extends Activity implements CvCameraViewListener2 
             }
             return mRgbaT;
         } else if (points.size() == 0) {
-            prevFrame = inputFrame.gray().clone();
-            //Core.flip(prevFrame, prevFrame, 1);
+            prevFrame = inputFrame.gray().t().clone();
+            Core.flip(prevFrame, prevFrame, 1);
             Imgproc.resize(prevFrame, prevFrame, prevFrame.size());
             Log.v("myTag", "no points");
             if(record){
