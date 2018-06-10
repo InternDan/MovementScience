@@ -2,11 +2,11 @@
 {
 	"buildFiles" : 
 	[
-		"C:/Users/buffa/Documents/Android Studio Projects/MovementScience/app/CMakeLists.txt"
+		"C:/Users/buffa/Documents/android studio projects/MovementScience/app/CMakeLists.txt"
 	],
 	"cleanCommands" : 
 	[
-		"C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\Android Studio Projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\armeabi-v7a\" --target clean"
+		"C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\android studio projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\armeabi-v7a\" --target clean"
 	],
 	"cppFileExtensions" : [ "cpp" ],
 	"libraries" : 
@@ -15,27 +15,27 @@
 		{
 			"abi" : "armeabi-v7a",
 			"artifactName" : "native-lib",
-			"buildCommand" : "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\Android Studio Projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\armeabi-v7a\" --target native-lib",
+			"buildCommand" : "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\android studio projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\release\\armeabi-v7a\" --target native-lib",
 			"buildType" : "release",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  --target=armv7-none-linux-androideabi --gcc-toolchain=C:/Users/buffa/AppData/Local/Android/sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/buffa/AppData/Local/Android/sdk/ndk-bundle/sysroot  -Dnative_lib_EXPORTS -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\sdk\\ndk-bundle\\sources\\cxx-stl\\llvm-libc++\\include -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\sdk\\ndk-bundle\\sources\\android\\support\\include -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\sdk\\ndk-bundle\\sources\\cxx-stl\\llvm-libc++abi\\include  -isystem C:/Users/buffa/AppData/Local/Android/sdk/ndk-bundle/sysroot/usr/include/arm-linux-androideabi -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -std=c++11  -Os -DNDEBUG  -fPIC    -c ",
-					"src" : "C:/Users/buffa/Documents/Android Studio Projects/MovementScience/app/src/main/cpp/native-lib.cpp",
-					"workingDirectory" : "C:/Users/buffa/Documents/Android Studio Projects/MovementScience/app/.externalNativeBuild/cmake/release/armeabi-v7a"
+					"flags" : "  --target=armv7-none-linux-androideabi --gcc-toolchain=C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/sysroot  -Dnative_lib_EXPORTS -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\sources\\cxx-stl\\llvm-libc++\\include -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\sources\\android\\support\\include -isystem C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\sources\\cxx-stl\\llvm-libc++abi\\include  -isystem C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/sysroot/usr/include/arm-linux-androideabi -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -std=c++11  -Os -DNDEBUG  -fPIC    -c ",
+					"src" : "C:/Users/buffa/Documents/android studio projects/MovementScience/app/src/main/cpp/native-lib.cpp",
+					"workingDirectory" : "C:/Users/buffa/Documents/android studio projects/MovementScience/app/.externalNativeBuild/cmake/release/armeabi-v7a"
 				}
 			],
-			"output" : "C:/Users/buffa/Documents/Android Studio Projects/MovementScience/app/build/intermediates/cmake/release/obj/armeabi-v7a/libnative-lib.so",
-			"toolchain" : "4048174037"
+			"output" : "C:/Users/buffa/Documents/android studio projects/MovementScience/app/build/intermediates/cmake/release/obj/armeabi-v7a/libnative-lib.so",
+			"toolchain" : "2113081685"
 		}
 	},
 	"toolchains" : 
 	{
-		"4048174037" : 
+		"2113081685" : 
 		{
-			"cCompilerExecutable" : "C:/Users/buffa/AppData/Local/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
-			"cppCompilerExecutable" : "C:/Users/buffa/AppData/Local/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+			"cCompilerExecutable" : "C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "C:/Users/buffa/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
 		}
 	}
 }
