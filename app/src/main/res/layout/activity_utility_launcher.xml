@@ -68,11 +68,11 @@
 
                 <Button
                     android:id="@+id/cleanTemporaryFiles"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_centerInParent="true"
-                    android:onClick="cleanTemporaryFiles"
-                    android:text="Clean Temporary Files" />
+                    android:background="@mipmap/ic_clear_cache_foreground"
+                    android:onClick="cleanTemporaryFiles" />
 
             </RelativeLayout>
         </LinearLayout>

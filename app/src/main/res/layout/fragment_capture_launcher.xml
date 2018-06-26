@@ -28,8 +28,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:onClick="launchVideoRecorder"
-                    android:text="Normal Recorder" />
+                    android:background="@mipmap/ic_recorder_foreground"
+                    android:onClick="launchVideoRecorder" />
 
             </RelativeLayout>
 

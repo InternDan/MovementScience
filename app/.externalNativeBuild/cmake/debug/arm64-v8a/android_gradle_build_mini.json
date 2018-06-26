@@ -1,16 +1,16 @@
 {
   "buildFiles": [
-    "C:\\Users\\buffa\\Documents\\android studio projects\\MovementScience\\app\\CMakeLists.txt"
+    "C:\\Users\\buffa\\Documents\\Android Studio Projects\\MovementScience\\app\\CMakeLists.txt"
   ],
   "cleanCommands": [
-    "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\android studio projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a\" --target clean"
+    "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\Android Studio Projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a\" --target clean"
   ],
   "libraries": {
     "native-lib-Debug-arm64-v8a": {
       "artifactName": "native-lib",
-      "buildCommand": "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\android studio projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a\" --target native-lib",
+      "buildCommand": "C:\\Users\\buffa\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build \"C:\\Users\\buffa\\Documents\\Android Studio Projects\\MovementScience\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a\" --target native-lib",
       "abi": "arm64-v8a",
-      "output": "C:\\Users\\buffa\\Documents\\android studio projects\\MovementScience\\app\\build\\intermediates\\cmake\\debug\\obj\\arm64-v8a\\libnative-lib.so"
+      "output": "C:\\Users\\buffa\\Documents\\Android Studio Projects\\MovementScience\\app\\build\\intermediates\\cmake\\debug\\obj\\arm64-v8a\\libnative-lib.so"
     }
   }
 }

@@ -1,3 +1,3 @@
-C:/Users/buffa/Documents/android studio projects/MovementScience/app/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/native-lib.dir
-C:/Users/buffa/Documents/android studio projects/MovementScience/app/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/edit_cache.dir
-C:/Users/buffa/Documents/android studio projects/MovementScience/app/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/rebuild_cache.dir
+C:/Users/buffa/Documents/Android Studio Projects/MovementScience/app/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/native-lib.dir
+C:/Users/buffa/Documents/Android Studio Projects/MovementScience/app/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/buffa/Documents/Android Studio Projects/MovementScience/app/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/rebuild_cache.dir
