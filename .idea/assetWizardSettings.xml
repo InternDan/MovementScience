@@ -18,6 +18,17 @@
                                 <PersistentState>
                                   <option name="children">
                                     <map>
+                                      <entry key="backgroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="foregroundImage">
                                         <value>
                                           <PersistentState>
@@ -33,10 +44,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_recorder_background" />
-                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\recording_camera.png" />
-                                      <entry key="foregroundLayerName" value="ic_recorder_foreground" />
-                                      <entry key="outputName" value="recorder" />
+                                      <entry key="backgroundLayerName" value="ic_settings_background" />
+                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\settings.png" />
+                                      <entry key="foregroundLayerName" value="ic_settings_foreground" />
+                                      <entry key="outputName" value="settings" />
                                     </map>
                                   </option>
                                 </PersistentState>
