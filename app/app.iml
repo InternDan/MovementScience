@@ -99,6 +99,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/build-info" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/builds" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/check-manifest" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/cmake" />
@@ -124,7 +125,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/builds" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 27 Platform" jdkType="Android SDK" />
@@ -181,7 +181,6 @@
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-analytics-11.0.4" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-identity-11.0.4" level="project" />
     <orderEntry type="library" name="Gradle: com.github.bumptech.glide:annotations:4.0.0-RC1@jar" level="project" />
-    <orderEntry type="library" name="Gradle: com.github.ittianyu:BottomNavigationViewEx-1.2.4" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-plus-11.0.4" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\Users\buffa\Documents\Android Studio Projects\MovementScience\app\src\main\libs\libfreenect.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\Users\buffa\Documents\Android Studio Projects\MovementScience\app\src\main\libs\opencv-android-x86.jar:unspecified@jar" level="project" />

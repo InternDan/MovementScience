@@ -106,8 +106,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:onClick="launchGooglePhotos"
-                        android:text="Trim Video" />
+                        android:background="@mipmap/ic_trim_video_foreground"
+                        android:onClick="launchGooglePhotos" />
 
                 </RelativeLayout>
 
@@ -127,8 +127,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:onClick="launchGooglePhotos"
-                        android:text="Stabilize Video" />
+                        android:background="@mipmap/ic_stabilize_video_foreground"
+                        android:onClick="launchGooglePhotos" />
 
                 </RelativeLayout>
 

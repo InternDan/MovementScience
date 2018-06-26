@@ -59,7 +59,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
                 android:onClick="keyFrame"
-                android:text="@string/select_key_frame"
+                android:background="@mipmap/ic_key_frame_foreground"
                 app:layout_constraintBottom_toBottomOf="@+id/videoView"
                 app:layout_constraintHorizontal_bias="0.886"
                 app:layout_constraintLeft_toLeftOf="parent"

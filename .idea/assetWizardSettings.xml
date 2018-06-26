@@ -44,10 +44,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_settings_background" />
-                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\settings.png" />
-                                      <entry key="foregroundLayerName" value="ic_settings_foreground" />
-                                      <entry key="outputName" value="settings" />
+                                      <entry key="backgroundLayerName" value="ic_update_thumbnails_background" />
+                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\update_thumb.png" />
+                                      <entry key="foregroundLayerName" value="ic_update_thumbnails_foreground" />
+                                      <entry key="outputName" value="update_thumbnails" />
                                     </map>
                                   </option>
                                 </PersistentState>
