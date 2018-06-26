@@ -44,10 +44,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_update_thumbnails_background" />
-                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\update_thumb.png" />
-                                      <entry key="foregroundLayerName" value="ic_update_thumbnails_foreground" />
-                                      <entry key="outputName" value="update_thumbnails" />
+                                      <entry key="backgroundLayerName" value="ic_video_player_background" />
+                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\video_player.png" />
+                                      <entry key="foregroundLayerName" value="ic_play_video_foreground" />
+                                      <entry key="outputName" value="play_video" />
                                     </map>
                                   </option>
                                 </PersistentState>
