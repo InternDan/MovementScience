@@ -4,25 +4,25 @@
     <item
         android:id="@+id/action_capture"
         android:enabled="true"
-        android:icon="@drawable/ic_recorder"
+        android:icon="@mipmap/ic_recorder_foreground"
         android:title="Capture"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_edit"
         android:enabled="true"
-        android:icon="@drawable/ic_recorder"
+        android:icon="@mipmap/ic_edit_foreground"
         android:title="Edit"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_utilities"
         android:enabled="true"
-        android:icon="@drawable/ic_recorder"
+        android:icon="@mipmap/ic_settings_foreground"
         android:title="Utilities"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_help"
         android:enabled="true"
-        android:icon="@drawable/ic_recorder"
+        android:icon="@mipmap/ic_help_foreground"
         android:title="Help"
         app:showAsAction="ifRoom" />
 </menu>
