@@ -6,143 +6,114 @@
     style="@style/MovSciTheme"
     >
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:weightSum="5"
-    style="@style/MovSciTheme">
-
-    <!--first section contains logo, maybe link to website -->
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="3"
-        android:orientation="horizontal"
-        android:background="@drawable/border"
-        >
-
-
-    </LinearLayout>
-
-    <!-- contains 4 rows of view types -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical"
-        >
+        android:weightSum="5"
+        style="@style/MovSciTheme">
 
+        <!--first section contains logo, maybe link to website -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
+            android:layout_height="0dip"
+            android:layout_weight="3"
+            android:orientation="horizontal"
             android:background="@drawable/border"
             >
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
-                <Button
+        </LinearLayout>
+
+        <!-- contains 4 rows of view types -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                >
+
+                <ImageView
                     android:id="@+id/launchCaptureImage"
                     android:layout_width="wrap_content"
-                    android:layout_height="81dp"
-                    android:layout_centerInParent="true"
-                    android:background="@mipmap/ic_recorder_foreground"
-                    android:onClick="launchCaptureLauncher" />
-            </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_recorder_foreground"
+                     />
 
-        </LinearLayout>
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:background="@drawable/border"
-            >
-
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                >
 
-                <Button
+                <ImageView
                     android:id="@+id/launchEditing"
                     android:layout_width="wrap_content"
-                    android:layout_height="81dp"
-                    android:layout_centerInParent="true"
-                    android:background="@mipmap/ic_edit_foreground"
-                    android:onClick="launchEditLauncher" />
-            </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_edit_foreground"
+                    android:layout_gravity="center" />
 
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:background="@drawable/border"
-            >
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                >
+                <ImageView
                     android:id="@+id/launchUtilities"
                     android:layout_width="wrap_content"
-                    android:layout_height="81dp"
-                    android:layout_centerInParent="true"
-                    android:background="@mipmap/ic_settings_foreground"
-                    android:onClick="utilityLauncher" />
-            </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_settings_foreground"
+                    android:layout_gravity="center" />
 
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:background="@drawable/border"
-            >
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                >
 
-                <Button
+                <ImageView
                     android:id="@+id/launchHelp"
+                    android:layout_height="match_parent"
                     android:layout_width="wrap_content"
-                    android:layout_height="81dp"
                     android:layout_centerInParent="true"
-                    android:background="@mipmap/ic_help_foreground"
-                    android:onClick="getHelp" />
-            </RelativeLayout>
+                    android:src="@mipmap/ic_help_foreground"
+                    android:layout_gravity="center"/>
 
-
+            </LinearLayout>
 
         </LinearLayout>
-
 
     </LinearLayout>
 
-
-
-
-</LinearLayout>
-
-<android.support.design.widget.NavigationView
-android:id="@+id/nav_view"
-android:layout_width="wrap_content"
-android:layout_height="match_parent"
-android:layout_gravity="start"
-app:menu="@menu/bottom_navigation_main"
-app:headerLayout="@layout/nav_header"
-    />
-    </android.support.v4.widget.DrawerLayout>
+    <android.support.design.widget.NavigationView
+    android:id="@+id/nav_view"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    app:menu="@menu/bottom_navigation_main"
+    app:headerLayout="@layout/nav_header"
+        />
+</android.support.v4.widget.DrawerLayout>
 
