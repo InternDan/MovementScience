@@ -18,11 +18,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dip"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:orientation="horizontal"
             android:background="@drawable/border"
             >
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/bannerImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_banner_pic_foreground" />
+            </RelativeLayout>
 
         </LinearLayout>
 
@@ -30,7 +40,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:orientation="vertical"
             >
 

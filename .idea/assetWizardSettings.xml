@@ -44,10 +44,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_rotate_90_background" />
-                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\rotate90degrees.png" />
-                                      <entry key="foregroundLayerName" value="ic_rotate_90_foreground" />
-                                      <entry key="outputName" value="rotate_90" />
+                                      <entry key="backgroundLayerName" value="ic_banner_pic_trimmed_background" />
+                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Logo Art\Simplified no cross bar.tif" />
+                                      <entry key="foregroundLayerName" value="ic_banner_pic_trimmed_foreground" />
+                                      <entry key="outputName" value="banner_pic_trimmed" />
                                     </map>
                                   </option>
                                 </PersistentState>
