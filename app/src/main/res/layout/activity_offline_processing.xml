@@ -37,53 +37,56 @@
 
             <Button
                 android:id="@+id/buttonLoadVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@mipmap/ic_load_video_foreground"
                 android:onClick="loadVideo"
-                android:text="@string/load_video"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.015" />
+                app:layout_constraintVertical_bias="0.0" />
 
 
             <Button
                 android:id="@+id/buttonSelectKeyFrame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:onClick="keyFrame"
                 android:background="@mipmap/ic_key_frame_foreground"
+                android:onClick="keyFrame"
                 app:layout_constraintBottom_toBottomOf="@+id/videoView"
-                app:layout_constraintHorizontal_bias="0.886"
+                app:layout_constraintEnd_toStartOf="@+id/buttonPickPoints"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/buttonLoadImage"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.116" />
+                app:layout_constraintVertical_bias="0.0" />
 
             <Button
                 android:id="@+id/buttonLoadImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@mipmap/ic_load_image_foreground"
                 android:onClick="loadImage"
-                android:text="@string/load_still_image"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/buttonPickPoints"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/buttonLoadVideo"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/buttonLoadVideo"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.116" />
+                app:layout_constraintVertical_bias="0.0" />
 
             <Button
                 android:id="@+id/buttonPickPoints"
@@ -96,7 +99,7 @@
                 android:onClick="pickPoints"
                 android:text="@string/go_to_pick_points"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.906"
+                app:layout_constraintHorizontal_bias="0.969"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
