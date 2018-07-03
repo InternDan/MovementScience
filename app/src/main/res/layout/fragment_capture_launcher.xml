@@ -12,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="2"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1">
 
             <RelativeLayout
@@ -28,16 +28,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:onClick="launchVideoRecorder"
-                    android:text="Normal Recorder" />
+                    android:background="@mipmap/ic_recorder_foreground"
+                    android:onClick="launchVideoRecorder" />
 
             </RelativeLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1">
 
             <RelativeLayout
@@ -49,8 +49,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:onClick="launchRealTimeTracking"
-                    android:text="Real-Time Tracking" />
+                    android:background="@mipmap/ic_live_foreground"
+                    android:onClick="launchRealTimeTracking" />
 
             </RelativeLayout>
 

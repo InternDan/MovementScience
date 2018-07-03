@@ -29,8 +29,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:onClick="editSettings"
-                    android:text="Edit Settings" />
+                    android:background="@mipmap/ic_settings_foreground"
+                    android:onClick="editSettings" />
 
             </RelativeLayout>
         </LinearLayout>
@@ -50,8 +50,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:onClick="updateThumbnails"
-                    android:text="Update Thumbnails (not often necessary)" />
+                    android:background="@mipmap/ic_update_thumbnails_foreground"
+                    android:onClick="updateThumbnails" />
 
             </RelativeLayout>
         </LinearLayout>
@@ -68,11 +68,11 @@
 
                 <Button
                     android:id="@+id/cleanTemporaryFiles"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_centerInParent="true"
-                    android:onClick="cleanTemporaryFiles"
-                    android:text="Clean Temporary Files" />
+                    android:background="@mipmap/ic_clear_cache_foreground"
+                    android:onClick="cleanTemporaryFiles" />
 
             </RelativeLayout>
         </LinearLayout>

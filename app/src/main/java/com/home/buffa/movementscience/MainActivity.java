@@ -31,8 +31,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.Manifest;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -84,7 +86,77 @@ public class MainActivity extends Activity {
                 //.setStyle(new NotificationCompat.BigTextStyle()
                 //        .bigText("Much longer text that cannot fit one line..."))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        notificationManager.notify(notificationID, mBuilder.build());
+        //notificationManager.notify(notificationID, mBuilder.build());
+
+        //set up image views as buttons
+        final ImageView v1 = (ImageView) findViewById(R.id.launchCaptureImage);
+        v1.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                switch (arg1.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        launchCaptureLauncher();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL:{
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
+
+        final ImageView v2 = (ImageView) findViewById(R.id.launchEditing);
+        v2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                switch (arg1.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        launchEditLauncher();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL:{
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
+        final ImageView v3 = (ImageView) findViewById(R.id.launchUtilities);
+        v3.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                switch (arg1.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        utilityLauncher();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL:{
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
+        final ImageView v4 = (ImageView) findViewById(R.id.launchHelp);
+        v4.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                switch (arg1.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        getHelp();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL:{
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
 
         NavigationView navigationView  = findViewById(R.id.nav_view);
         final DrawerLayout mDrawerLayout = new DrawerLayout(getApplicationContext());
@@ -169,12 +241,12 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void launchCaptureLauncher(View view) {
+    public void launchCaptureLauncher() {
         Intent intent = new Intent(getApplicationContext(), CaptureLauncher.class);
         startActivity(intent);
     }
 
-    public void launchEditLauncher(View view) {
+    public void launchEditLauncher() {
         Intent intent = new Intent(getApplicationContext(), EditLauncher.class);
         startActivity(intent);
     }
@@ -304,12 +376,12 @@ public class MainActivity extends Activity {
 
 
 
-    public void utilityLauncher(View view){
+    public void utilityLauncher(){
         Intent intent = new Intent(getApplicationContext(),UtilityLauncher.class);
         startActivity(intent);
     }
 
-    public void getHelp(View view){
+    public void getHelp(){
         Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
     }
 

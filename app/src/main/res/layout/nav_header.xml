@@ -10,13 +10,13 @@
     android:id="@+id/navigation_header">
 
     <ImageView
-        android:layout_width="95dp"
-        android:layout_height="87dp"
-        android:background="@drawable/ic_recorder" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/ic_banner_pic_foreground" />
 
-    <TextView
+    <!-- <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MovSci" />
+        android:text="MovSci" /> -->
 
 </LinearLayout>

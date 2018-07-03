@@ -29,8 +29,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:onClick="watchVideo"
-                    android:text="Play a Video" />
+                    android:background="@mipmap/ic_play_video_foreground"
+                    android:onClick="watchVideo" />
 
             </RelativeLayout>
 
@@ -56,8 +56,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:onClick="combineVideos"
-                        android:text="Compare/Merge Videos" />
+                        android:background="@mipmap/ic_comparison_foreground"
+                        android:onClick="combineVideos" />
 
                 </RelativeLayout>
 
@@ -106,8 +106,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:onClick="launchGooglePhotos"
-                        android:text="Trim Video" />
+                        android:background="@mipmap/ic_trim_video_foreground"
+                        android:onClick="launchGooglePhotos" />
 
                 </RelativeLayout>
 
@@ -127,8 +127,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:onClick="launchGooglePhotos"
-                        android:text="Stabilize Video" />
+                        android:background="@mipmap/ic_stabilize_video_foreground"
+                        android:onClick="launchGooglePhotos" />
 
                 </RelativeLayout>
 
@@ -156,8 +156,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:onClick="launchOfflineTracking"
-                        android:text="Offline Markup" />
+                        android:background="@mipmap/ic_offline_processing_foreground"
+                        android:onClick="launchOfflineTracking" />
 
                 </RelativeLayout>
 
@@ -177,8 +177,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:onClick="talkOverVideo"
-                        android:text="Record Voiceover" />
+                        android:background="@mipmap/ic_voice_over_video_foreground"
+                        android:onClick="talkOverVideo" />
 
                 </RelativeLayout>
 
