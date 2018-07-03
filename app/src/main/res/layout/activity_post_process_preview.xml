@@ -47,9 +47,9 @@
                 android:id="@+id/buttonCombineVideos"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:onClick="postProcessExectute"
                 android:layout_centerInParent="true"
-                android:text="Combine Videos" />
+                android:onClick="postProcessExectute"
+                android:text="Combine!" />
 
         </RelativeLayout>
 

@@ -22,8 +22,8 @@
             android:orientation="vertical"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:weightSum="2">
 
             <VideoView
@@ -43,8 +43,8 @@
             android:orientation="vertical"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:weightSum="2">
 
             <VideoView
@@ -81,7 +81,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:onClick="resetViews"
-                android:text="Reset Views" />
+                android:text="Reset" />
 
         </RelativeLayout>
 
