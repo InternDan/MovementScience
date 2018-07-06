@@ -44,10 +44,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_4_point_angle_background" />
-                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v2 (really, round two)_\4pt_angle.png" />
-                                      <entry key="foregroundLayerName" value="ic_4_point_angle_foreground" />
-                                      <entry key="outputName" value="4_point_angle" />
+                                      <entry key="backgroundLayerName" value="ic_line_background" />
+                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\line.png" />
+                                      <entry key="foregroundLayerName" value="ic_line_foreground" />
+                                      <entry key="outputName" value="line" />
                                     </map>
                                   </option>
                                 </PersistentState>

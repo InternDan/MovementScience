@@ -41,17 +41,18 @@
 
         <Button
             android:id="@+id/buttonStartVoiceRecording"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="8dp"
             android:layout_gravity="top"
             android:onClick="beginRecording"
-            android:text="Start Recording" />
+            android:background="@mipmap/ic_record_square_foreground" />
 
         <Button
             android:id="@+id/buttonStopVoiceRecording"
-            android:layout_width="130dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="135dp"
+            android:layout_marginLeft="64dp"
             android:onClick="endRecording"
             android:text="Stop Recording" />
 
