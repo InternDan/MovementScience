@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -86,6 +87,7 @@ public class pickPoints extends Activity {
     // Declaring the Integer Array with resourse Id's of Images for the Spinners
     Integer[] objectsImages = { 0, R.mipmap.point, R.mipmap.line, R.mipmap.two_point_angle,
             R.mipmap.three_point_angle, R.mipmap.four_point_angle };
+    Spinner spinner;
 
 
 
@@ -95,11 +97,11 @@ public class pickPoints extends Activity {
     //ImageButton button3Angle;
     //ImageButton button4Angle;
 
-    //boolean buttonPointPressed = false;
-    //boolean buttonLinePressed = false;
-    //boolean button2AnglePressed = false;
-    //boolean button3AnglePressed = false;
-    //boolean button4AnglePressed = false;
+    boolean buttonPointPressed = false;
+    boolean buttonLinePressed = false;
+    boolean button2AnglePressed = false;
+    boolean button3AnglePressed = false;
+    boolean button4AnglePressed = false;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -137,7 +139,7 @@ public class pickPoints extends Activity {
         String curPtSize = sharedPref.getString("pref_currentPointSize","5");
         currentPointSize = Integer.valueOf(curPtSize);
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+        spinner = (Spinner) findViewById(R.id.spinner1);
         SimpleImageArrayAdapter adapter = new
                 SimpleImageArrayAdapter(getApplicationContext(),R.layout.spinner_value_layout,objects,objectsImages);
         spinner.setAdapter(adapter);
@@ -320,8 +322,32 @@ public class pickPoints extends Activity {
     }
 
     public void addFeature(View view) {
-
+        setLinearLayoutOnTouchListener();
+        switch(spinner.getSelectedItemPosition()){
+            case 0:
+                ptType = null;
+                break;
+            case 1:
+                ptType = 0;
+                break;
+            case 2:
+                ptType = 1;
+                break;
+            case 3:
+                ptType = 2;
+                break;
+            case 4:
+                ptType = 3;
+                break;
+            case 5:
+                ptType = 4;
+                break;
+        }
         selectionCounter = 0;
+        if (ptType == null){
+            selectionCap = 0;
+            return;
+        }
         if (ptType == 0) {
             selectionCap = 1;
         } else if (ptType == 1) {
@@ -368,6 +394,25 @@ public class pickPoints extends Activity {
         return m;
     }
 
+    /*public void onClick(View view){
+        switch(spinner.getSelectedItemPosition()){
+            case 1:
+                buttonPointPressed = true;
+                break;
+            case 2:
+                buttonLinePressed = true;
+                break;
+            case 3:
+                button2AnglePressed = true;
+                break;
+            case 4:
+                button3AnglePressed = true;
+                break;
+            case 5:
+                button4AnglePressed = true;
+                break;
+        }
+    }/*
     /*private void setButtons(){
 
         buttonPoint = findViewById(R.id.buttonPointOffline);
