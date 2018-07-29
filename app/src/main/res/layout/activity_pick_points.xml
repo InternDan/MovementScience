@@ -68,7 +68,22 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.017" />
 
-            <ImageButton
+            <Spinner
+                android:id="@+id/spinner1"
+                android:layout_width="262dp"
+                android:layout_height="39dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.016" />
+
+            <!--<ImageButton
                 android:id="@+id/buttonPointOffline"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -146,7 +161,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/button3AngleOffline"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.017" />
+                app:layout_constraintVertical_bias="0.017" /> -->
 
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>

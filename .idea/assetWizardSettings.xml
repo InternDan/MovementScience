@@ -44,10 +44,11 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_line_background" />
-                                      <entry key="foregroundImage" value="C:\Users\buffa\Google Drive\collaborations\MovementScience\Icons_v1\line.png" />
-                                      <entry key="foregroundLayerName" value="ic_line_foreground" />
-                                      <entry key="outputName" value="line" />
+                                      <entry key="backgroundImage" value="E:\StudioProjects\MovementScience\app\src\main\res\drawable\button_background.xml" />
+                                      <entry key="backgroundLayerName" value="ic_point2_background" />
+                                      <entry key="foregroundImage" value="E:\Google Drive\collaborations\MovementScience\Icons_v3\point_v3.png" />
+                                      <entry key="foregroundLayerName" value="ic_point2_foreground" />
+                                      <entry key="outputName" value="point1" />
                                     </map>
                                   </option>
                                 </PersistentState>

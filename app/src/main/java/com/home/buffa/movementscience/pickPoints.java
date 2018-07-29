@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -40,6 +41,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+
+import com.home.buffa.movementscience.SimpleImageArrayAdapter;
 
 public class pickPoints extends Activity {
 
@@ -77,17 +80,26 @@ public class pickPoints extends Activity {
     int rotateDegreesPostProcess;
     LinearLayout linearLayout;
 
-    ImageButton buttonPoint;
-    ImageButton buttonLine;
-    ImageButton button2Angle;
-    ImageButton button3Angle;
-    ImageButton button4Angle;
+    // Declaring the String Array with the Text Data for the Spinners
+    String[] objects = { "Select a Feature to Track", "Point", "2-Point Line",
+            "2-Point Angle", "3-Point Angle", "4-Point Angle" };
+    // Declaring the Integer Array with resourse Id's of Images for the Spinners
+    Integer[] objectsImages = { 0, R.mipmap.point_round, R.mipmap.line, R.mipmap.two_point_angle,
+            R.mipmap.three_point_angle, R.mipmap.four_point_angle };
 
-    boolean buttonPointPressed = false;
-    boolean buttonLinePressed = false;
-    boolean button2AnglePressed = false;
-    boolean button3AnglePressed = false;
-    boolean button4AnglePressed = false;
+
+
+    //ImageButton buttonPoint;
+    //ImageButton buttonLine;
+    //ImageButton button2Angle;
+    //ImageButton button3Angle;
+    //ImageButton button4Angle;
+
+    //boolean buttonPointPressed = false;
+    //boolean buttonLinePressed = false;
+    //boolean button2AnglePressed = false;
+    //boolean button3AnglePressed = false;
+    //boolean button4AnglePressed = false;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -124,6 +136,11 @@ public class pickPoints extends Activity {
 
         String curPtSize = sharedPref.getString("pref_currentPointSize","5");
         currentPointSize = Integer.valueOf(curPtSize);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+        SimpleImageArrayAdapter adapter = new
+                SimpleImageArrayAdapter(getApplicationContext(),R.layout.spinner_value_layout,objects,objectsImages);
+        spinner.setAdapter(adapter);
 
         String curPtClr = sharedPref.getString("pref_currentPointColor","r");
         if (Objects.equals(curPtClr,new String("r")) == true){
@@ -266,7 +283,7 @@ public class pickPoints extends Activity {
         });
 
         linearLayout = findViewById(R.id.linearLayoutPickPoints);
-        setButtons();
+        //setButtons();
         setLinearLayoutOnTouchListenerReset();
     }
 
@@ -351,7 +368,7 @@ public class pickPoints extends Activity {
         return m;
     }
 
-    private void setButtons(){
+    /*private void setButtons(){
 
         buttonPoint = findViewById(R.id.buttonPointOffline);
         buttonLine = findViewById(R.id.buttonLineOffline);
@@ -451,7 +468,7 @@ public class pickPoints extends Activity {
             }
         });
 
-    }
+    }*/
 
     private void setLinearLayoutOnTouchListener(){
         linearLayout.setOnTouchListener(
