@@ -7,6 +7,7 @@
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:background="@color/colorPrimaryDark"
         android:backgroundTint="@color/colorPrimaryDark">
         <ImageView
@@ -18,6 +19,7 @@
             android:id="@+id/spinnerTextView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:textColor="@color/white"
             />
     </TableRow>
