@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.DrawableRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
@@ -82,8 +83,12 @@ public class pickPoints extends Activity {
     LinearLayout linearLayout;
 
     // Declaring the String Array with the Text Data for the Spinners
-    String[] objects = { "Select a Feature to Track", "Point", "2-Point Line",
-            "2-Point Angle", "3-Point Angle", "4-Point Angle" };
+    String[] objects = {"  Select a Feature to Track  ",
+                        "Point  ",
+                        "2-Point Line  ",
+                        "2-Point Angle  ",
+                        "3-Point Angle  ",
+                        "4-Point Angle  " };
     // Declaring the Integer Array with resourse Id's of Images for the Spinners
     Integer[] objectsImages = { 0, R.mipmap.point, R.mipmap.line, R.mipmap.two_point_angle,
             R.mipmap.three_point_angle, R.mipmap.four_point_angle };

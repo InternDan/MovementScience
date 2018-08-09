@@ -8,12 +8,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:background="@color/colorPrimaryDark"
-        android:backgroundTint="@color/colorPrimaryDark">
+        android:background="@color/colorPrimaryDark"><!--
+        android:backgroundTint="@color/colorPrimaryDark"-->
         <ImageView
             android:id="@+id/spinnerImages"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/app_name"/>"
         <TextView
             android:id="@+id/spinnerTextView"
