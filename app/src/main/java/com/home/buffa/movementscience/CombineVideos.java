@@ -35,6 +35,8 @@ import java.util.Calendar;
 import static android.content.ContentValues.TAG;
 import static junit.framework.Assert.fail;
 
+import wseemann.media.FFmpegMediaMetadataRetriever;
+
 /**
  * Created by buffa on 4/23/2018.
  */
@@ -83,6 +85,14 @@ public class CombineVideos {
     VideoProcessing vp = new VideoProcessing();
 
     public void initialize(){
+        FFmpegMediaMetadataRetriever mmr1 = new FFmpegMediaMetadataRetriever();
+        mmr1.setDataSource(videoAbsolutePath1);
+        Bitmap bitmap1 = mmr1.getFrameAtTime(0, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+
+        FFmpegMediaMetadataRetriever mmr2 = new FFmpegMediaMetadataRetriever();
+        mmr2.setDataSource(videoAbsolutePath2);
+        Bitmap bitmap2 = mmr2.getFrameAtTime(0, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+
         MainActivity.mBuilder.setContentText("Initializing softare tools");
         MainActivity.notificationManager.notify(MainActivity.notificationID, MainActivity.mBuilder.build());
         decoder1 = null;
