@@ -95,14 +95,14 @@ public class keyFrame extends Activity {
     String text;
 
     // Declaring the String Array with the Text Data for the Spinners
-    String[] objects = {"  Select a Feature to Track  ",
-                        "Point                        ",
-                        "2-Point Line                 ",
-                        "2-Point Angle                ",
-                        "3-Point Angle                ",
-                        "4-Point Angle                ",
-                        "Scribble                     ",
-                        "Text                         "};
+    String[] objects = {"  Select a Feature to Add  ",
+                        "Point                      ",
+                        "2-Point Line               ",
+                        "2-Point Angle              ",
+                        "3-Point Angle              ",
+                        "4-Point Angle              ",
+                        "Scribble                   ",
+                        "Text                       "};
     // Declaring the Integer Array with resourse Id's of Images for the Spinners
     Integer[] objectsImages = { 0, R.mipmap.point, R.mipmap.line, R.mipmap.two_point_angle,
             R.mipmap.three_point_angle, R.mipmap.four_point_angle, R.mipmap.scribble, R.mipmap.text };
