@@ -504,9 +504,9 @@ public class keyFrame extends Activity {
         buttonLine = findViewById(R.id.buttonLine);
         button2Angle = findViewById(R.id.button2Angle);
         button3Angle = findViewById(R.id.button3Angle);
-        button4Angle = findViewById(R.id.button4Angle);*/
+        button4Angle = findViewById(R.id.button4Angle);
         buttonScribble = findViewById(R.id.buttonScribble);
-        buttonText = findViewById(R.id.buttonText);
+        buttonText = findViewById(R.id.buttonText);*/
 
         /*buttonPoint.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
