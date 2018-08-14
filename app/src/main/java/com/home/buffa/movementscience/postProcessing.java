@@ -51,6 +51,8 @@ public class postProcessing extends Activity {
     int clickTrack1 = 0;
     int clickTrack2 = 0;
 
+    CombineVideos cv = new CombineVideos();
+
     public static int vid1Height;
     public static int vid1Width;
     public static int vid2Height;

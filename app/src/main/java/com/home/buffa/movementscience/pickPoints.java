@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.DrawableRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
@@ -19,9 +20,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -40,6 +43,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+
+import com.home.buffa.movementscience.SimpleImageArrayAdapter;
 
 public class pickPoints extends Activity {
 
@@ -77,11 +82,25 @@ public class pickPoints extends Activity {
     int rotateDegreesPostProcess;
     LinearLayout linearLayout;
 
-    ImageButton buttonPoint;
-    ImageButton buttonLine;
-    ImageButton button2Angle;
-    ImageButton button3Angle;
-    ImageButton button4Angle;
+    // Declaring the String Array with the Text Data for the Spinners
+    String[] objects = {"  Select a Feature to Track  ",
+                        "Point  ",
+                        "2-Point Line  ",
+                        "2-Point Angle  ",
+                        "3-Point Angle  ",
+                        "4-Point Angle  " };
+    // Declaring the Integer Array with resourse Id's of Images for the Spinners
+    Integer[] objectsImages = { 0, R.mipmap.point, R.mipmap.line, R.mipmap.two_point_angle,
+            R.mipmap.three_point_angle, R.mipmap.four_point_angle };
+    Spinner spinner;
+
+
+
+    //ImageButton buttonPoint;
+    //ImageButton buttonLine;
+    //ImageButton button2Angle;
+    //ImageButton button3Angle;
+    //ImageButton button4Angle;
 
     boolean buttonPointPressed = false;
     boolean buttonLinePressed = false;
@@ -124,6 +143,11 @@ public class pickPoints extends Activity {
 
         String curPtSize = sharedPref.getString("pref_currentPointSize","5");
         currentPointSize = Integer.valueOf(curPtSize);
+
+        spinner = (Spinner) findViewById(R.id.spinner1);
+        SimpleImageArrayAdapter adapter = new
+                SimpleImageArrayAdapter(getApplicationContext(),R.layout.spinner_value_layout,objects,objectsImages);
+        spinner.setAdapter(adapter);
 
         String curPtClr = sharedPref.getString("pref_currentPointColor","r");
         if (Objects.equals(curPtClr,new String("r")) == true){
@@ -266,7 +290,7 @@ public class pickPoints extends Activity {
         });
 
         linearLayout = findViewById(R.id.linearLayoutPickPoints);
-        setButtons();
+        //setButtons();
         setLinearLayoutOnTouchListenerReset();
     }
 
@@ -303,8 +327,32 @@ public class pickPoints extends Activity {
     }
 
     public void addFeature(View view) {
-
+        setLinearLayoutOnTouchListener();
+        switch(spinner.getSelectedItemPosition()){
+            case 0:
+                ptType = null;
+                break;
+            case 1:
+                ptType = 0;
+                break;
+            case 2:
+                ptType = 1;
+                break;
+            case 3:
+                ptType = 2;
+                break;
+            case 4:
+                ptType = 3;
+                break;
+            case 5:
+                ptType = 4;
+                break;
+        }
         selectionCounter = 0;
+        if (ptType == null){
+            selectionCap = 0;
+            return;
+        }
         if (ptType == 0) {
             selectionCap = 1;
         } else if (ptType == 1) {
@@ -351,7 +399,26 @@ public class pickPoints extends Activity {
         return m;
     }
 
-    private void setButtons(){
+    /*public void onClick(View view){
+        switch(spinner.getSelectedItemPosition()){
+            case 1:
+                buttonPointPressed = true;
+                break;
+            case 2:
+                buttonLinePressed = true;
+                break;
+            case 3:
+                button2AnglePressed = true;
+                break;
+            case 4:
+                button3AnglePressed = true;
+                break;
+            case 5:
+                button4AnglePressed = true;
+                break;
+        }
+    }/*
+    /*private void setButtons(){
 
         buttonPoint = findViewById(R.id.buttonPointOffline);
         buttonLine = findViewById(R.id.buttonLineOffline);
@@ -451,7 +518,7 @@ public class pickPoints extends Activity {
             }
         });
 
-    }
+    }*/
 
     private void setLinearLayoutOnTouchListener(){
         linearLayout.setOnTouchListener(

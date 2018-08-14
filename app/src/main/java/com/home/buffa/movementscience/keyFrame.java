@@ -53,11 +53,11 @@ public class keyFrame extends Activity {
     ImageView keyFrameView;
     String pathKeyFrame;
 
-    ImageButton buttonPoint;
+    /*ImageButton buttonPoint;
     ImageButton buttonLine;
     ImageButton button2Angle;
     ImageButton button3Angle;
-    ImageButton button4Angle;
+    ImageButton button4Angle;*/
     ImageButton buttonScribble;
     ImageButton buttonText;
     LinearLayout linearLayout;
@@ -94,6 +94,20 @@ public class keyFrame extends Activity {
 
     String text;
 
+    // Declaring the String Array with the Text Data for the Spinners
+    String[] objects = {"  Select a Feature to Add  ",
+                        "Point                      ",
+                        "2-Point Line               ",
+                        "2-Point Angle              ",
+                        "3-Point Angle              ",
+                        "4-Point Angle              ",
+                        "Scribble                   ",
+                        "Text                       "};
+    // Declaring the Integer Array with resourse Id's of Images for the Spinners
+    Integer[] objectsImages = { 0, R.mipmap.point, R.mipmap.line, R.mipmap.two_point_angle,
+            R.mipmap.three_point_angle, R.mipmap.four_point_angle, R.mipmap.scribble, R.mipmap.text };
+    Spinner spinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +124,11 @@ public class keyFrame extends Activity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setButtons();
+
+        spinner = (Spinner) findViewById(R.id.spinner1);
+        SimpleImageArrayAdapter adapter = new
+                SimpleImageArrayAdapter(getApplicationContext(),R.layout.spinner_value_layout,objects,objectsImages);
+        spinner.setAdapter(adapter);
 
         linearLayout = findViewById(R.id.linearLayoutKeyFrame);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -337,9 +356,38 @@ public class keyFrame extends Activity {
     }
 
     public void addFeature(View view) {
-        getPointType();
         setLinearLayoutOnTouchListener();
+        switch(spinner.getSelectedItemPosition()){
+            case 0:
+                ptType = null;
+                break;
+            case 1:
+                ptType = 0;
+                break;
+            case 2:
+                ptType = 1;
+                break;
+            case 3:
+                ptType = 2;
+                break;
+            case 4:
+                ptType = 3;
+                break;
+            case 5:
+                ptType = 4;
+                break;
+            case 6:
+                addScribble();
+                break;
+            case 7:
+                getTextAndAdd();
+                break;
+        }
         selectionCounter = 0;
+        if (ptType == null){
+            selectionCap = 0;
+            return;
+        }
         if (ptType == 0) {
             selectionCap = 1;
         } else if (ptType == 1) {
@@ -350,14 +398,6 @@ public class keyFrame extends Activity {
             selectionCap = 3;
         } else if (ptType == 4){
             selectionCap = 4;
-        }
-        if (ptType == 5){
-            addScribble();
-            setLinearLayoutOnTouchListenerReset();
-        }
-        if (ptType == 6){
-            getTextAndAdd();
-            setLinearLayoutOnTouchListenerReset();
         }
     }
 
@@ -460,15 +500,15 @@ public class keyFrame extends Activity {
 
     private void setButtons(){
 
-        buttonPoint = findViewById(R.id.buttonPoint);
+        /*buttonPoint = findViewById(R.id.buttonPoint);
         buttonLine = findViewById(R.id.buttonLine);
         button2Angle = findViewById(R.id.button2Angle);
         button3Angle = findViewById(R.id.button3Angle);
         button4Angle = findViewById(R.id.button4Angle);
         buttonScribble = findViewById(R.id.buttonScribble);
-        buttonText = findViewById(R.id.buttonText);
+        buttonText = findViewById(R.id.buttonText);*/
 
-        buttonPoint.setOnClickListener(new View.OnClickListener() {
+        /*buttonPoint.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
                 buttonPoint.setBackgroundColor(Color.parseColor("#101010"));
@@ -576,45 +616,15 @@ public class keyFrame extends Activity {
         buttonScribble.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                buttonScribble.setBackgroundColor(Color.parseColor("#101010"));
-                buttonScribblePressed = true;
-                setLinearLayoutOnTouchListenerReset();
-                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
-                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
-                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
-                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
-                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
-                buttonText.setBackgroundColor(Color.parseColor("#999999"));
 
-                buttonPointPressed = false;
-                buttonLinePressed = false;
-                button3AnglePressed = false;
-                button4AnglePressed = false;
-                button2AnglePressed = false;
-                buttonTextPressed = false;
             }
         });
         buttonText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                buttonText.setBackgroundColor(Color.parseColor("#101010"));
-                buttonTextPressed = true;
-                setLinearLayoutOnTouchListenerReset();
-                buttonPoint.setBackgroundColor(Color.parseColor("#999999"));
-                buttonLine.setBackgroundColor(Color.parseColor("#999999"));
-                button3Angle.setBackgroundColor(Color.parseColor("#999999"));
-                button4Angle.setBackgroundColor(Color.parseColor("#999999"));
-                button2Angle.setBackgroundColor(Color.parseColor("#999999"));
-                buttonScribble.setBackgroundColor(Color.parseColor("#999999"));
 
-                buttonPointPressed = false;
-                buttonLinePressed = false;
-                button3AnglePressed = false;
-                button4AnglePressed = false;
-                button2AnglePressed = false;
-                buttonScribblePressed = false;
             }
-        });
+        });*/
     }
 
     private void setLinearLayoutOnTouchListener(){
